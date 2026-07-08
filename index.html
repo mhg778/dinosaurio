@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>DINOSAURIO | Simulador Analítico de Baremo Concurso Reservistas Voluntarios</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body { background: #10140b; color: #d9dcc9; margin: 0; padding: 20px; }
+  h1 { text-align: center; font-size: 24px; color: #8bc34a; margin-bottom: 2px; letter-spacing: 2px; }
+  h1 span { color: #c9d16b; }
+  h2.sub { text-align: center; font-size: 13px; color: #8a9478; font-weight: normal; margin-top: 0; margin-bottom: 20px; }
+  .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+  .tab-btn { padding: 10px 22px; background: #1c2414; border: 1px solid #3b4a2a; color: #cfd6bd;
+             border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.2s; }
+  .tab-btn.active { background: #4b5e2e; border-color: #7cb342; color: #f3f7e8; }
+  .view-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+  .view-btn { padding: 6px 16px; background: transparent; border: 1px solid #3b4a2a; color: #8a9478;
+              border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .view-btn.active { background: #263019; color: #a8d66b; border-color: #7cb342; }
+  .container { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; max-width: 1300px; margin: 0 auto; }
+  .panel { background: #1a2113; border: 1px solid #3b4a2a; border-radius: 10px; padding: 18px; }
+  .master-box { background: #212b16; border: 1px solid #5a7038; border-radius: 10px; padding: 16px 18px;
+                margin-bottom: 18px; }
+  .master-box label { display:flex; justify-content: space-between; font-size:14px; font-weight:600; color:#c9e494; margin-bottom:6px;}
+  .master-box .desc { color:#8a9478; font-size:11px; margin-top:6px; }
+  input[type=range].master { accent-color: #c9e494; height: 6px; }
+  .param { margin-bottom: 16px; }
+  .param label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .param .code { color: #9ccc65; font-size: 11px; }
+  .param .val { color: #d4b96a; font-weight: bold; }
+  input[type=range] { width: 100%; accent-color: #7cb342; }
+  .desc { font-size: 11px; color: #8a9478; margin-top: 2px; }
+  .result-box { text-align: center; padding: 20px; background: #141a0d; border-radius: 10px; border: 1px solid #3b4a2a; margin-bottom: 15px; }
+  .age-value { font-size: 48px; font-weight: bold; color: #8bc34a; }
+  .age-label { font-size: 12px; color: #8a9478; }
+  .compare { display: flex; justify-content: space-around; margin-top: 10px; }
+  .compare div { text-align: center; }
+  .compare .n { font-size: 20px; font-weight: bold; }
+  .limits { display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px; color: #c2a45c; }
+  .excellence-box { padding: 15px; background: #141a0d; border-radius: 10px; border: 1px solid #3b4a2a; }
+  .bar-bg { background: #26301a; border-radius: 6px; height: 22px; overflow: hidden; margin-top: 6px; }
+  .bar-fill { height: 100%; transition: width 0.3s; border-radius: 6px; }
+  #chart2d { width: 100%; height: 320px; margin-top: 15px; }
+  #chart3d { width: 100%; height: 560px; margin-top: 15px; display: none; }
+  .full-width { grid-column: 1 / -1; }
+  .footer-note { text-align: center; font-size: 11px; color: #61694f; margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+  .reset-btn { display: block; margin: 15px auto 0; padding: 8px 20px; background: #263019; border: 1px solid #5a7038;
+               color: #cfd6bd; border-radius: 6px; cursor: pointer; }
+  .logo { text-align:center; font-size: 42px; margin-bottom: -8px; filter: hue-rotate(60deg) saturate(1.4); }
+</style>
+</head>
+<body>
+
+<div class="logo">🦖</div>
+<h1>DINO<span>SAURIO</span></h1>
+<h2 class="sub">Simulador Analítico de Baremo de Baremo Concurso Reservistas Voluntarios </h2>
+
+<div class="tabs">
+  <button class="tab-btn active" data-cat="oficial">Oficiales</button>
+  <button class="tab-btn" data-cat="suboficial">Suboficiales</button>
+  <button class="tab-btn" data-cat="tropa">Tropa y Marinería</button>
+</div>
+<div class="view-tabs">
+  <button class="view-btn active" data-view="2d">Vista Trayectoria (2D)</button>
+  <button class="view-btn" data-view="3d">Vista Superficie de Excelencia (3D)</button>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <div class="master-box">
+      <label><span>🎯 Edad Media Objetivo</span><span id="masterVal">45.2 años</span></label>
+      <input type="range" class="master" id="masterSlider" min="18" max="58" step="0.1" value="45.2">
+      <div class="desc">Al mover este control, se reasignan automáticamente los recortes en los parámetros de mérito, priorizando siempre los menos lesivos para la excelencia técnica.</div>
+    </div>
+    <div id="params-panel"></div>
+  </div>
+
+  <div>
+    <div class="result-box">
+      <div class="age-value" id="ageProjected">45.2</div>
+      <div class="age-label">Edad Media Proyectada (años)</div>
+      <div class="compare">
+        <div><div class="n" id="ageBase" style="color:#8a9478">45.2</div><div class="age-label">Base actual</div></div>
+        <div><div class="n" id="ageDelta" style="color:#8bc34a">0.0</div><div class="age-label">Δ vs. actual</div></div>
+      </div>
+      <div class="limits">
+        <span>Suelo biológico: <b id="floorAge">22</b> años</span>
+        <span>Techo legal: <b id="ceilAge">58</b> años</span>
+      </div>
+    </div>
+
+    <div class="excellence-box">
+      <div style="display:flex; justify-content:space-between; font-size:13px;">
+        <span>Índice de Pérdida de Excelencia Técnica</span>
+        <span id="excText" style="color:#e05252; font-weight:bold;">0%</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill" id="excBar" style="width:0%; background:#8bc34a;"></div></div>
+      <div class="desc">Penaliza más los recortes en Experiencia Profesional y Formación Específica (ligados directamente al puesto), y menos los recortes en méritos generales (idiomas, cursos, carnets).</div>
+    </div>
+
+    <div id="chart2d"></div>
+    <button class="reset-btn" onclick="resetSliders()">Restablecer valores del BOE vigente</button>
+  </div>
+
+  <div id="chart3d" class="full-width"></div>
+</div>
+
+<p class="footer-note">
+DINOSAURIO — Modelo calibrado con: (1) regresión OLS sobre 171 aspirantes reales clasificados en la convocatoria 2025 (edad ~ méritos);
+(2) edad media real de obtención de cada mérito en España según fuentes públicas (INE, EOI/Cambridge, CSD, DGT, estudios sobre funcionariado y FCSE).
+Suelo/techo de edad: Tropa 18-55, Suboficial 20-58, Oficial 22-58 años (Base 2.1.b de la convocatoria).
+Cada parámetro solo admite saltos enteros equivalentes a sus puntos reales del baremo (ej. Permisos C/D: 4 saltos).
+</p>
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script>
+
+const CATEGORIES = {
+  oficial: { floor: 22, ceil: 58, baseAge: 43.5 },
+  suboficial: { floor: 20, ceil: 58, baseAge: 41.0 },
+  tropa: { floor: 18, ceil: 55, baseAge: 32.0 }
+};
+
+const PARAMS = [
+  { id:"tserv", code:"Ap.3.I", name:"Tiempo de Servicio", max:10, weight:0.02,
+    desc:"Servicio militar previo computable por meses (BOE Ap.3.I)" },
+  { id:"macad", code:"Ap.3.II", name:"Méritos Académicos", max:10, weight:-0.35,
+    desc:"Titulación exigida y superior. Edad media graduación univ. España: 23-24 años (INE)" },
+  { id:"midio", code:"Ap.3.III.a", name:"Idiomas (SLP no exigido)", max:6, weight:0.20,
+    desc:"SLP/B2/C1 adicionales. Edad media obtención certificado: 20-24 años (EOI/Cambridge)" },
+  { id:"mcurso", code:"Ap.3.III.b", name:"Cursos CESEDEN / Alta Gestión", max:6, weight:0.85,
+    desc:"Monográfico, Seg. y Defensa, RRHH/Financieros. Perfil típico +35-40 años" },
+  { id:"mfunc", code:"Ap.3.III.c/d", name:"Funcionario / FCSE previa", max:6, weight:0.75,
+    desc:"Subgrupos C1/C2, ex-Policía/Guardia Civil. Edad media funcionariado ES: 51,6 años (INE)" },
+  { id:"mcarnet", code:"Ap.3.III.e", name:"Permisos C/D profesionales", max:4, weight:0.30,
+    desc:"Carnet camión/autobús. Edad media obtención en España: 20-23 años (DGT)" },
+  { id:"mdep", code:"Base 4.1.f", name:"Deportista Alto Nivel", max:3, weight:0.40,
+    desc:"Bono por resolución CSD. Edad media de retirada deportiva en España: ~30 años" },
+  { id:"mexmil", code:"Ap.3.III.f", name:"Bono Ex-Militar/Reservista", max:5, weight:0.65,
+    desc:"Antigüedad militar previa/priorización. Requiere años de servicio ya acumulados" },
+  { id:"mesp", code:"Ap.3.IV.a", name:"Experiencia Profesional (puesto)", max:35, weight:0.55,
+    desc:"Mérito específico ligado al área de trabajo de la vacante (Base 4.6). Muy lesivo recortar" },
+  { id:"mform", code:"Ap.3.IV.b", name:"Formación Específica del Puesto", max:15, weight:0.45,
+    desc:"Cursos/titulaciones ligadas al cometido de la plaza. Lesivo recortar" }
+];
+
+function sensitivity(id) {
+  if (id === "mesp") return 6.0;
+  if (id === "mform") return 4.0;
+  if (id === "tserv" || id === "macad") return 0.3;
+  return 0.8;
+}
+
+let currentCat = "oficial";
+let currentView = "2d";
+let values = {};
+PARAMS.forEach(p => values[p.id] = p.max);
+
+function baseConst(cat) {
+  const c = CATEGORIES[cat];
+  let sumWeighted = 0;
+  PARAMS.forEach(p => sumWeighted += p.weight * p.max);
+  return c.baseAge - sumWeighted;
+}
+
+function computeAge(overrides) {
+  const v = overrides || values;
+  const c = CATEGORIES[currentCat];
+  const K = baseConst(currentCat);
+  let age = K;
+  PARAMS.forEach(p => age += p.weight * v[p.id]);
+  age = Math.max(c.floor, Math.min(c.ceil, age));
+  return age;
+}
+
+function computeExcellenceLoss(overrides) {
+  const v = overrides || values;
+  let loss = 0;
+  PARAMS.forEach(p => {
+    const cut = p.max - v[p.id];
+    loss += sensitivity(p.id) * Math.pow(cut, 1.6);
+  });
+  return loss;
+}
+
+function allocateForTargetAge(targetAge) {
+  const c = CATEGORIES[currentCat];
+  targetAge = Math.max(c.floor, Math.min(c.baseAge, targetAge));
+  PARAMS.forEach(p => values[p.id] = p.max);
+  let age = computeAge();
+  let guard = 0;
+  while (age > targetAge + 0.05 && guard < 5000) {
+    guard++;
+    let best = null; let bestRatio = Infinity;
+    PARAMS.forEach(p => {
+      if (p.weight <= 0) return;
+      if (values[p.id] <= 0) return;
+      const cutNow = p.max - values[p.id];
+      const marginalCost = sensitivity(p.id) * (Math.pow(cutNow+1,1.6) - Math.pow(cutNow,1.6));
+      const ratio = marginalCost / p.weight;
+      if (ratio < bestRatio) { bestRatio = ratio; best = p; }
+    });
+    if (!best) break;
+    values[best.id] = Math.max(0, values[best.id] - 1);
+    age = computeAge();
+  }
+  renderParams();
+}
+
+function renderParams() {
+  const panel = document.getElementById("params-panel");
+  panel.innerHTML = "";
+  PARAMS.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "param";
+    div.innerHTML = `
+      <label>
+        <span>${p.name} <span class="code">[${p.code}]</span></span>
+        <span class="val" id="val_${p.id}">${values[p.id]} / ${p.max} pts</span>
+      </label>
+      <input type="range" id="slider_${p.id}" min="0" max="${p.max}" step="1" value="${values[p.id]}">
+      <div class="desc">${p.desc}</div>
+    `;
+    panel.appendChild(div);
+  });
+  PARAMS.forEach(p => {
+    document.getElementById(`slider_${p.id}`).addEventListener("input", (e) => {
+      values[p.id] = parseInt(e.target.value);
+      document.getElementById(`val_${p.id}`).textContent = `${values[p.id]} / ${p.max} pts`;
+      update();
+    });
+  });
+}
+
+function resetSliders() {
+  PARAMS.forEach(p => values[p.id] = p.max);
+  renderParams();
+  syncMasterSlider();
+  update();
+}
+
+function syncMasterSlider() {
+  const age = computeAge();
+  document.getElementById("masterSlider").value = age;
+  document.getElementById("masterVal").textContent = age.toFixed(1) + " años";
+}
+
+function initChart2D() {
+  const trace = {
+    x: [0], y: [computeAge()],
+    mode: "lines+markers",
+    line: { color: "#8bc34a", width: 3 },
+    marker: { size: 8, color: "#c9e494" },
+    fill: "tozeroy",
+    fillcolor: "rgba(139,195,74,0.08)",
+    name: "Edad proyectada"
+  };
+  const layout = {
+    paper_bgcolor: "#1a2113", plot_bgcolor: "#141a0d",
+    font: { color: "#cfd6bd", size: 11 },
+    margin: { t: 30, l: 40, r: 20, b: 40 },
+    title: { text: "Evolución de la edad proyectada (histórico de ajustes)", font: { size: 13 } },
+    xaxis: { title: "Nº de ajuste", gridcolor: "#26301a" },
+    yaxis: { title: "Edad (años)", gridcolor: "#26301a" }
+  };
+  Plotly.newPlot("chart2d", [trace], layout, {displayModeBar: false});
+}
+
+function renderSurface3D() {
+  const n = 30;
+  const xVals = []; const yVals = []; const zVals = [];
+  for (let i = 0; i < n; i++) {
+    const rowZ = [];
+    const cutEsp = (i / (n-1)) * 15;
+    for (let j = 0; j < n; j++) {
+      const cutGenAgg = (j / (n-1)) * 15;
+      const lossEsp = sensitivity("mesp") * Math.pow(cutEsp, 1.6);
+      const lossGen = 0.8 * Math.pow(cutGenAgg, 1.6);
+      rowZ.push(lossEsp + lossGen);
+    }
+    zVals.push(rowZ);
+    xVals.push(cutEsp);
+  }
+  for (let j = 0; j < n; j++) yVals.push((j/(n-1))*15);
+
+  const curCutEsp = PARAMS.find(p=>p.id==="mesp").max - values["mesp"];
+  let curCutGen = 0;
+  PARAMS.forEach(p => { if (p.id !== "mesp" && p.id !== "mform") curCutGen += (p.max - values[p.id]); });
+  curCutGen += (PARAMS.find(p=>p.id==="mform").max - values["mform"]);
+  const curLoss = computeExcellenceLoss();
+
+  const surface = {
+    type: "surface", x: xVals, y: yVals, z: zVals,
+    colorscale: [[0,"#141a0d"],[0.3,"#3b4a2a"],[0.6,"#7cb342"],[0.85,"#c9e494"],[1,"#e8f5c0"]],
+    showscale: true,
+    colorbar: { title: "Pérdida excelencia", titlefont:{color:"#cfd6bd"}, tickfont:{color:"#cfd6bd"} },
+    opacity: 0.92
+  };
+  const point = {
+    type: "scatter3d", mode: "markers",
+    x: [curCutEsp], y: [Math.min(15,curCutGen)], z: [Math.min(curLoss, 400)],
+    marker: { size: 8, color: "#e05252", symbol: "circle", line: {color:"white", width:1} },
+    name: "Tu configuración actual"
+  };
+  const layout = {
+    paper_bgcolor: "#1a2113",
+    font: { color: "#cfd6bd", size: 11 },
+    margin: { t: 40, l: 0, r: 0, b: 0 },
+    title: { text: "Superficie de Excelencia: recorte Experiencia Profesional vs. resto de méritos", font: {size:13} },
+    scene: {
+      xaxis: { title: "Recorte Exper. Profesional (pts)", gridcolor: "#3b4a2a", color:"#cfd6bd" },
+      yaxis: { title: "Recorte resto de méritos (pts)", gridcolor: "#3b4a2a", color:"#cfd6bd" },
+      zaxis: { title: "Pérdida de excelencia", gridcolor: "#3b4a2a", color:"#cfd6bd" },
+      bgcolor: "#141a0d"
+    }
+  };
+  Plotly.newPlot("chart3d", [surface, point], layout, {displayModeBar: false});
+}
+
+let history = [];
+function update() {
+  const c = CATEGORIES[currentCat];
+  const age = computeAge();
+  const base = c.baseAge;
+  const delta = age - base;
+  document.getElementById("ageProjected").textContent = age.toFixed(1);
+  document.getElementById("ageBase").textContent = base.toFixed(1);
+  const deltaEl = document.getElementById("ageDelta");
+  deltaEl.textContent = (delta >= 0 ? "+" : "") + delta.toFixed(1);
+  deltaEl.style.color = delta < 0 ? "#8bc34a" : (delta > 0 ? "#e05252" : "#8a9478");
+  document.getElementById("floorAge").textContent = c.floor;
+  document.getElementById("ceilAge").textContent = c.ceil;
+
+  const loss = computeExcellenceLoss();
+  const lossPct = Math.min(100, loss / 3);
+  document.getElementById("excText").textContent = lossPct.toFixed(1) + "%";
+  const bar = document.getElementById("excBar");
+  bar.style.width = lossPct + "%";
+  bar.style.background = lossPct < 15 ? "#8bc34a" : (lossPct < 40 ? "#d4b96a" : "#e05252");
+
+  document.getElementById("masterVal").textContent = age.toFixed(1) + " años";
+
+  if (currentView === "2d") {
+    history.push(age);
+    if (history.length > 30) history.shift();
+    Plotly.update("chart2d", { x: [Array.from({length: history.length}, (_,i)=>i)], y: [history] });
+  } else {
+    renderSurface3D();
+  }
+}
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentCat = btn.dataset.cat;
+    const c = CATEGORIES[currentCat];
+    document.getElementById("masterSlider").min = c.floor;
+    document.getElementById("masterSlider").max = c.ceil;
+    resetSliders();
+    history = [];
+    update();
+  });
+});
+
+document.querySelectorAll(".view-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentView = btn.dataset.view;
+    if (currentView === "2d") {
+      document.getElementById("chart2d").style.display = "block";
+      document.getElementById("chart3d").style.display = "none";
+      initChart2D();
+      update();
+    } else {
+      document.getElementById("chart2d").style.display = "none";
+      document.getElementById("chart3d").style.display = "block";
+      renderSurface3D();
+    }
+  });
+});
+
+document.getElementById("masterSlider").addEventListener("input", (e) => {
+  const target = parseFloat(e.target.value);
+  allocateForTargetAge(target);
+  update();
+});
+
+const initCat = CATEGORIES[currentCat];
+document.getElementById("masterSlider").min = initCat.floor;
+document.getElementById("masterSlider").max = initCat.ceil;
+document.getElementById("masterSlider").value = initCat.baseAge;
+
+renderParams();
+initChart2D();
+update();
+</script>
+</body>
+</html>
