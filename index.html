@@ -2,399 +2,407 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>DINOSAURIO | Simulador Analítico de Baremo Concurso Reservistas Voluntarios</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DINOSAURIO — Simulador Analítico del Baremo de Reservistas</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-  body { background: #10140b; color: #d9dcc9; margin: 0; padding: 20px; }
-  h1 { text-align: center; font-size: 24px; color: #8bc34a; margin-bottom: 2px; letter-spacing: 2px; }
-  h1 span { color: #c9d16b; }
-  h2.sub { text-align: center; font-size: 13px; color: #8a9478; font-weight: normal; margin-top: 0; margin-bottom: 20px; }
-  .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
-  .tab-btn { padding: 10px 22px; background: #1c2414; border: 1px solid #3b4a2a; color: #cfd6bd;
-             border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.2s; }
-  .tab-btn.active { background: #4b5e2e; border-color: #7cb342; color: #f3f7e8; }
-  .view-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-  .view-btn { padding: 6px 16px; background: transparent; border: 1px solid #3b4a2a; color: #8a9478;
-              border-radius: 6px; cursor: pointer; font-size: 12px; }
-  .view-btn.active { background: #263019; color: #a8d66b; border-color: #7cb342; }
-  .container { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; max-width: 1300px; margin: 0 auto; }
-  .panel { background: #1a2113; border: 1px solid #3b4a2a; border-radius: 10px; padding: 18px; }
-  .master-box { background: #212b16; border: 1px solid #5a7038; border-radius: 10px; padding: 16px 18px;
-                margin-bottom: 18px; }
-  .master-box label { display:flex; justify-content: space-between; font-size:14px; font-weight:600; color:#c9e494; margin-bottom:6px;}
-  .master-box .desc { color:#8a9478; font-size:11px; margin-top:6px; }
-  input[type=range].master { accent-color: #c9e494; height: 6px; }
-  .param { margin-bottom: 16px; }
-  .param label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
-  .param .code { color: #9ccc65; font-size: 11px; }
-  .param .val { color: #d4b96a; font-weight: bold; }
-  input[type=range] { width: 100%; accent-color: #7cb342; }
-  .desc { font-size: 11px; color: #8a9478; margin-top: 2px; }
-  .result-box { text-align: center; padding: 20px; background: #141a0d; border-radius: 10px; border: 1px solid #3b4a2a; margin-bottom: 15px; }
-  .age-value { font-size: 48px; font-weight: bold; color: #8bc34a; }
-  .age-label { font-size: 12px; color: #8a9478; }
-  .compare { display: flex; justify-content: space-around; margin-top: 10px; }
-  .compare div { text-align: center; }
-  .compare .n { font-size: 20px; font-weight: bold; }
-  .limits { display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px; color: #c2a45c; }
-  .excellence-box { padding: 15px; background: #141a0d; border-radius: 10px; border: 1px solid #3b4a2a; }
-  .bar-bg { background: #26301a; border-radius: 6px; height: 22px; overflow: hidden; margin-top: 6px; }
-  .bar-fill { height: 100%; transition: width 0.3s; border-radius: 6px; }
-  #chart2d { width: 100%; height: 320px; margin-top: 15px; }
-  #chart3d { width: 100%; height: 560px; margin-top: 15px; display: none; }
-  .full-width { grid-column: 1 / -1; }
-  .footer-note { text-align: center; font-size: 11px; color: #61694f; margin-top: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
-  .reset-btn { display: block; margin: 15px auto 0; padding: 8px 20px; background: #263019; border: 1px solid #5a7038;
-               color: #cfd6bd; border-radius: 6px; cursor: pointer; }
-  .logo { text-align:center; font-size: 42px; margin-bottom: -8px; filter: hue-rotate(60deg) saturate(1.4); }
+:root{
+  --color-fondo:#12181a; --color-panel:#1b2427; --color-texto:#e8ecec;
+  --color-primario:#5fae62; --color-secundario:#8fa89a; --color-acento:#d4a24e;
+  --color-alerta:#e15c4f; --color-borde:#2c3a3d;
+}
+*{box-sizing:border-box;}
+body{margin:0;padding:20px;background:var(--color-fondo);color:var(--color-texto);
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif;}
+.header{border-bottom:2px solid var(--color-primario);margin-bottom:20px;padding-bottom:15px;}
+.header h1{margin:0;font-size:28px;color:var(--color-primario);text-transform:uppercase;letter-spacing:2px;}
+.header p{margin:5px 0 0 0;font-size:14px;color:var(--color-secundario);}
+.selector-escala{display:flex;gap:15px;margin-bottom:25px;}
+.selector-escala button{padding:10px 20px;font-size:14px;font-weight:bold;cursor:pointer;
+  background:#22302f;color:var(--color-primario);border:1px solid var(--color-borde);
+  border-radius:4px;transition:all .2s;text-transform:uppercase;}
+.selector-escala button.active{background:var(--color-primario);color:#0d1211;border-color:var(--color-primario);}
+.grid-container{display:grid;grid-template-columns:370px 1fr;gap:25px;align-items:start;}
+.control-panel{background:var(--color-panel);padding:22px;border-radius:6px;border:1px solid var(--color-borde);
+  max-height:calc(100vh - 260px);overflow-y:auto;}
+.control-group{margin-bottom:16px;}
+.control-group.master{background:#20201a;padding:14px;border-radius:4px;border-left:4px solid var(--color-acento);margin-bottom:20px;}
+.control-group.new{border-left:3px solid #4a90c4;padding-left:10px;}
+label{display:flex;justify-content:space-between;font-size:12.5px;font-weight:600;margin-bottom:6px;
+  text-transform:uppercase;color:var(--color-texto);}
+.tag{font-weight:bold;color:var(--color-primario);font-size:12.5px;}
+.tag-master{color:var(--color-acento);font-size:17px;font-weight:bold;}
+input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
+.info-text{font-size:10.5px;color:var(--color-secundario);margin-top:3px;display:block;}
+.section-title{font-size:13px;font-weight:bold;color:var(--color-acento);text-transform:uppercase;
+  margin:18px 0 10px 0;border-bottom:1px solid var(--color-borde);padding-bottom:4px;}
+.chart-panel{display:grid;grid-template-rows:auto 1fr;gap:22px;}
+.chart-container{background:var(--color-panel);padding:18px;border-radius:6px;border:1px solid var(--color-borde);position:relative;}
+.axis-selectors{display:flex;gap:16px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.axis-selectors .fixed-axis{background:#20201a;border:1px solid var(--color-acento);color:var(--color-acento);
+  padding:6px 12px;border-radius:4px;font-size:12.5px;font-weight:bold;text-transform:uppercase;}
+.axis-selectors select{padding:6px 10px;border:1px solid var(--color-borde);border-radius:4px;font-size:13px;
+  color:var(--color-texto);background:#22302f;}
+.axis-selectors label{display:inline;font-size:11.5px;margin:0 6px 0 0;text-transform:none;font-weight:600;color:var(--color-secundario);}
+.corr-badge{font-size:11.5px;font-weight:bold;padding:4px 10px;border-radius:12px;color:#0d1211;}
+.corr-alta{background:#5fae62;} .corr-media{background:#d4a24e;} .corr-baja{background:#e15c4f;}
+#chart3d{width:100%;height:500px;}
+.kpi-box{position:absolute;top:16px;right:16px;background:rgba(27,36,39,.92);border:1px solid var(--color-borde);
+  padding:8px 12px;border-radius:4px;font-size:11.5px;color:var(--color-texto);}
+.footer-disclaimer{margin-top:26px;padding:16px 20px;background:var(--color-panel);border:1px solid var(--color-borde);
+  border-radius:6px;font-size:11px;line-height:1.6;color:var(--color-secundario);}
+.footer-disclaimer strong{color:var(--color-primario);}
 </style>
 </head>
 <body>
 
-<div class="logo">🦖</div>
-<h1>DINO<span>SAURIO</span></h1>
-<h2 class="sub">Simulador Analítico de Baremo de Baremo Concurso Reservistas Voluntarios </h2>
-
-<div class="tabs">
-  <button class="tab-btn active" data-cat="oficial">Oficiales</button>
-  <button class="tab-btn" data-cat="suboficial">Suboficiales</button>
-  <button class="tab-btn" data-cat="tropa">Tropa y Marinería</button>
-</div>
-<div class="view-tabs">
-  <button class="view-btn active" data-view="2d">Vista Trayectoria (2D)</button>
-  <button class="view-btn" data-view="3d">Vista Superficie de Excelencia (3D)</button>
+<div class="header">
+  <h1>DINOSAURIO</h1>
+  <p>Simulador analítico del baremo de reservistas voluntarios · Optimización contrafactual del baremo militar</p>
 </div>
 
-<div class="container">
-  <div class="panel">
-    <div class="master-box">
-      <label><span>🎯 Edad Media Objetivo</span><span id="masterVal">45.2 años</span></label>
-      <input type="range" class="master" id="masterSlider" min="18" max="58" step="0.1" value="45.2">
-      <div class="desc">Al mover este control, se reasignan automáticamente los recortes en los parámetros de mérito, priorizando siempre los menos lesivos para la excelencia técnica.</div>
+<div class="selector-escala" id="scale-selectors">
+  <button data-escala="oficial" class="active">Oficiales</button>
+  <button data-escala="suboficial">Suboficiales</button>
+  <button data-escala="tropa">Tropa y Marinería</button>
+</div>
+
+<div class="grid-container">
+  <div class="control-panel">
+
+    <div class="control-group master">
+      <label>Edad Proyectada (Simulación) <span class="tag-master" id="val-edad-sim">-- Años</span></label>
+      <div class="info-text" style="color:var(--color-alerta);font-weight:bold;margin-bottom:5px;">
+        Base actual de la escala: <span id="val-edad-base">--</span> Años
+      </div>
     </div>
-    <div id="params-panel"></div>
+
+    <div class="section-title">1 · Méritos generales y específicos</div>
+
+    <div class="control-group">
+      <label>Experiencia Civil <span class="tag" id="val-exp">-- pts</span></label>
+      <input type="range" id="param-exp" min="0" max="30" step="5">
+      <span class="info-text">Códigos BOE: H3019, W9001, etc. Corr. Excelencia r≈0,47.</span>
+    </div>
+
+    <div class="control-group">
+      <label>Formación Específica <span class="tag" id="val-form">-- pts</span></label>
+      <input type="range" id="param-form" min="0" max="43" step="1">
+      <span class="info-text">Códigos BOE: H2006, N2002. Factor dominante 2024, r≈0,95.</span>
+    </div>
+
+    <div class="control-group">
+      <label>Tiempos de Servicio <span class="tag" id="val-serv">-- pts</span></label>
+      <input type="range" id="param-serv" min="0" max="20" step="2">
+      <span class="info-text">Priorización de exmilitares (bono). Corr. r≈0,18.</span>
+    </div>
+
+    <div class="section-title">2 · Méritos académicos</div>
+
+    <div class="control-group">
+      <label>Méritos Académicos (Base) <span class="tag" id="val-acad">-- pts</span></label>
+      <input type="range" id="param-acad" min="0" max="30" step="5">
+      <span class="info-text">Requisito MECES aplicado. Corr. r≈0,22.</span>
+    </div>
+
+    <div class="control-group new">
+      <label>Máster / Doctorado <span class="tag" id="val-master">-- pts</span></label>
+      <input type="range" id="param-master" min="0" max="8" step="2">
+      <span class="info-text">Nuevo 2024 · edad media Máster ≈29 / Doctorado ≈34 (INE).</span>
+    </div>
+
+    <div class="section-title">3 · Idiomas y certificaciones</div>
+
+    <div class="control-group">
+      <label>Idiomas (SLP) <span class="tag" id="val-idiom">-- pts</span></label>
+      <input type="range" id="param-idiom" min="0" max="15" step="5">
+      <span class="info-text">Edad media certificación EOI/Cambridge C1 ≈24 años.</span>
+    </div>
+
+    <div class="control-group new">
+      <label>Certificaciones TIC <span class="tag" id="val-tic">-- pts</span></label>
+      <input type="range" id="param-tic" min="0" max="6" step="2">
+      <span class="info-text">Nuevo 2024 · edad media certificación TIC/ofimática ≈27 años.</span>
+    </div>
+
+    <div class="section-title">4 · Permisos y habilitaciones</div>
+
+    <div class="control-group">
+      <label>Carnets de Conducir (C/D) <span class="tag" id="val-carnet">-- pts</span></label>
+      <input type="range" id="param-carnet" min="0" max="10" step="4">
+      <span class="info-text">4 saltos equivalentes a puntos reales del baremo (DGT).</span>
+    </div>
+
+    <div class="control-group new">
+      <label>Permisos Moto (A2/A) <span class="tag" id="val-moto">-- pts</span></label>
+      <input type="range" id="param-moto" min="0" max="4" step="2">
+      <span class="info-text">Nuevo 2024 · edad media A2 ≈20 / A ≈24 años (DGT).</span>
+    </div>
+
+    <div class="control-group new">
+      <label>Formación ADR <span class="tag" id="val-adr">-- pts</span></label>
+      <input type="range" id="param-adr" min="0" max="4" step="2">
+      <span class="info-text">Nuevo 2024 · edad media formación mercancías peligrosas ≈31 años.</span>
+    </div>
+
+    <div class="section-title">5 · Deporte y aptitud física</div>
+
+    <div class="control-group new">
+      <label>Nivel Deportivo (CSD) <span class="tag" id="val-deporte">-- pts</span></label>
+      <input type="range" id="param-deporte" min="0" max="6" step="2">
+      <span class="info-text">Nuevo 2024 · deportistas de alto nivel CSD, edad media pico ≈23 años.</span>
+    </div>
+
+    <div class="section-title">6 · Perfil profesional previo</div>
+
+    <div class="control-group new">
+      <label>Experiencia FCSE <span class="tag" id="val-fcse">-- pts</span></label>
+      <input type="range" id="param-fcse" min="0" max="6" step="2">
+      <span class="info-text">Nuevo 2024 · Fuerzas y Cuerpos de Seguridad del Estado, edad media ingreso ≈27 años.</span>
+    </div>
+
+    <div class="control-group new">
+      <label>Funcionariado Previo <span class="tag" id="val-func">-- pts</span></label>
+      <input type="range" id="param-func" min="0" max="4" step="2">
+      <span class="info-text">Nuevo 2024 · edad media consolidación plaza funcionarial ≈33 años.</span>
+    </div>
+
+    <div class="section-title">Restricciones ineludibles</div>
+    <div class="info-text">
+      Suelo Biológico: <strong id="kpi-suelo">--</strong> años ·
+      Techo Legal: <strong id="kpi-techo">--</strong> años
+      <br>(Base 2.1.b de la convocatoria: Tropa 18-55 · Suboficial 20-58 · Oficial 22-58)
+    </div>
+
   </div>
 
-  <div>
-    <div class="result-box">
-      <div class="age-value" id="ageProjected">45.2</div>
-      <div class="age-label">Edad Media Proyectada (años)</div>
-      <div class="compare">
-        <div><div class="n" id="ageBase" style="color:#8a9478">45.2</div><div class="age-label">Base actual</div></div>
-        <div><div class="n" id="ageDelta" style="color:#8bc34a">0.0</div><div class="age-label">Δ vs. actual</div></div>
+  <div class="chart-panel">
+    <div class="chart-container">
+      <div class="axis-selectors">
+        <span class="fixed-axis">Eje Z fijo: Excelencia (Nota Final)</span>
+        <label>Eje X:
+          <select id="sel-x"></select>
+        </label>
+        <label>Eje Y:
+          <select id="sel-y"></select>
+        </label>
+        <span class="corr-badge" id="corr-badge">r = --</span>
       </div>
-      <div class="limits">
-        <span>Suelo biológico: <b id="floorAge">22</b> años</span>
-        <span>Techo legal: <b id="ceilAge">58</b> años</span>
+      <div id="chart3d"></div>
+      <div class="info-text" style="margin-top:8px;">
+        Superficie interpolada sobre la muestra real combinada 2024+2025 (n=305 clasificados). Selecciona combinaciones
+        de méritos para comparar visualmente su poder explicativo sobre la Excelencia.
       </div>
     </div>
 
-    <div class="excellence-box">
-      <div style="display:flex; justify-content:space-between; font-size:13px;">
-        <span>Índice de Pérdida de Excelencia Técnica</span>
-        <span id="excText" style="color:#e05252; font-weight:bold;">0%</span>
+    <div class="chart-container" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <div id="distChart" style="height:340px;"></div>
       </div>
-      <div class="bar-bg"><div class="bar-fill" id="excBar" style="width:0%; background:#8bc34a;"></div></div>
-      <div class="desc">Penaliza más los recortes en Experiencia Profesional y Formación Específica (ligados directamente al puesto), y menos los recortes en méritos generales (idiomas, cursos, carnets).</div>
+      <div style="position:relative;">
+        <div id="barChart" style="height:340px;"></div>
+        <div class="kpi-box">
+          <strong>Puntuación total simulada</strong><br>
+          <span id="kpi-total" style="font-size:16px;color:var(--color-acento);font-weight:bold;">-- pts</span>
+        </div>
+      </div>
     </div>
-
-    <div id="chart2d"></div>
-    <button class="reset-btn" onclick="resetSliders()">Restablecer valores del BOE vigente</button>
   </div>
-
-  <div id="chart3d" class="full-width"></div>
 </div>
 
-<p class="footer-note">
-DINOSAURIO — Modelo calibrado con: (1) regresión OLS sobre 171 aspirantes reales clasificados en la convocatoria 2025 (edad ~ méritos);
-(2) edad media real de obtención de cada mérito en España según fuentes públicas (INE, EOI/Cambridge, CSD, DGT, estudios sobre funcionariado y FCSE).
-Suelo/techo de edad: Tropa 18-55, Suboficial 20-58, Oficial 22-58 años (Base 2.1.b de la convocatoria).
-Cada parámetro solo admite saltos enteros equivalentes a sus puntos reales del baremo (ej. Permisos C/D: 4 saltos).
-</p>
+<div class="footer-disclaimer">
+  <strong>DINOSAURIO</strong> — Es un ejercicio académico de Manuel Hernández González para la DIPE.
+  Todos los derechos reservados.<br>
+  Modelo calibrado con: (1) regresión OLS sobre 305 aspirantes reales clasificados en las convocatorias 2024 y 2025
+  (edad ~ méritos); (2) edad media real de obtención de cada mérito en España según fuentes públicas
+  (INE, EOI/Cambridge, CSD, DGT, estudios sobre funcionariado y FCSE). Suelo/techo de edad: Tropa 18-55,
+  Suboficial 20-58, Oficial 22-58 años (Base 2.1.b de la convocatoria). Cada parámetro solo admite saltos
+  enteros equivalentes a sus puntos reales del baremo (ej. Permisos C/D: 4 saltos). Ampliado con
+  Máster/Doctorado, Permisos moto A2/A, Certificaciones TIC y Formación ADR, calibrados con datos INE/DGT/CSD.
+</div>
 
-<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <script>
+/* ============================ 1. DATOS ============================ */
+const dbEscalas = {
+  oficial:    { suelo:22, techo:58, base:{mu:45.2, sigma:5.8},
+    opt:{exp:15, form:35, serv:15, acad:20, master:6, idiom:10, tic:2, carnet:0, moto:0, adr:1, deporte:2, fcse:2, func:2} },
+  suboficial: { suelo:20, techo:58, base:{mu:42.5, sigma:5.2},
+    opt:{exp:15, form:30, serv:20, acad:15, master:2, idiom:5, tic:4, carnet:0, moto:2, adr:2, deporte:3, fcse:3, func:2} },
+  tropa:      { suelo:18, techo:55, base:{mu:38.4, sigma:6.1},
+    opt:{exp:10, form:20, serv:15, acad:15, master:0, idiom:5, tic:6, carnet:10, moto:4, adr:2, deporte:4, fcse:4, func:0} }
+};
+let escalaActual = "oficial";
+const edadesVector = Array.from({length:45},(_,i)=>i+16);
 
-const CATEGORIES = {
-  oficial: { floor: 22, ceil: 58, baseAge: 43.5 },
-  suboficial: { floor: 20, ceil: 58, baseAge: 41.0 },
-  tropa: { floor: 18, ceil: 55, baseAge: 32.0 }
+/* ============================ 2. Superficies precomputadas (interpolación 2024) ============================ */
+const GRIDS = {"mesp__age": {"x": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "y": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "z": [[16.0, 16.0, 16.0, 16.0, 18.5, 18.5, 26.0, 26.0, 26.0, 26.0, 34.5, 34.5, 34.5, 34.5, 44.0, 44.0, 44.0, 44.0], [16.0, 16.0, 16.32, 18.12, 20.06, 22.04, 24.01, 26.0, 26.0, 26.0, 34.5, 34.5, 34.5, 34.5, 44.0, 44.0, 44.0, 44.0], [17.0, 17.0, 16.99, 17.72, 22.21, 24.29, 25.88, 27.05, 29.19, 34.5, 34.5, 34.5, 34.5, 34.5, 44.0, 44.0, 44.0, 44.0], [17.0, 17.0, 17.21, 18.21, 22.57, 24.13, 26.59, 28.22, 29.48, 32.49, 34.5, 34.5, 34.5, 44.0, 44.0, 44.0, 44.0, 44.0], [17.0, 15.14, 16.12, 16.76, 18.66, 21.71, 25.4, 28.87, 30.48, 33.54, 36.45, 36.0, 39.0, 44.0, 44.0, 44.0, 44.0, 49.0], [12.5, 14.79, 15.15, 17.2, 18.5, 24.57, 23.79, 26.38, 31.72, 35.6, 36.85, 41.53, 51.0, 44.0, 44.0, 44.0, 49.0, 49.0], [12.5, 13.46, 14.52, 16.81, 19.39, 24.57, 24.31, 31.76, 33.25, 30.75, 36.98, 41.12, 46.61, 44.0, 44.0, 49.0, 49.0, 49.0], [12.5, 12.98, 14.59, 19.24, 22.07, 26.0, 24.75, 27.24, 28.5, 33.74, 39.16, 39.05, 46.04, 46.18, 46.94, 49.0, 49.0, 49.0], [12.5, 12.51, 14.66, 19.3, 23.61, 26.0, 27.58, 31.5, 29.17, 34.68, 36.44, 40.09, 42.6, 44.76, 48.07, 49.0, 49.0, 52.0], [12.0, 12.07, 14.73, 18.42, 22.34, 26.57, 27.25, 29.24, 30.07, 31.65, 37.07, 37.74, 45.91, 51.24, 47.61, 50.33, 52.0, 52.0], [12.0, 11.75, 13.62, 16.87, 21.08, 25.83, 24.1, 28.0, 30.9, 34.34, 39.37, 39.18, 45.52, 46.51, 46.74, 50.03, 52.0, 52.0], [12.0, 11.43, 14.03, 15.32, 19.81, 23.98, 26.07, 27.32, 30.51, 32.69, 42.36, 39.24, 40.56, 43.94, 48.51, 49.21, 51.86, 60.0], [12.0, 11.12, 16.58, 14.61, 18.23, 22.6, 25.1, 26.35, 33.15, 38.28, 37.21, 43.0, 42.65, 47.12, 45.79, 50.62, 54.41, 53.0], [10.0, 11.32, 17.08, 18.65, 21.95, 25.14, 27.43, 28.18, 37.12, 40.15, 37.43, 42.39, 42.79, 45.65, 49.0, 48.89, 54.95, 53.0], [10.0, 11.83, 17.59, 22.6, 25.76, 28.91, 31.64, 31.62, 37.77, 33.91, 37.41, 39.69, 45.09, 43.71, 47.82, 50.35, 49.71, 53.0], [10.0, 11.94, 16.94, 21.86, 26.42, 30.98, 35.36, 27.54, 33.67, 32.88, 36.44, 40.74, 42.88, 51.06, 49.85, 51.33, 47.53, 53.0], [10.0, 10.0, 21.0, 21.0, 24.37, 27.85, 31.34, 34.83, 33.67, 33.53, 40.11, 43.16, 38.76, 47.94, 45.44, 49.94, 49.69, 53.0], [10.0, 10.0, 21.0, 21.0, 21.0, 35.6, 35.6, 35.0, 35.0, 36.67, 38.75, 39.0, 44.5, 43.0, 43.75, 47.5, 49.0, 53.0]]}, "mesp__macad": {"x": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "y": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "z": [[10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 29.0, 29.0, 29.0, 29.0, 38.0, 42.0, 47.0, 44.0, 44.0, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 30.0, 29.0, 29.0, 29.0, 38.0, 42.0, 47.0, 44.0, 43.12, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 30.0, 29.0, 29.0, 29.0, 38.0, 42.0, 38.4, 40.91, 44.27, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 30.0, 29.0, 29.0, 29.0, 34.21, 36.19, 38.7, 42.01, 44.97, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 30.0, 29.0, 29.0, 32.0, 33.99, 36.5, 39.81, 43.11, 45.37, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 30.0, 27.82, 29.8, 31.78, 34.29, 37.6, 40.91, 44.05, 45.78, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 20.0, 27.0, 25.61, 27.59, 29.58, 32.09, 35.39, 38.7, 42.01, 45.78, 46.18, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 22.0, 21.42, 23.4, 25.39, 27.37, 29.88, 33.19, 36.49, 39.8, 40.36, 46.19, 46.71, 44.0], [10.0, 10.0, 14.0, 14.0, 17.0, 19.22, 21.2, 23.04, 26.44, 28.1, 30.21, 34.29, 37.59, 40.9, 43.83, 46.59, 47.74, 52.0], [10.0, 10.0, 14.0, 15.03, 16.96, 18.63, 22.29, 23.38, 27.68, 29.57, 31.19, 35.76, 38.7, 42.0, 45.84, 46.99, 48.76, 52.0], [10.0, 10.84, 12.55, 14.22, 17.88, 22.18, 22.02, 26.4, 27.71, 29.94, 32.56, 41.24, 39.06, 40.8, 47.0, 47.39, 49.79, 52.0], [12.5, 11.18, 12.84, 14.47, 18.88, 22.65, 22.74, 27.24, 28.12, 30.24, 33.85, 42.24, 38.76, 42.47, 47.52, 47.8, 50.44, 52.0], [12.5, 11.07, 13.48, 15.06, 18.74, 24.5, 22.89, 27.53, 28.26, 30.53, 35.21, 42.53, 38.5, 43.06, 45.47, 48.2, 50.98, 53.0], [12.5, 11.74, 14.12, 15.65, 18.59, 24.55, 23.44, 27.82, 28.41, 30.82, 37.26, 42.82, 38.5, 43.65, 45.18, 49.12, 51.53, 53.0], [12.5, 14.19, 14.42, 16.71, 24.15, 24.69, 25.21, 28.0, 29.68, 31.24, 38.34, 43.71, 39.32, 44.47, 45.71, 50.53, 52.08, 53.0], [12.5, 12.0, 14.5, 18.61, 21.09, 24.98, 26.97, 28.0, 32.62, 31.82, 37.92, 45.47, 41.38, 45.65, 47.47, 50.35, 54.99, 53.0], [12.5, 12.0, 14.5, 21.0, 23.37, 25.28, 28.74, 28.0, 29.91, 32.41, 37.51, 47.24, 43.44, 46.82, 48.62, 50.18, 56.62, 53.0], [12.5, 12.0, 14.5, 21.0, 18.5, 28.0, 30.5, 28.0, 30.5, 33.0, 37.1, 49.0, 45.5, 48.0, 49.5, 50.0, 57.5, 53.0]]}, "mesp__mgen": {"x": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "y": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "z": [[10.0, 12.0, 13.5, 14.0, 18.5, 21.0, 23.5, 26.0, 28.5, 33.0, 37.1, 36.0, 38.5, 42.0, 45.6, 46.0, 48.83, 53.0], [10.0, 12.0, 14.38, 15.94, 17.84, 21.59, 24.38, 28.65, 29.13, 31.53, 35.69, 36.0, 39.38, 42.44, 44.38, 48.14, 47.0, 53.0], [10.0, 11.32, 15.07, 17.76, 18.51, 22.26, 25.26, 28.24, 30.38, 31.29, 37.0, 37.29, 38.74, 42.88, 45.26, 49.61, 46.74, 44.0], [12.5, 12.36, 16.11, 18.65, 19.74, 22.82, 26.15, 27.35, 32.18, 33.94, 36.84, 38.65, 40.44, 43.65, 46.15, 50.19, 48.01, 44.0], [12.5, 13.55, 17.03, 19.53, 21.53, 23.59, 27.03, 28.59, 33.26, 35.21, 37.26, 39.53, 42.03, 48.76, 47.03, 50.46, 50.09, 44.0], [12.5, 15.16, 17.91, 20.41, 22.41, 24.59, 28.13, 31.65, 34.17, 35.65, 37.91, 40.41, 42.91, 49.29, 47.91, 50.89, 52.74, 57.0], [12.5, 17.0, 18.79, 21.29, 23.29, 26.36, 29.94, 31.91, 34.17, 36.29, 38.79, 41.29, 43.79, 46.65, 48.79, 51.51, 54.94, 57.0], [12.5, 17.0, 21.0, 22.18, 24.8, 28.89, 31.81, 32.18, 34.68, 37.18, 39.68, 42.18, 44.68, 48.82, 49.68, 52.18, 56.18, 57.0], [12.5, 17.0, 21.0, 22.56, 25.56, 28.77, 35.42, 33.08, 35.56, 38.06, 40.56, 42.94, 46.71, 48.12, 52.03, 53.34, 57.06, 57.0], [12.5, 17.0, 21.0, 21.0, 25.87, 28.87, 32.75, 34.33, 36.9, 38.94, 41.44, 42.06, 48.16, 49.88, 52.47, 54.53, 57.94, 60.0], [12.5, 17.0, 21.0, 21.0, 24.0, 29.17, 32.17, 35.57, 39.44, 41.8, 43.65, 44.0, 48.57, 51.65, 52.77, 55.59, 59.09, 60.0], [12.5, 17.0, 21.0, 21.0, 24.0, 35.6, 32.48, 35.47, 39.99, 43.58, 44.0, 46.09, 48.99, 52.47, 54.28, 57.65, 60.0, 60.0], [12.5, 17.0, 21.0, 21.0, 24.0, 35.6, 36.0, 35.78, 39.15, 44.38, 44.26, 48.07, 49.59, 53.25, 55.56, 53.0, 60.0, 60.0], [17.0, 17.0, 21.0, 21.0, 24.0, 35.6, 36.0, 36.0, 39.08, 43.54, 44.54, 48.82, 50.65, 53.47, 53.0, 53.0, 60.0, 60.0], [17.0, 17.0, 21.0, 21.0, 24.0, 35.6, 36.0, 36.0, 39.39, 42.7, 44.82, 48.49, 51.38, 53.0, 53.0, 53.0, 60.0, 60.0], [17.0, 21.0, 21.0, 21.0, 24.0, 36.0, 36.0, 36.0, 36.0, 42.69, 45.96, 48.16, 51.0, 53.0, 53.0, 53.0, 60.0, 60.0], [17.0, 21.0, 21.0, 21.0, 24.0, 36.0, 36.0, 36.0, 36.0, 47.5, 46.25, 48.91, 49.0, 53.0, 53.0, 53.0, 60.0, 60.0], [17.0, 21.0, 21.0, 21.0, 24.0, 36.0, 36.0, 36.0, 36.0, 47.5, 47.5, 47.5, 47.5, 53.0, 53.0, 53.0, 60.0, 60.0]]}, "mesp__tserv": {"x": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "y": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "z": [[12.5, 11.0, 14.5, 16.0, 18.5, 24.5, 24.5, 26.0, 28.5, 33.0, 38.5, 43.0, 42.5, 43.0, 49.0, 50.0, 54.5, 53.0], [12.5, 12.77, 14.91, 17.12, 25.03, 24.95, 25.13, 30.24, 32.21, 34.08, 38.09, 39.59, 40.23, 42.84, 48.8, 50.47, 56.62, 53.0], [12.5, 10.0, 15.73, 19.37, 23.57, 25.4, 26.65, 34.47, 35.91, 35.15, 37.68, 38.64, 40.03, 42.69, 48.6, 51.3, 53.62, 53.0], [12.5, 10.0, 17.48, 19.89, 23.3, 25.84, 29.47, 30.88, 38.13, 36.23, 37.26, 37.98, 39.82, 42.53, 48.39, 52.26, 48.68, 53.0], [12.5, 10.0, 14.5, 20.47, 22.97, 26.34, 30.59, 33.29, 38.53, 37.3, 37.58, 38.45, 39.63, 42.37, 48.19, 53.22, 52.15, 53.0], [12.5, 10.0, 14.5, 22.19, 24.93, 26.84, 31.33, 34.3, 38.93, 38.38, 38.38, 38.92, 40.1, 42.22, 48.04, 54.18, 52.0, 53.0], [12.5, 10.0, 14.5, 21.0, 25.29, 30.2, 32.06, 34.7, 39.33, 39.46, 39.19, 39.39, 40.57, 42.06, 47.94, 55.14, 52.0, 53.0], [12.5, 10.0, 14.5, 21.0, 26.9, 29.44, 32.79, 35.1, 39.74, 40.53, 39.99, 39.87, 41.04, 42.65, 47.83, 56.82, 52.0, 53.0], [12.5, 10.0, 14.5, 21.0, 18.5, 30.43, 33.52, 36.06, 40.14, 41.61, 40.79, 40.34, 41.51, 43.68, 48.35, 56.47, 52.0, 53.0], [12.5, 10.0, 14.5, 21.0, 18.5, 31.61, 34.25, 37.1, 40.54, 42.48, 41.59, 40.81, 41.99, 44.72, 50.03, 56.71, 52.0, 53.0], [12.5, 10.0, 14.5, 21.0, 18.5, 35.6, 34.99, 38.14, 41.55, 43.28, 42.39, 41.5, 42.63, 45.75, 51.7, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 38.51, 41.52, 44.53, 43.29, 42.3, 43.66, 46.79, 53.4, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 40.93, 43.93, 45.81, 44.01, 44.7, 47.82, 55.27, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 43.8, 43.34, 46.35, 46.53, 45.73, 48.86, 57.14, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 43.8, 43.8, 45.76, 48.76, 47.24, 49.89, 59.0, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 43.8, 43.8, 42.5, 48.17, 49.76, 50.93, 59.0, 59.0, 59.0, 53.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 43.8, 43.8, 42.5, 42.5, 50.59, 51.96, 59.0, 59.0, 59.0, 59.0], [12.5, 10.0, 14.5, 21.0, 35.6, 35.6, 35.6, 35.6, 43.8, 43.8, 42.5, 42.5, 53.0, 53.0, 59.0, 59.0, 59.0, 59.0]]}, "age__mesp": {"x": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "y": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "z": [[16.0, 16.0, 17.0, 17.0, 17.0, 12.5, 12.5, 12.5, 12.5, 12.0, 12.0, 12.0, 12.0, 10.0, 10.0, 10.0, 10.0, 10.0], [16.0, 16.0, 17.0, 17.0, 15.14, 14.79, 13.46, 12.98, 12.51, 12.07, 11.75, 11.43, 11.12, 11.32, 11.83, 11.94, 10.0, 10.0], [16.0, 16.32, 16.99, 17.21, 16.12, 15.15, 14.52, 14.59, 14.66, 14.73, 13.62, 14.03, 16.58, 17.08, 17.59, 16.94, 21.0, 21.0], [16.0, 18.12, 17.72, 18.21, 16.76, 17.2, 16.81, 19.24, 19.3, 18.42, 16.87, 15.32, 14.61, 18.65, 22.6, 21.86, 21.0, 21.0], [18.5, 20.06, 22.21, 22.66, 19.25, 18.5, 19.39, 22.07, 23.61, 22.34, 21.08, 19.81, 18.23, 21.95, 25.76, 26.42, 24.37, 21.0], [18.5, 22.04, 24.29, 24.13, 21.71, 21.7, 24.57, 26.0, 26.0, 26.57, 25.83, 23.98, 22.6, 25.14, 28.91, 30.98, 27.85, 35.6], [26.0, 24.01, 25.88, 26.59, 24.85, 23.79, 24.31, 24.75, 27.55, 26.62, 24.1, 26.07, 25.1, 27.43, 31.64, 35.36, 31.34, 35.6], [26.0, 26.0, 27.05, 28.22, 28.87, 26.38, 33.65, 27.24, 28.5, 28.18, 28.0, 27.32, 26.35, 28.18, 31.62, 27.54, 34.83, 35.0], [26.0, 26.0, 29.19, 29.48, 30.48, 31.72, 33.25, 28.5, 29.17, 30.07, 30.9, 29.66, 31.58, 37.12, 37.77, 33.67, 33.67, 35.0], [26.0, 26.0, 34.5, 32.49, 33.54, 35.6, 30.75, 33.74, 34.68, 31.65, 34.34, 32.27, 33.87, 39.62, 33.91, 32.88, 33.53, 36.67], [34.5, 34.5, 34.5, 34.5, 36.45, 36.85, 36.98, 39.16, 36.44, 37.07, 39.37, 42.36, 37.21, 37.43, 37.41, 36.44, 40.11, 38.75], [34.5, 34.5, 34.5, 34.5, 36.0, 41.53, 41.12, 39.05, 40.09, 37.19, 38.73, 39.24, 41.29, 42.39, 39.69, 41.5, 43.06, 39.0], [34.5, 34.5, 34.5, 34.5, 39.0, 51.0, 46.61, 46.04, 42.6, 45.91, 45.52, 40.56, 42.65, 42.79, 45.09, 42.88, 38.52, 43.0], [34.5, 34.5, 34.5, 44.0, 44.0, 44.0, 44.0, 46.18, 44.76, 51.24, 46.51, 43.94, 48.59, 45.65, 43.47, 44.88, 47.94, 49.0], [44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 46.7, 48.07, 47.12, 45.57, 48.51, 45.79, 49.0, 47.82, 49.85, 45.44, 43.75], [44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 49.0, 49.0, 49.0, 50.33, 49.56, 48.56, 50.26, 48.89, 50.35, 51.33, 49.94, 47.5], [44.0, 44.0, 44.0, 44.0, 44.0, 49.0, 49.0, 49.0, 49.0, 52.0, 52.0, 51.86, 54.41, 54.95, 49.71, 47.53, 49.69, 49.0], [44.0, 44.0, 44.0, 44.0, 49.0, 49.0, 49.0, 49.0, 52.0, 52.0, 52.0, 60.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0]]}, "age__macad": {"x": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "y": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "z": [[16.0, 20.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 26.0, 29.0, 29.0, 44.0, 44.0, 44.0, 44.0, 44.0], [16.0, 20.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 26.0, 29.0, 29.0, 44.0, 42.18, 44.0, 44.0, 44.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 26.0, 29.0, 29.0, 40.57, 39.77, 44.0, 44.0, 44.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 26.0, 29.0, 39.29, 38.86, 38.95, 44.0, 44.0, 36.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 26.0, 38.84, 38.51, 36.18, 38.13, 42.55, 36.0, 36.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 32.5, 36.69, 35.86, 35.57, 33.53, 37.32, 42.75, 36.0, 36.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 25.0, 32.5, 34.41, 33.22, 35.22, 32.82, 30.88, 36.5, 42.76, 36.0, 36.0], [16.0, 26.0, 20.0, 20.0, 22.0, 31.0, 31.0, 37.48, 32.13, 31.67, 33.8, 32.27, 30.18, 29.58, 35.68, 42.37, 36.0, 36.0], [16.0, 26.0, 27.0, 20.0, 22.0, 31.0, 34.84, 29.85, 31.22, 31.16, 31.92, 29.47, 32.59, 33.59, 34.86, 41.98, 36.0, 36.0], [16.0, 26.0, 27.0, 20.0, 22.0, 32.21, 27.57, 30.76, 28.51, 31.57, 28.98, 30.35, 25.88, 37.41, 34.1, 41.59, 39.99, 36.0], [16.0, 26.0, 27.0, 20.0, 29.57, 25.29, 30.31, 25.86, 29.1, 28.63, 27.0, 34.06, 18.06, 41.24, 33.39, 41.2, 39.94, 36.0], [16.0, 26.0, 27.0, 32.5, 19.06, 25.24, 29.41, 24.73, 27.96, 28.0, 33.88, 38.88, 20.47, 41.06, 35.85, 41.12, 41.32, 49.0], [16.0, 26.0, 27.65, 28.88, 21.71, 23.96, 29.85, 25.35, 26.53, 27.95, 36.53, 45.94, 27.59, 41.21, 40.71, 42.29, 43.09, 49.0], [16.0, 22.79, 28.0, 23.38, 24.35, 22.69, 30.91, 30.06, 25.65, 28.41, 37.76, 52.82, 36.12, 41.35, 45.56, 43.47, 44.85, 49.0], [16.0, 23.12, 27.0, 21.65, 27.47, 25.24, 31.79, 33.41, 26.53, 32.44, 38.76, 55.47, 43.24, 43.15, 48.47, 45.0, 46.59, 39.03], [16.0, 26.0, 26.35, 25.47, 29.62, 28.35, 32.41, 33.41, 30.06, 38.76, 39.94, 51.94, 48.24, 47.41, 48.47, 47.06, 48.65, 42.85], [16.0, 26.0, 27.0, 28.26, 30.65, 32.18, 35.5, 38.56, 35.0, 40.62, 37.88, 48.76, 53.24, 51.68, 48.47, 49.12, 50.71, 46.68], [16.0, 26.0, 27.0, 29.0, 31.68, 36.0, 38.59, 43.71, 40.88, 41.35, 35.82, 47.0, 57.06, 53.12, 48.74, 51.65, 52.76, 50.5]]}, "age__mgen": {"x": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "y": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "z": [[26.0, 26.0, 22.24, 18.35, 17.91, 22.71, 22.06, 24.41, 40.88, 32.35, 19.82, 38.44, 43.71, 30.88, 34.71, 38.88, 38.48, 43.0], [16.0, 22.62, 24.44, 20.31, 16.76, 25.65, 21.71, 32.88, 42.29, 31.65, 33.0, 43.19, 44.35, 37.59, 39.16, 30.06, 40.69, 40.57], [16.0, 19.31, 26.65, 21.06, 24.0, 23.17, 26.0, 32.82, 43.18, 37.29, 32.0, 36.24, 44.53, 37.59, 46.88, 16.82, 43.82, 38.15], [16.0, 18.59, 25.45, 23.64, 21.6, 21.0, 26.51, 37.24, 42.82, 36.06, 32.59, 30.06, 40.29, 41.06, 46.35, 24.29, 44.06, 36.69], [16.0, 18.5, 23.09, 26.28, 26.36, 24.59, 21.26, 41.44, 41.65, 35.1, 32.15, 38.67, 46.35, 45.47, 40.84, 36.35, 44.06, 35.59], [16.0, 18.5, 21.86, 23.47, 25.74, 29.0, 26.76, 44.45, 41.47, 32.44, 34.18, 45.82, 42.15, 45.88, 39.53, 44.82, 44.29, 39.94], [16.0, 23.0, 23.0, 23.36, 23.53, 27.88, 27.88, 42.71, 32.41, 32.76, 37.49, 46.18, 39.5, 43.82, 43.65, 43.88, 45.35, 48.03], [16.0, 23.0, 23.0, 23.0, 25.04, 27.99, 30.53, 37.41, 32.49, 32.54, 38.92, 48.59, 45.41, 54.5, 45.68, 43.98, 42.71, 49.0], [16.0, 23.0, 23.0, 23.0, 28.93, 29.05, 32.49, 36.31, 35.91, 36.16, 41.35, 51.24, 45.47, 43.88, 42.35, 36.71, 40.4, 49.0], [23.0, 23.0, 23.0, 24.0, 24.0, 30.73, 34.18, 38.33, 39.95, 40.38, 43.91, 53.88, 53.41, 48.94, 39.85, 43.11, 42.05, 49.0], [23.0, 23.0, 23.0, 24.0, 24.0, 36.0, 35.99, 40.15, 43.88, 44.13, 48.41, 56.44, 58.47, 48.07, 40.71, 50.34, 45.53, 44.5], [23.0, 23.0, 23.0, 24.0, 36.0, 36.0, 39.21, 45.22, 47.2, 47.7, 53.71, 56.24, 57.88, 51.67, 43.92, 50.94, 46.68, 44.5], [23.0, 23.0, 23.0, 24.0, 36.0, 36.0, 36.0, 49.7, 50.48, 51.26, 54.75, 55.43, 55.81, 52.75, 47.56, 49.62, 49.0, 44.5], [23.0, 23.0, 23.0, 36.0, 36.0, 36.0, 51.0, 51.0, 51.18, 51.95, 52.96, 54.23, 53.74, 50.68, 48.82, 49.0, 49.0, 44.5], [23.0, 23.0, 23.0, 36.0, 36.0, 36.0, 51.0, 51.0, 53.0, 50.39, 51.18, 52.44, 51.67, 48.61, 48.49, 49.0, 49.0, 49.0], [23.0, 23.0, 36.0, 36.0, 36.0, 36.0, 51.0, 51.0, 53.0, 53.0, 49.6, 50.65, 49.6, 48.16, 49.0, 49.0, 49.0, 49.0], [23.0, 23.0, 36.0, 36.0, 36.0, 51.0, 51.0, 51.0, 53.0, 53.0, 47.5, 48.87, 47.83, 47.5, 49.0, 49.0, 49.0, 49.0], [23.0, 23.0, 36.0, 36.0, 36.0, 51.0, 51.0, 51.0, 53.0, 53.0, 47.5, 47.5, 47.5, 47.5, 49.0, 49.0, 49.0, 49.0]]}, "age__tserv": {"x": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "y": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "z": [[16.0, 25.71, 26.94, 20.12, 22.12, 24.18, 30.82, 29.0, 24.06, 40.03, 35.5, 42.06, 44.76, 37.82, 46.97, 44.5, 22.38, 37.5], [16.0, 22.59, 28.06, 24.56, 18.27, 27.24, 35.37, 29.63, 25.63, 39.38, 36.81, 41.75, 46.89, 37.85, 45.33, 43.59, 33.08, 50.5], [16.0, 26.0, 29.18, 29.35, 22.21, 22.9, 27.16, 30.22, 27.2, 38.73, 38.12, 41.43, 47.59, 37.88, 43.7, 42.67, 37.59, 50.5], [16.0, 26.0, 26.06, 31.26, 26.65, 23.15, 29.29, 30.53, 28.76, 38.08, 39.39, 40.82, 45.1, 38.5, 42.06, 41.76, 37.53, 38.2], [16.0, 26.0, 27.0, 32.38, 31.24, 24.8, 26.37, 33.49, 30.57, 37.43, 40.58, 40.12, 42.61, 38.59, 40.42, 40.85, 37.46, 38.2], [16.0, 26.0, 27.0, 29.53, 34.47, 28.74, 28.02, 31.35, 32.35, 38.68, 41.77, 40.71, 40.11, 38.68, 40.16, 39.93, 37.39, 38.2], [16.0, 26.0, 27.0, 28.0, 35.59, 33.18, 29.68, 31.24, 34.08, 40.41, 42.96, 41.9, 40.86, 39.75, 40.24, 39.02, 38.07, 38.2], [16.0, 26.0, 27.0, 28.0, 33.0, 37.68, 31.33, 32.9, 35.63, 42.14, 44.15, 43.42, 41.93, 40.82, 40.31, 38.11, 38.88, 38.2], [16.0, 26.0, 27.0, 28.0, 24.0, 38.79, 35.26, 34.55, 36.35, 43.87, 45.33, 46.16, 43.5, 41.89, 40.39, 37.19, 39.69, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 36.47, 39.82, 36.2, 37.77, 45.07, 48.03, 48.9, 45.88, 42.95, 40.47, 36.28, 40.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 23.0, 42.0, 37.86, 39.43, 45.79, 50.77, 51.63, 48.27, 44.72, 40.55, 35.74, 41.32, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 23.0, 39.94, 41.79, 41.08, 46.51, 52.95, 54.19, 50.65, 46.3, 40.82, 36.58, 42.13, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 23.0, 33.0, 45.21, 42.73, 47.23, 53.67, 56.57, 52.2, 45.51, 39.2, 41.69, 42.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 23.0, 33.0, 33.0, 44.39, 47.94, 54.39, 56.57, 48.95, 41.83, 44.31, 35.6, 42.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 33.0, 33.0, 33.0, 48.41, 48.66, 55.11, 52.39, 44.77, 46.94, 43.8, 35.6, 42.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 33.0, 33.0, 33.0, 53.0, 49.38, 55.82, 48.2, 59.0, 43.8, 43.8, 35.6, 42.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 33.0, 33.0, 53.0, 53.0, 50.92, 51.64, 59.0, 59.0, 43.8, 43.8, 35.6, 42.5, 42.5], [16.0, 26.0, 27.0, 28.0, 24.0, 33.0, 33.0, 53.0, 53.0, 53.0, 53.0, 59.0, 59.0, 43.8, 43.8, 35.6, 42.5, 42.5]]}, "macad__mesp": {"x": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "y": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "z": [[10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5], [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.84, 11.18, 11.07, 11.74, 14.19, 12.0, 12.0, 12.0], [14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 12.55, 12.84, 13.48, 14.12, 14.42, 14.5, 14.5, 14.5], [14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 14.0, 15.03, 14.22, 15.65, 17.71, 19.76, 21.82, 18.61, 21.0, 21.0], [17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 16.96, 17.13, 18.31, 18.38, 18.46, 24.15, 23.74, 23.37, 18.5], [22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 19.22, 18.63, 22.18, 22.65, 24.5, 24.55, 24.69, 24.98, 25.28, 28.0], [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 21.42, 21.2, 21.75, 22.02, 22.74, 22.89, 23.44, 25.21, 26.97, 28.74, 30.5], [27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 23.4, 23.04, 23.38, 26.4, 26.76, 26.47, 26.18, 26.24, 26.82, 27.41, 28.0], [29.0, 30.0, 30.0, 30.0, 30.0, 30.0, 25.61, 25.39, 26.44, 27.65, 27.15, 27.74, 28.03, 28.32, 30.15, 34.26, 33.83, 33.83], [29.0, 29.0, 29.0, 29.0, 29.0, 27.82, 27.59, 27.37, 27.78, 29.55, 30.35, 31.79, 33.41, 35.03, 35.65, 34.76, 33.88, 33.0], [29.0, 29.0, 29.0, 29.0, 29.0, 29.8, 29.58, 29.88, 30.21, 31.19, 32.56, 34.17, 35.83, 37.5, 38.34, 37.92, 37.51, 37.1], [29.0, 29.0, 29.0, 29.0, 32.0, 31.78, 32.09, 33.19, 34.29, 35.76, 41.24, 42.24, 42.53, 42.82, 43.71, 45.47, 47.24, 49.0], [38.0, 38.0, 38.0, 34.21, 33.99, 34.29, 35.39, 36.49, 37.59, 38.7, 39.06, 38.76, 38.5, 38.5, 39.01, 40.28, 41.56, 42.83], [42.0, 42.0, 42.0, 36.19, 36.5, 37.6, 38.7, 39.8, 40.9, 42.0, 42.06, 44.47, 45.06, 45.65, 46.71, 48.47, 50.24, 52.0], [47.0, 47.0, 38.4, 38.7, 39.81, 40.91, 42.01, 40.44, 44.84, 46.16, 47.0, 46.69, 49.97, 49.68, 50.21, 51.97, 51.26, 49.5], [44.0, 44.0, 40.91, 42.01, 43.11, 44.62, 45.78, 46.19, 46.59, 46.99, 47.39, 47.8, 48.2, 49.12, 50.53, 50.35, 50.18, 50.0], [44.0, 43.12, 44.4, 44.97, 45.37, 45.78, 46.18, 46.71, 47.74, 48.76, 49.79, 50.44, 50.98, 51.53, 52.08, 53.88, 54.81, 55.25], [44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 52.0, 52.0, 52.0, 52.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0]]}, "macad__age": {"x": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "y": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "z": [[16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0], [20.0, 20.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 22.79, 23.12, 26.0, 26.0, 26.0], [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 27.0, 27.0, 27.0, 27.0, 27.65, 28.0, 27.0, 26.35, 27.0, 27.0], [20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 20.0, 32.5, 28.88, 23.38, 21.65, 25.47, 28.26, 29.0], [22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 22.0, 29.57, 24.35, 25.53, 25.38, 23.65, 26.68, 29.18, 31.68], [31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 32.21, 25.29, 25.86, 25.37, 23.94, 24.35, 28.35, 32.18, 36.0], [31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 31.0, 34.84, 27.57, 30.31, 28.82, 28.53, 25.5, 25.12, 30.94, 34.76, 38.59], [25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 25.0, 37.48, 29.85, 30.76, 25.86, 27.08, 27.35, 33.47, 37.24, 35.18, 39.44, 43.71], [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 32.13, 31.22, 28.51, 29.1, 30.31, 31.12, 29.65, 30.41, 34.53, 37.94, 40.88], [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 34.41, 31.67, 31.16, 31.57, 28.63, 30.08, 32.63, 33.88, 33.88, 36.53, 40.59, 45.59], [26.0, 26.0, 26.0, 26.0, 26.0, 36.69, 33.22, 33.8, 31.92, 28.98, 27.0, 35.29, 39.71, 41.29, 40.29, 36.47, 33.29, 31.09], [29.0, 29.0, 29.0, 29.0, 38.84, 35.86, 35.22, 32.27, 29.47, 30.35, 40.41, 41.35, 41.35, 43.29, 45.94, 47.71, 48.12, 43.12], [29.0, 29.0, 29.0, 39.29, 38.51, 35.57, 32.82, 30.18, 32.94, 37.88, 41.0, 39.76, 38.88, 37.65, 39.76, 43.59, 41.24, 38.88], [44.0, 44.0, 40.57, 38.86, 36.18, 33.53, 30.88, 29.34, 33.59, 37.41, 41.24, 40.82, 39.35, 38.28, 40.95, 46.84, 52.72, 53.12], [44.0, 42.18, 39.73, 38.6, 37.46, 36.33, 35.19, 34.06, 32.92, 31.97, 31.14, 33.29, 35.65, 38.0, 40.71, 43.94, 47.18, 48.74], [44.0, 44.0, 44.0, 44.0, 42.55, 42.75, 42.76, 42.37, 41.98, 41.59, 41.2, 42.18, 43.5, 44.82, 44.5, 46.41, 48.32, 50.71], [44.0, 44.0, 44.0, 44.0, 36.0, 36.0, 36.0, 36.0, 36.0, 41.02, 40.24, 40.44, 40.74, 41.03, 41.65, 42.53, 43.41, 44.29], [44.0, 44.0, 44.0, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0, 43.0, 43.0, 43.0, 41.24, 44.32, 47.41, 50.5]]}, "macad__mgen": {"x": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "y": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "z": [[44.0, 44.0, 44.0, 29.0, 29.0, 29.0, 29.0, 29.76, 33.59, 37.41, 41.24, 38.94, 35.12, 31.29, 29.47, 30.65, 31.82, 33.0], [44.0, 44.0, 44.0, 44.0, 35.26, 33.46, 31.65, 29.85, 26.71, 27.24, 31.53, 33.47, 34.94, 36.41, 35.65, 35.65, 35.65, 35.65], [44.0, 41.88, 40.07, 38.27, 36.47, 34.67, 32.87, 31.07, 29.26, 26.12, 20.18, 22.24, 27.97, 33.71, 37.21, 37.35, 37.5, 37.53], [44.0, 43.85, 43.82, 38.82, 36.06, 34.88, 33.71, 32.28, 30.48, 28.68, 25.53, 23.35, 22.76, 24.65, 33.06, 42.63, 39.91, 37.19], [44.0, 44.0, 43.89, 43.41, 42.94, 43.82, 38.82, 32.35, 26.94, 25.76, 24.59, 26.0, 28.06, 33.65, 37.76, 39.68, 38.81, 36.09], [44.0, 44.0, 44.58, 43.92, 43.26, 42.98, 42.29, 42.94, 43.82, 38.82, 32.35, 32.71, 34.76, 34.35, 34.5, 36.41, 38.32, 40.24], [44.0, 44.0, 44.0, 44.61, 43.96, 43.3, 42.82, 42.49, 41.8, 42.06, 42.94, 43.82, 44.71, 44.06, 43.79, 44.68, 45.97, 47.88], [44.0, 44.0, 44.0, 47.0, 44.65, 43.99, 43.33, 42.67, 42.43, 42.0, 41.31, 40.47, 39.59, 38.71, 39.71, 43.06, 46.74, 50.41], [44.0, 44.0, 42.0, 42.0, 45.34, 44.68, 44.03, 43.37, 42.71, 42.24, 42.04, 42.12, 42.41, 42.71, 43.71, 45.76, 47.82, 50.0], [44.0, 42.0, 42.0, 42.0, 42.0, 45.38, 44.72, 44.06, 43.4, 42.74, 42.09, 41.76, 41.47, 41.18, 42.06, 44.71, 47.35, 50.0], [42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 45.41, 44.75, 44.1, 43.44, 42.78, 44.21, 39.12, 43.48, 44.31, 46.72, 49.15, 51.65], [42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 45.45, 44.79, 44.13, 43.47, 44.9, 46.86, 41.76, 38.29, 42.79, 47.57, 52.35], [42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 46.14, 45.48, 44.82, 44.17, 45.6, 47.55, 49.5, 47.12, 47.71, 48.29, 52.79], [42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 49.0, 46.18, 45.52, 44.86, 46.29, 48.24, 50.2, 51.06, 51.65, 52.24, 53.0], [47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 46.21, 45.55, 46.98, 48.94, 50.14, 50.73, 49.0, 53.0, 53.0], [47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 46.9, 46.25, 47.68, 49.22, 49.81, 49.0, 49.0, 53.0, 53.0], [47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 46.94, 48.3, 47.5, 47.5, 47.5, 47.5, 53.0, 53.0], [47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 53.0]]}, "macad__tserv": {"x": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "y": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "z": [[44.0, 41.79, 39.59, 37.38, 35.18, 32.97, 30.76, 28.59, 26.53, 24.47, 22.41, 26.82, 32.85, 38.88, 41.38, 38.59, 35.79, 33.0], [44.0, 44.32, 42.8, 40.6, 38.39, 36.19, 33.98, 31.77, 29.67, 27.61, 25.55, 27.07, 33.98, 45.24, 47.74, 43.65, 38.93, 34.21], [44.0, 44.0, 44.64, 43.58, 41.61, 39.4, 37.2, 34.99, 32.8, 30.75, 28.69, 30.2, 32.62, 36.31, 44.39, 44.86, 40.14, 35.41], [44.0, 44.0, 44.0, 44.96, 43.9, 42.62, 40.41, 38.21, 36.0, 33.88, 31.82, 33.34, 35.75, 38.16, 37.59, 37.61, 38.88, 36.62], [44.0, 44.0, 44.0, 44.0, 45.27, 44.22, 43.17, 41.42, 39.22, 37.02, 34.96, 36.48, 38.89, 37.82, 36.24, 36.25, 36.27, 37.1], [44.0, 44.0, 44.0, 44.0, 46.65, 45.59, 44.54, 43.49, 42.43, 40.23, 38.1, 39.62, 39.1, 36.46, 34.88, 34.89, 39.93, 37.1], [44.0, 44.0, 44.0, 44.0, 29.0, 46.97, 45.91, 44.86, 43.8, 42.75, 41.24, 40.39, 37.75, 35.1, 33.52, 39.42, 41.21, 37.1], [44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 47.28, 46.23, 45.18, 44.12, 43.07, 43.16, 40.72, 38.07, 38.91, 42.11, 42.34, 37.1], [44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 47.6, 46.55, 45.5, 44.44, 45.82, 44.02, 43.64, 44.48, 38.04, 47.2, 47.2], [44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 47.92, 46.87, 45.81, 44.76, 40.74, 44.88, 44.08, 49.84, 47.2, 47.2], [44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 49.29, 48.24, 47.19, 46.13, 50.65, 37.37, 36.08, 48.43, 43.8, 43.8], [44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 49.61, 48.56, 47.5, 49.24, 46.29, 46.33, 47.02, 35.6, 35.6], [44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.5, 49.93, 48.88, 47.82, 55.47, 55.93, 42.5, 42.5, 42.5], [44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 59.0, 59.0, 59.0, 50.25, 49.2, 54.06, 54.52, 59.0, 59.0, 59.0], [44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 59.0, 59.0, 59.0, 59.0, 59.0, 50.57, 52.65, 53.11, 59.0, 59.0, 59.0], [44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 51.94, 51.24, 51.69, 53.0, 53.0, 53.0], [42.0, 42.0, 42.0, 42.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 52.26, 53.0, 53.0, 53.0, 53.0], [42.0, 42.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0]]}, "mgen__mesp": {"x": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "y": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "z": [[10.0, 10.0, 10.0, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 17.0, 17.0, 17.0, 17.0, 17.0], [12.0, 12.0, 11.32, 12.36, 13.55, 15.16, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 21.0, 21.0, 21.0], [13.5, 14.38, 15.07, 16.11, 17.03, 17.91, 18.79, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0], [16.0, 16.88, 17.76, 18.65, 19.53, 20.41, 21.29, 22.18, 22.56, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0], [18.5, 17.84, 18.51, 19.74, 21.53, 22.41, 23.29, 24.8, 25.56, 25.87, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0], [19.57, 21.59, 22.26, 22.82, 23.59, 24.59, 26.36, 28.89, 28.77, 28.87, 29.17, 35.6, 35.6, 35.6, 35.6, 36.0, 36.0, 36.0], [23.5, 24.38, 25.26, 26.15, 27.03, 28.13, 29.94, 31.81, 35.42, 32.75, 32.17, 32.48, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0], [26.0, 28.65, 28.24, 27.35, 28.59, 30.41, 31.91, 32.18, 33.08, 34.33, 35.57, 35.47, 35.78, 36.0, 36.0, 36.0, 36.0, 36.0], [28.5, 29.62, 30.38, 32.18, 33.26, 34.17, 34.17, 34.68, 35.56, 36.9, 39.44, 39.99, 39.15, 39.08, 39.39, 36.0, 36.0, 36.0], [33.0, 31.53, 31.29, 33.94, 35.21, 36.47, 37.9, 37.61, 38.06, 38.94, 41.8, 43.58, 44.38, 43.54, 42.7, 42.69, 47.5, 47.5], [37.1, 35.69, 37.0, 36.84, 37.26, 37.91, 38.79, 39.68, 40.56, 41.44, 43.65, 44.0, 44.26, 44.54, 44.82, 45.96, 46.25, 47.5], [36.0, 36.0, 37.29, 38.65, 39.53, 40.41, 41.29, 42.18, 42.94, 42.06, 44.0, 46.09, 48.07, 48.82, 48.49, 48.16, 48.91, 47.5], [38.5, 38.5, 38.79, 40.79, 42.03, 42.91, 43.79, 44.68, 46.71, 48.16, 48.57, 48.99, 49.59, 50.65, 51.38, 51.0, 49.0, 47.5], [43.0, 43.0, 43.0, 43.65, 44.53, 46.24, 48.29, 48.82, 48.12, 49.88, 51.65, 53.18, 54.27, 53.47, 53.0, 53.0, 53.0, 53.0], [45.6, 45.88, 45.26, 46.15, 47.03, 47.91, 48.79, 50.03, 52.21, 55.29, 57.42, 57.06, 55.56, 53.0, 53.0, 53.0, 53.0, 53.0], [47.33, 48.88, 49.76, 50.19, 50.46, 50.89, 51.51, 52.18, 53.34, 55.59, 58.76, 57.65, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0], [48.83, 47.0, 46.74, 48.01, 50.09, 52.74, 54.94, 56.18, 57.06, 57.94, 59.26, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0], [53.0, 53.0, 44.0, 44.0, 44.0, 57.0, 57.0, 57.0, 57.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0, 60.0]]}, "mgen__age": {"x": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "y": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "z": [[26.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0], [26.0, 22.62, 19.31, 18.59, 18.5, 18.5, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0], [22.24, 24.44, 26.65, 25.45, 23.09, 21.86, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 36.0, 36.0, 36.0], [18.35, 21.0, 26.8, 23.64, 26.28, 23.47, 23.36, 23.0, 23.0, 24.0, 24.0, 24.0, 24.0, 36.0, 36.0, 36.0, 36.0, 36.0], [19.06, 17.59, 24.0, 20.45, 21.51, 20.82, 21.41, 25.04, 28.93, 24.0, 24.0, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0], [19.53, 23.79, 23.17, 20.59, 24.59, 29.0, 28.1, 27.99, 29.05, 30.73, 36.0, 36.0, 36.0, 36.0, 36.0, 36.0, 51.0, 51.0], [22.06, 33.62, 29.88, 26.51, 21.26, 27.79, 29.72, 31.26, 32.49, 34.18, 35.99, 39.21, 36.0, 51.0, 51.0, 51.0, 51.0, 51.0], [33.41, 43.53, 44.29, 45.76, 46.55, 44.45, 43.22, 37.93, 36.31, 38.33, 40.15, 45.22, 49.7, 51.0, 51.0, 51.0, 51.0, 51.0], [36.12, 41.59, 41.06, 42.53, 44.0, 40.41, 31.0, 32.37, 35.91, 39.95, 43.88, 47.2, 50.48, 51.18, 53.0, 53.0, 53.0, 53.0], [32.35, 26.59, 32.73, 34.78, 35.1, 32.44, 32.76, 32.54, 36.16, 40.38, 44.13, 47.7, 51.26, 51.95, 50.39, 53.0, 53.0, 53.0], [19.82, 37.47, 35.34, 33.84, 32.15, 34.18, 37.49, 38.35, 41.55, 43.98, 48.41, 53.71, 54.75, 52.96, 51.18, 49.6, 47.5, 47.5], [38.44, 41.31, 36.24, 30.06, 38.67, 46.53, 41.35, 45.06, 49.03, 53.0, 55.12, 54.35, 54.72, 54.23, 52.44, 50.65, 48.87, 47.5], [41.94, 44.15, 41.27, 41.0, 48.89, 47.59, 41.97, 44.5, 46.15, 53.65, 58.47, 57.88, 55.81, 53.74, 51.67, 49.6, 47.83, 47.5], [37.08, 38.47, 41.12, 44.59, 49.0, 44.41, 42.35, 50.65, 43.18, 48.28, 48.07, 51.67, 52.75, 50.68, 48.61, 48.16, 47.5, 47.5], [40.38, 41.18, 42.06, 40.71, 35.41, 38.15, 45.5, 37.74, 38.12, 38.79, 40.71, 43.92, 47.56, 48.82, 48.49, 49.0, 49.0, 49.0], [39.65, 30.06, 16.82, 23.0, 36.18, 44.65, 43.0, 41.51, 36.71, 43.11, 50.34, 50.94, 49.62, 49.0, 49.0, 49.0, 49.0, 49.0], [52.18, 37.18, 42.94, 44.06, 44.06, 34.59, 28.53, 45.38, 40.4, 42.05, 45.53, 46.68, 49.0, 49.0, 49.0, 49.0, 49.0, 49.0], [43.0, 43.44, 43.88, 41.09, 37.12, 39.94, 48.03, 50.5, 49.0, 49.0, 44.5, 44.5, 44.5, 44.5, 49.0, 49.0, 49.0, 49.0]]}, "mgen__macad": {"x": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "y": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "z": [[44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [44.0, 44.0, 41.88, 43.85, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [44.0, 44.0, 40.07, 44.18, 43.89, 44.58, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [29.0, 44.0, 38.27, 41.76, 43.41, 43.92, 44.61, 47.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [29.0, 35.26, 36.47, 39.25, 45.06, 43.26, 43.96, 44.65, 45.34, 42.0, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [29.0, 33.46, 34.67, 36.84, 44.18, 43.22, 43.3, 43.99, 44.68, 45.38, 42.0, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [29.0, 31.65, 32.87, 34.44, 41.76, 45.47, 42.82, 43.33, 44.03, 44.72, 45.41, 42.0, 42.0, 42.0, 47.5, 47.5, 47.5, 47.5], [29.06, 29.85, 31.07, 32.28, 38.97, 45.06, 43.31, 42.67, 43.37, 44.06, 44.75, 45.45, 46.14, 49.0, 47.5, 47.5, 47.5, 47.5], [29.35, 25.29, 29.26, 30.48, 36.25, 44.18, 45.57, 42.43, 42.71, 43.4, 44.1, 44.79, 45.48, 46.18, 47.5, 47.5, 47.5, 47.5], [29.65, 23.29, 24.71, 28.68, 33.85, 41.76, 45.94, 43.41, 42.24, 42.74, 43.44, 44.13, 44.82, 45.52, 46.21, 46.9, 47.5, 47.5], [29.94, 26.41, 13.0, 24.12, 31.45, 38.97, 45.06, 45.67, 42.04, 42.09, 42.78, 43.47, 44.17, 44.86, 45.55, 46.25, 46.94, 47.5], [31.65, 28.82, 22.94, 21.47, 35.44, 40.65, 44.88, 44.94, 42.24, 41.88, 43.74, 44.43, 45.13, 45.82, 46.51, 47.21, 47.83, 47.5], [33.71, 31.76, 34.41, 22.06, 40.47, 43.44, 44.88, 38.18, 42.53, 41.59, 39.08, 45.8, 46.49, 47.18, 47.88, 48.16, 47.5, 47.5], [35.76, 34.71, 44.18, 24.65, 43.26, 43.65, 44.53, 31.41, 42.82, 41.29, 44.06, 41.14, 47.86, 48.55, 48.49, 48.16, 47.5, 47.5], [36.53, 35.65, 44.65, 33.06, 43.06, 44.03, 44.62, 29.29, 43.82, 42.18, 45.62, 37.78, 45.43, 48.82, 48.49, 49.0, 47.5, 47.5], [35.35, 35.65, 41.41, 42.41, 38.35, 45.65, 45.5, 34.15, 45.88, 44.82, 50.18, 43.62, 45.43, 48.82, 49.0, 49.0, 47.5, 47.5], [34.18, 35.65, 38.18, 38.59, 34.18, 40.94, 46.68, 39.0, 47.94, 47.47, 54.56, 49.87, 45.43, 48.82, 53.0, 53.0, 53.0, 47.5], [33.0, 35.65, 37.53, 34.76, 30.35, 36.24, 48.29, 42.18, 50.0, 50.0, 58.24, 56.12, 51.26, 53.0, 53.0, 53.0, 53.0, 53.0]]}, "mgen__tserv": {"x": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "y": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "z": [[37.0, 31.71, 35.97, 27.41, 39.5, 37.56, 43.44, 55.76, 49.53, 42.47, 43.79, 38.33, 48.33, 52.35, 51.14, 49.93, 48.71, 47.5], [37.47, 33.94, 35.54, 30.83, 42.21, 46.15, 42.26, 50.9, 44.35, 41.54, 43.73, 39.65, 49.65, 51.18, 49.97, 48.75, 47.54, 47.5], [37.94, 37.44, 27.88, 39.26, 49.2, 44.97, 41.09, 46.04, 39.18, 41.33, 43.66, 40.97, 50.97, 50.01, 48.8, 47.58, 47.5, 47.5], [37.62, 39.09, 36.31, 47.69, 46.1, 43.79, 40.29, 41.06, 38.79, 41.11, 43.59, 42.29, 50.05, 48.84, 47.62, 46.41, 47.5, 47.5], [38.09, 35.66, 44.74, 44.59, 43.0, 41.42, 40.14, 36.48, 38.4, 40.89, 43.52, 43.61, 48.88, 47.67, 46.45, 47.5, 47.5, 47.5], [39.74, 41.79, 43.08, 41.5, 39.91, 38.32, 37.63, 36.09, 38.01, 40.67, 43.45, 44.93, 47.71, 46.5, 48.85, 47.5, 47.5, 47.5], [41.38, 41.57, 39.99, 38.4, 36.81, 35.22, 33.78, 35.7, 37.62, 40.45, 43.38, 46.25, 46.54, 45.32, 53.0, 47.5, 47.5, 47.5], [43.27, 41.69, 40.1, 38.51, 36.92, 34.12, 33.39, 35.31, 37.23, 40.23, 43.37, 46.58, 45.37, 51.28, 53.0, 47.5, 47.5, 47.5], [45.31, 43.73, 42.14, 38.96, 35.91, 36.01, 34.99, 34.92, 36.84, 40.01, 43.45, 45.41, 47.76, 43.8, 43.8, 47.5, 47.5, 47.5], [47.07, 43.8, 40.53, 37.71, 37.81, 37.9, 36.64, 34.53, 36.44, 39.8, 43.35, 44.24, 53.72, 43.8, 43.8, 43.8, 47.5, 47.5], [45.37, 42.1, 39.5, 39.6, 39.7, 39.8, 38.3, 36.19, 36.05, 39.58, 43.13, 50.2, 43.8, 43.8, 43.8, 43.8, 47.5, 47.5], [43.67, 41.3, 41.39, 41.49, 41.59, 41.69, 39.96, 37.84, 36.91, 42.22, 47.51, 56.16, 43.8, 43.8, 43.8, 43.8, 43.8, 47.5], [42.5, 43.19, 43.29, 43.39, 43.48, 43.58, 41.61, 39.5, 42.72, 48.14, 53.47, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 47.5], [42.5, 42.5, 45.18, 45.28, 45.38, 45.39, 43.27, 43.11, 48.53, 53.95, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [42.5, 42.5, 47.07, 47.17, 47.27, 47.04, 44.93, 48.93, 54.35, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [42.5, 42.5, 42.5, 49.06, 49.16, 48.7, 49.32, 54.74, 35.6, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [42.5, 42.5, 53.0, 53.0, 51.05, 50.36, 53.0, 53.0, 35.6, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [42.5, 42.5, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0]]}, "tserv__mesp": {"x": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "y": [0.5, 3.0, 5.5, 8.0, 10.5, 13.0, 15.5, 18.0, 20.5, 23.0, 25.5, 28.0, 30.5, 33.0, 35.5, 38.0, 40.5, 43.0], "z": [[12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5], [11.0, 12.77, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0], [14.5, 14.91, 15.73, 17.48, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5, 14.5], [16.0, 17.12, 19.37, 19.89, 20.47, 22.19, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0, 21.0], [18.5, 24.13, 23.27, 22.1, 22.97, 24.93, 25.29, 26.9, 18.5, 18.5, 18.5, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6], [24.5, 24.95, 25.4, 25.84, 26.34, 26.84, 29.8, 28.82, 30.43, 31.61, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6], [24.5, 28.89, 31.12, 30.18, 30.59, 31.33, 32.06, 32.79, 33.52, 34.25, 34.99, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6], [29.0, 31.82, 34.65, 30.06, 31.16, 32.57, 33.78, 34.99, 36.06, 37.1, 38.14, 38.51, 35.6, 35.6, 35.6, 35.6, 35.6, 35.6], [28.5, 30.15, 31.79, 33.24, 34.45, 35.66, 36.87, 38.08, 39.29, 40.5, 41.55, 41.52, 40.93, 43.8, 43.8, 43.8, 43.8, 43.8], [33.0, 34.08, 35.15, 36.23, 37.3, 38.38, 39.46, 40.53, 41.61, 42.48, 43.28, 44.53, 43.93, 43.34, 43.8, 43.8, 43.8, 43.8], [38.5, 38.09, 37.68, 37.26, 37.58, 38.38, 39.19, 39.99, 40.79, 41.59, 42.39, 43.29, 45.81, 46.35, 45.76, 42.5, 42.5, 42.5], [43.0, 42.05, 39.73, 37.98, 38.45, 38.92, 39.39, 39.87, 40.34, 40.81, 41.5, 42.3, 44.01, 46.53, 48.76, 48.17, 42.5, 42.5], [42.5, 40.23, 40.03, 39.82, 39.63, 40.1, 40.57, 41.04, 41.51, 41.99, 42.63, 43.66, 44.7, 45.73, 47.24, 49.76, 50.59, 53.0], [50.0, 48.75, 47.49, 46.24, 44.98, 43.73, 42.47, 42.65, 43.68, 44.72, 45.75, 46.79, 47.82, 48.86, 49.89, 50.93, 51.96, 53.0], [47.5, 47.63, 47.77, 47.9, 48.04, 48.04, 47.94, 47.83, 48.35, 50.03, 51.7, 53.4, 55.27, 57.14, 59.0, 59.0, 59.0, 59.0], [50.0, 50.47, 51.3, 52.26, 53.22, 54.18, 55.14, 56.82, 56.47, 56.71, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [54.5, 56.62, 53.62, 48.68, 52.15, 52.0, 52.0, 52.0, 52.0, 52.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 53.0, 59.0, 59.0]]}, "tserv__age": {"x": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "y": [24.0, 25.94, 27.88, 29.82, 31.76, 33.71, 35.65, 37.59, 39.53, 41.47, 43.41, 45.35, 47.29, 49.24, 51.18, 53.12, 55.06, 57.0], "z": [[16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0, 16.0], [25.71, 22.59, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0, 26.0], [26.94, 28.06, 29.18, 26.06, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0, 27.0], [20.12, 24.56, 29.35, 31.26, 32.38, 29.53, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0, 28.0], [22.12, 18.27, 22.21, 26.65, 31.24, 34.47, 35.59, 33.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0, 24.0], [24.18, 27.24, 22.9, 23.15, 24.8, 28.74, 33.18, 37.68, 38.79, 36.47, 23.0, 23.0, 23.0, 23.0, 33.0, 33.0, 33.0, 33.0], [30.82, 35.37, 27.16, 29.29, 26.37, 28.02, 29.68, 31.33, 35.26, 39.82, 42.0, 39.94, 33.0, 33.0, 33.0, 33.0, 33.0, 33.0], [29.0, 29.63, 30.22, 30.53, 33.49, 31.35, 31.24, 32.9, 34.55, 36.2, 37.86, 41.79, 45.21, 33.0, 33.0, 33.0, 53.0, 53.0], [24.06, 25.63, 27.2, 28.76, 30.57, 32.35, 34.08, 35.63, 36.35, 37.77, 39.43, 41.08, 42.73, 44.39, 48.41, 53.0, 53.0, 53.0], [40.03, 39.38, 38.73, 38.08, 37.43, 38.68, 40.41, 42.14, 43.87, 45.07, 45.79, 46.51, 47.23, 47.94, 48.66, 49.38, 50.92, 53.0], [35.5, 36.81, 38.12, 39.39, 40.58, 41.77, 42.96, 44.15, 45.33, 48.03, 50.77, 52.95, 53.67, 54.39, 55.11, 55.82, 51.64, 53.0], [42.06, 41.75, 41.43, 40.82, 40.12, 40.71, 41.9, 43.42, 46.16, 48.9, 51.63, 54.19, 56.57, 56.57, 52.39, 48.2, 59.0, 59.0], [44.76, 46.89, 47.59, 45.1, 42.61, 40.11, 40.86, 41.93, 43.5, 45.88, 48.27, 50.65, 52.2, 48.95, 44.77, 59.0, 59.0, 59.0], [37.24, 37.26, 37.29, 38.5, 38.59, 38.68, 39.75, 40.82, 41.89, 42.95, 44.72, 46.3, 45.51, 41.83, 46.94, 43.8, 43.8, 43.8], [46.97, 45.33, 43.7, 42.06, 40.42, 40.16, 40.24, 40.31, 40.39, 40.47, 40.55, 40.82, 39.2, 44.31, 43.8, 43.8, 43.8, 43.8], [37.12, 36.99, 36.86, 36.73, 36.6, 36.47, 36.34, 36.21, 36.08, 35.96, 35.8, 36.58, 41.69, 35.6, 35.6, 35.6, 35.6, 35.6], [44.03, 39.73, 37.98, 37.79, 37.6, 37.41, 38.07, 38.88, 39.69, 40.5, 41.32, 42.13, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5], [50.5, 50.5, 50.5, 38.2, 38.2, 38.2, 38.2, 38.2, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5]]}, "tserv__macad": {"x": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "y": [0.0, 0.59, 1.18, 1.76, 2.35, 2.94, 3.53, 4.12, 4.71, 5.29, 5.88, 6.47, 7.06, 7.65, 8.24, 8.82, 9.41, 10.0], "z": [[44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0], [41.79, 44.32, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0], [39.59, 42.8, 44.64, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0], [37.38, 40.6, 43.58, 44.96, 44.0, 44.0, 44.0, 44.0, 44.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0], [35.18, 38.39, 41.61, 43.9, 45.27, 46.65, 29.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0, 53.0], [32.97, 36.19, 39.4, 42.62, 44.22, 45.59, 46.97, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0, 53.0], [30.76, 33.98, 37.2, 40.41, 43.17, 44.54, 45.91, 47.28, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 42.0, 53.0, 53.0, 53.0], [28.47, 31.77, 34.99, 38.21, 41.42, 43.49, 44.86, 46.23, 47.6, 42.0, 42.0, 42.0, 42.0, 42.0, 59.0, 53.0, 53.0, 53.0], [25.82, 29.27, 32.73, 36.0, 39.22, 42.43, 43.8, 45.18, 46.55, 47.92, 49.29, 42.0, 42.0, 59.0, 59.0, 53.0, 53.0, 53.0], [23.18, 26.63, 30.08, 33.53, 36.98, 40.23, 42.75, 44.12, 45.5, 46.87, 48.24, 49.61, 42.5, 59.0, 59.0, 53.0, 53.0, 53.0], [20.53, 23.98, 27.43, 30.88, 34.33, 37.78, 41.24, 43.07, 44.44, 45.81, 47.19, 48.56, 49.93, 59.0, 59.0, 53.0, 53.0, 53.0], [25.76, 25.66, 29.11, 32.56, 36.02, 39.47, 40.39, 43.16, 45.82, 44.76, 46.13, 47.5, 48.88, 50.25, 59.0, 53.0, 53.0, 53.0], [32.97, 33.04, 31.88, 35.33, 38.78, 39.1, 37.75, 40.72, 44.02, 40.74, 50.65, 49.24, 47.82, 49.2, 50.57, 51.94, 53.0, 53.0], [40.18, 44.96, 35.96, 38.09, 37.82, 36.46, 35.1, 38.07, 43.64, 44.88, 37.37, 46.29, 55.47, 54.06, 52.65, 51.24, 52.26, 53.0], [43.5, 48.28, 44.39, 37.59, 36.24, 34.88, 33.52, 38.91, 44.48, 44.08, 36.08, 46.33, 55.93, 54.52, 53.11, 51.69, 53.0, 53.0], [41.0, 44.67, 44.99, 37.61, 36.25, 34.89, 39.42, 42.11, 38.04, 49.84, 48.43, 47.02, 42.5, 59.0, 59.0, 53.0, 53.0, 53.0], [38.5, 40.5, 40.82, 38.88, 36.27, 39.93, 41.21, 42.34, 47.2, 47.2, 43.8, 35.6, 42.5, 59.0, 59.0, 53.0, 53.0, 53.0], [36.0, 36.32, 36.65, 36.97, 37.1, 37.1, 37.1, 37.1, 47.2, 47.2, 43.8, 35.6, 42.5, 59.0, 59.0, 53.0, 53.0, 53.0]]}, "tserv__mgen": {"x": [0.0, 0.47, 0.94, 1.41, 1.88, 2.35, 2.82, 3.29, 3.76, 4.24, 4.71, 5.18, 5.65, 6.12, 6.59, 7.06, 7.53, 8.0], "y": [0.0, 0.88, 1.76, 2.65, 3.53, 4.41, 5.29, 6.18, 7.06, 7.94, 8.82, 9.71, 10.59, 11.47, 12.35, 13.24, 14.12, 15.0], "z": [[37.0, 37.47, 37.94, 37.62, 38.09, 39.74, 41.38, 43.27, 45.31, 47.07, 45.37, 43.67, 42.5, 42.5, 42.5, 42.5, 42.5, 42.5], [17.15, 26.35, 40.31, 41.96, 36.29, 41.79, 41.57, 41.69, 43.73, 43.8, 42.1, 41.3, 43.19, 42.5, 42.5, 42.5, 42.5, 42.5], [37.06, 40.0, 27.88, 36.31, 44.74, 43.08, 39.99, 40.1, 42.14, 40.53, 39.5, 41.39, 43.29, 45.18, 47.07, 42.5, 53.0, 53.0], [28.0, 30.83, 39.26, 47.69, 44.59, 41.5, 38.4, 38.51, 38.96, 37.71, 39.6, 41.49, 43.39, 45.28, 47.17, 49.06, 53.0, 53.0], [40.71, 42.21, 49.2, 46.1, 43.0, 39.91, 36.81, 36.92, 35.91, 37.81, 39.7, 41.59, 43.48, 45.38, 47.27, 49.16, 51.05, 53.0], [36.41, 44.84, 44.22, 43.59, 41.42, 38.32, 35.22, 34.12, 36.01, 37.9, 39.8, 41.69, 43.58, 45.39, 47.04, 48.7, 50.36, 53.0], [42.0, 41.37, 40.75, 38.35, 33.02, 33.1, 33.71, 33.39, 34.99, 36.64, 38.3, 39.96, 41.61, 43.27, 44.93, 49.32, 53.0, 53.0], [28.59, 34.08, 39.57, 40.94, 36.1, 35.78, 35.47, 35.16, 34.84, 34.53, 36.19, 37.84, 39.5, 43.11, 48.93, 54.74, 53.0, 53.0], [49.47, 43.98, 38.49, 38.18, 37.86, 37.55, 37.24, 36.92, 36.61, 36.29, 35.98, 36.91, 42.72, 48.53, 54.35, 35.6, 35.6, 59.0], [41.53, 40.64, 40.51, 40.39, 40.27, 40.14, 40.02, 39.9, 39.77, 39.65, 39.53, 42.22, 48.14, 53.95, 59.0, 59.0, 59.0, 59.0], [43.79, 43.73, 43.66, 43.59, 43.52, 43.45, 43.38, 43.33, 43.31, 43.23, 43.11, 47.51, 53.47, 59.0, 59.0, 59.0, 59.0, 59.0], [38.33, 39.65, 40.97, 42.29, 43.61, 44.93, 46.25, 46.58, 45.41, 44.24, 50.2, 56.16, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [48.33, 49.65, 50.97, 50.05, 48.88, 47.71, 46.54, 45.37, 47.76, 53.72, 43.8, 43.8, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [52.35, 51.18, 50.01, 48.84, 47.67, 46.5, 45.32, 51.28, 43.8, 43.8, 43.8, 43.8, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [51.14, 49.97, 48.8, 47.62, 46.45, 48.85, 53.0, 53.0, 43.8, 43.8, 43.8, 43.8, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [49.93, 48.75, 47.58, 46.41, 47.5, 47.5, 47.5, 47.5, 47.5, 43.8, 43.8, 43.8, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [48.71, 47.54, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 43.8, 59.0, 59.0, 59.0, 59.0, 59.0, 59.0], [47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 47.5, 59.0, 59.0, 59.0, 59.0, 59.0]]}};
+
+const MERIT_FIELDS = {
+  mesp:  {label:"Mérito Específico", key:"mesp"},
+  age:   {label:"Edad",              key:"age"},
+  macad: {label:"Mérito Académico",  key:"macad"},
+  mgen:  {label:"Mérito General",    key:"mgen"},
+  tserv: {label:"Tiempo Servicio",   key:"tserv"}
+};
+const CORRS = {mesp:0.94, age:0.62, mgen:0.45, macad:0.28, tserv:0.14}; // combinado 2024+2025, n=305
+
+/* ============================ 3. DOM ============================ */
+const inputs = {
+  exp:document.getElementById('param-exp'), form:document.getElementById('param-form'),
+  serv:document.getElementById('param-serv'), acad:document.getElementById('param-acad'),
+  master:document.getElementById('param-master'), idiom:document.getElementById('param-idiom'),
+  tic:document.getElementById('param-tic'), carnet:document.getElementById('param-carnet'),
+  moto:document.getElementById('param-moto'), adr:document.getElementById('param-adr'),
+  deporte:document.getElementById('param-deporte'), fcse:document.getElementById('param-fcse'),
+  func:document.getElementById('param-func')
+};
+const labels = {
+  exp:document.getElementById('val-exp'), form:document.getElementById('val-form'),
+  serv:document.getElementById('val-serv'), acad:document.getElementById('val-acad'),
+  master:document.getElementById('val-master'), idiom:document.getElementById('val-idiom'),
+  tic:document.getElementById('val-tic'), carnet:document.getElementById('val-carnet'),
+  moto:document.getElementById('val-moto'), adr:document.getElementById('val-adr'),
+  deporte:document.getElementById('val-deporte'), fcse:document.getElementById('val-fcse'),
+  func:document.getElementById('val-func'),
+  edadSim:document.getElementById('val-edad-sim'), edadBase:document.getElementById('val-edad-base'),
+  suelo:document.getElementById('kpi-suelo'), techo:document.getElementById('kpi-techo'),
+  total:document.getElementById('kpi-total')
 };
 
-const PARAMS = [
-  { id:"tserv", code:"Ap.3.I", name:"Tiempo de Servicio", max:10, weight:0.02,
-    desc:"Servicio militar previo computable por meses (BOE Ap.3.I)" },
-  { id:"macad", code:"Ap.3.II", name:"Méritos Académicos", max:10, weight:-0.35,
-    desc:"Titulación exigida y superior. Edad media graduación univ. España: 23-24 años (INE)" },
-  { id:"midio", code:"Ap.3.III.a", name:"Idiomas (SLP no exigido)", max:6, weight:0.20,
-    desc:"SLP/B2/C1 adicionales. Edad media obtención certificado: 20-24 años (EOI/Cambridge)" },
-  { id:"mcurso", code:"Ap.3.III.b", name:"Cursos CESEDEN / Alta Gestión", max:6, weight:0.85,
-    desc:"Monográfico, Seg. y Defensa, RRHH/Financieros. Perfil típico +35-40 años" },
-  { id:"mfunc", code:"Ap.3.III.c/d", name:"Funcionario / FCSE previa", max:6, weight:0.75,
-    desc:"Subgrupos C1/C2, ex-Policía/Guardia Civil. Edad media funcionariado ES: 51,6 años (INE)" },
-  { id:"mcarnet", code:"Ap.3.III.e", name:"Permisos C/D profesionales", max:4, weight:0.30,
-    desc:"Carnet camión/autobús. Edad media obtención en España: 20-23 años (DGT)" },
-  { id:"mdep", code:"Base 4.1.f", name:"Deportista Alto Nivel", max:3, weight:0.40,
-    desc:"Bono por resolución CSD. Edad media de retirada deportiva en España: ~30 años" },
-  { id:"mexmil", code:"Ap.3.III.f", name:"Bono Ex-Militar/Reservista", max:5, weight:0.65,
-    desc:"Antigüedad militar previa/priorización. Requiere años de servicio ya acumulados" },
-  { id:"mesp", code:"Ap.3.IV.a", name:"Experiencia Profesional (puesto)", max:35, weight:0.55,
-    desc:"Mérito específico ligado al área de trabajo de la vacante (Base 4.6). Muy lesivo recortar" },
-  { id:"mform", code:"Ap.3.IV.b", name:"Formación Específica del Puesto", max:15, weight:0.45,
-    desc:"Cursos/titulaciones ligadas al cometido de la plaza. Lesivo recortar" }
-];
+/* ============================ 4. Selectores de ejes 3D ============================ */
+const selX = document.getElementById('sel-x');
+const selY = document.getElementById('sel-y');
+Object.keys(MERIT_FIELDS).forEach(k=>{
+  const o1=document.createElement('option'); o1.value=k; o1.text=MERIT_FIELDS[k].label; selX.appendChild(o1);
+  const o2=document.createElement('option'); o2.value=k; o2.text=MERIT_FIELDS[k].label; selY.appendChild(o2);
+});
+selX.value = "mesp"; selY.value = "age";
 
-function sensitivity(id) {
-  if (id === "mesp") return 6.0;
-  if (id === "mform") return 4.0;
-  if (id === "tserv" || id === "macad") return 0.3;
-  return 0.8;
+function badge(){
+  const cx = CORRS[selX.value], cy = CORRS[selY.value];
+  const avg = (cx+cy)/2;
+  const el = document.getElementById('corr-badge');
+  el.textContent = "r(X)=" + cx.toFixed(2) + " · r(Y)=" + cy.toFixed(2);
+  el.className = "corr-badge " + (avg>0.6?"corr-alta":avg>0.35?"corr-media":"corr-baja");
 }
 
-let currentCat = "oficial";
-let currentView = "2d";
-let values = {};
-PARAMS.forEach(p => values[p.id] = p.max);
-
-function baseConst(cat) {
-  const c = CATEGORIES[cat];
-  let sumWeighted = 0;
-  PARAMS.forEach(p => sumWeighted += p.weight * p.max);
-  return c.baseAge - sumWeighted;
-}
-
-function computeAge(overrides) {
-  const v = overrides || values;
-  const c = CATEGORIES[currentCat];
-  const K = baseConst(currentCat);
-  let age = K;
-  PARAMS.forEach(p => age += p.weight * v[p.id]);
-  age = Math.max(c.floor, Math.min(c.ceil, age));
-  return age;
-}
-
-function computeExcellenceLoss(overrides) {
-  const v = overrides || values;
-  let loss = 0;
-  PARAMS.forEach(p => {
-    const cut = p.max - v[p.id];
-    loss += sensitivity(p.id) * Math.pow(cut, 1.6);
-  });
-  return loss;
-}
-
-function allocateForTargetAge(targetAge) {
-  const c = CATEGORIES[currentCat];
-  targetAge = Math.max(c.floor, Math.min(c.baseAge, targetAge));
-  PARAMS.forEach(p => values[p.id] = p.max);
-  let age = computeAge();
-  let guard = 0;
-  while (age > targetAge + 0.05 && guard < 5000) {
-    guard++;
-    let best = null; let bestRatio = Infinity;
-    PARAMS.forEach(p => {
-      if (p.weight <= 0) return;
-      if (values[p.id] <= 0) return;
-      const cutNow = p.max - values[p.id];
-      const marginalCost = sensitivity(p.id) * (Math.pow(cutNow+1,1.6) - Math.pow(cutNow,1.6));
-      const ratio = marginalCost / p.weight;
-      if (ratio < bestRatio) { bestRatio = ratio; best = p; }
-    });
-    if (!best) break;
-    values[best.id] = Math.max(0, values[best.id] - 1);
-    age = computeAge();
+function render3D(){
+  const xk = selX.value, yk = selY.value;
+  let grid = GRIDS[xk+"__"+yk];
+  let swap = false;
+  if(!grid){ grid = GRIDS[yk+"__"+xk]; swap = true; }
+  let zData = grid.z;
+  if(swap){
+    // transpose z if axes were swapped
+    zData = grid.z[0].map((_,c)=>grid.z.map(r=>r[c]));
   }
-  renderParams();
-}
-
-function renderParams() {
-  const panel = document.getElementById("params-panel");
-  panel.innerHTML = "";
-  PARAMS.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "param";
-    div.innerHTML = `
-      <label>
-        <span>${p.name} <span class="code">[${p.code}]</span></span>
-        <span class="val" id="val_${p.id}">${values[p.id]} / ${p.max} pts</span>
-      </label>
-      <input type="range" id="slider_${p.id}" min="0" max="${p.max}" step="1" value="${values[p.id]}">
-      <div class="desc">${p.desc}</div>
-    `;
-    panel.appendChild(div);
-  });
-  PARAMS.forEach(p => {
-    document.getElementById(`slider_${p.id}`).addEventListener("input", (e) => {
-      values[p.id] = parseInt(e.target.value);
-      document.getElementById(`val_${p.id}`).textContent = `${values[p.id]} / ${p.max} pts`;
-      update();
-    });
-  });
-}
-
-function resetSliders() {
-  PARAMS.forEach(p => values[p.id] = p.max);
-  renderParams();
-  syncMasterSlider();
-  update();
-}
-
-function syncMasterSlider() {
-  const age = computeAge();
-  document.getElementById("masterSlider").value = age;
-  document.getElementById("masterVal").textContent = age.toFixed(1) + " años";
-}
-
-function initChart2D() {
   const trace = {
-    x: [0], y: [computeAge()],
-    mode: "lines+markers",
-    line: { color: "#8bc34a", width: 3 },
-    marker: { size: 8, color: "#c9e494" },
-    fill: "tozeroy",
-    fillcolor: "rgba(139,195,74,0.08)",
-    name: "Edad proyectada"
+    x: swap ? grid.y : grid.x,
+    y: swap ? grid.x : grid.y,
+    z: zData,
+    type:'surface',
+    colorscale:'Viridis',
+    contours:{z:{show:true, usecolormap:true, highlightcolor:"#ffffff", project:{z:true}}}
   };
   const layout = {
-    paper_bgcolor: "#1a2113", plot_bgcolor: "#141a0d",
-    font: { color: "#cfd6bd", size: 11 },
-    margin: { t: 30, l: 40, r: 20, b: 40 },
-    title: { text: "Evolución de la edad proyectada (histórico de ajustes)", font: { size: 13 } },
-    xaxis: { title: "Nº de ajuste", gridcolor: "#26301a" },
-    yaxis: { title: "Edad (años)", gridcolor: "#26301a" }
-  };
-  Plotly.newPlot("chart2d", [trace], layout, {displayModeBar: false});
-}
-
-function renderSurface3D() {
-  const n = 30;
-  const xVals = []; const yVals = []; const zVals = [];
-  for (let i = 0; i < n; i++) {
-    const rowZ = [];
-    const cutEsp = (i / (n-1)) * 15;
-    for (let j = 0; j < n; j++) {
-      const cutGenAgg = (j / (n-1)) * 15;
-      const lossEsp = sensitivity("mesp") * Math.pow(cutEsp, 1.6);
-      const lossGen = 0.8 * Math.pow(cutGenAgg, 1.6);
-      rowZ.push(lossEsp + lossGen);
-    }
-    zVals.push(rowZ);
-    xVals.push(cutEsp);
-  }
-  for (let j = 0; j < n; j++) yVals.push((j/(n-1))*15);
-
-  const curCutEsp = PARAMS.find(p=>p.id==="mesp").max - values["mesp"];
-  let curCutGen = 0;
-  PARAMS.forEach(p => { if (p.id !== "mesp" && p.id !== "mform") curCutGen += (p.max - values[p.id]); });
-  curCutGen += (PARAMS.find(p=>p.id==="mform").max - values["mform"]);
-  const curLoss = computeExcellenceLoss();
-
-  const surface = {
-    type: "surface", x: xVals, y: yVals, z: zVals,
-    colorscale: [[0,"#141a0d"],[0.3,"#3b4a2a"],[0.6,"#7cb342"],[0.85,"#c9e494"],[1,"#e8f5c0"]],
-    showscale: true,
-    colorbar: { title: "Pérdida excelencia", titlefont:{color:"#cfd6bd"}, tickfont:{color:"#cfd6bd"} },
-    opacity: 0.92
-  };
-  const point = {
-    type: "scatter3d", mode: "markers",
-    x: [curCutEsp], y: [Math.min(15,curCutGen)], z: [Math.min(curLoss, 400)],
-    marker: { size: 8, color: "#e05252", symbol: "circle", line: {color:"white", width:1} },
-    name: "Tu configuración actual"
-  };
-  const layout = {
-    paper_bgcolor: "#1a2113",
-    font: { color: "#cfd6bd", size: 11 },
-    margin: { t: 40, l: 0, r: 0, b: 0 },
-    title: { text: "Superficie de Excelencia: recorte Experiencia Profesional vs. resto de méritos", font: {size:13} },
-    scene: {
-      xaxis: { title: "Recorte Exper. Profesional (pts)", gridcolor: "#3b4a2a", color:"#cfd6bd" },
-      yaxis: { title: "Recorte resto de méritos (pts)", gridcolor: "#3b4a2a", color:"#cfd6bd" },
-      zaxis: { title: "Pérdida de excelencia", gridcolor: "#3b4a2a", color:"#cfd6bd" },
-      bgcolor: "#141a0d"
+    paper_bgcolor:'#1b2427', plot_bgcolor:'#1b2427',
+    font:{color:'#e8ecec'},
+    margin:{l:0,r:0,b:0,t:10},
+    scene:{
+      xaxis:{title:MERIT_FIELDS[xk].label, backgroundcolor:'#1b2427', gridcolor:'#2c3a3d', color:'#e8ecec'},
+      yaxis:{title:MERIT_FIELDS[yk].label, backgroundcolor:'#1b2427', gridcolor:'#2c3a3d', color:'#e8ecec'},
+      zaxis:{title:'Excelencia (Nota Final)', backgroundcolor:'#1b2427', gridcolor:'#2c3a3d', color:'#e8ecec'}
     }
   };
-  Plotly.newPlot("chart3d", [surface, point], layout, {displayModeBar: false});
+  Plotly.newPlot('chart3d', [trace], layout, {responsive:true, displayModeBar:false});
+  badge();
+}
+selX.addEventListener('change', render3D);
+selY.addEventListener('change', render3D);
+
+/* ============================ 5. Gráficos 2D (Plotly, tema oscuro) ============================ */
+const darkLayoutBase = {
+  paper_bgcolor:'#1b2427', plot_bgcolor:'#1b2427', font:{color:'#e8ecec'}
+};
+function renderDist(sim, base){
+  const t1 = {x:edadesVector, y:base, mode:'lines', name:'Modelo Base', line:{color:'#e15c4f', dash:'dash', width:2}, fill:'tozeroy'};
+  const t2 = {x:edadesVector, y:sim, mode:'lines', name:'Modelo Simulado', line:{color:'#5fae62', width:3}, fill:'tozeroy'};
+  Plotly.newPlot('distChart', [t1,t2], Object.assign({}, darkLayoutBase, {
+    title:'Densidad Poblacional Contrafactual vs Actual',
+    margin:{l:30,r:10,t:40,b:35},
+    xaxis:{title:'Edad Biológica (años)', gridcolor:'#2c3a3d'}, yaxis:{visible:false},
+    legend:{orientation:'h', y:-0.25}
+  }), {responsive:true, displayModeBar:false});
+}
+function renderBar(vals, names){
+  Plotly.newPlot('barChart', [{
+    x:vals, y:names, type:'bar', orientation:'h', marker:{color:'#d4a24e'}
+  }], Object.assign({}, darkLayoutBase, {
+    title:'Calibración del Baremo (Puntos Máximos)',
+    margin:{l:110,r:10,t:40,b:35},
+    xaxis:{gridcolor:'#2c3a3d'}
+  }), {responsive:true, displayModeBar:false});
 }
 
-let history = [];
-function update() {
-  const c = CATEGORIES[currentCat];
-  const age = computeAge();
-  const base = c.baseAge;
-  const delta = age - base;
-  document.getElementById("ageProjected").textContent = age.toFixed(1);
-  document.getElementById("ageBase").textContent = base.toFixed(1);
-  const deltaEl = document.getElementById("ageDelta");
-  deltaEl.textContent = (delta >= 0 ? "+" : "") + delta.toFixed(1);
-  deltaEl.style.color = delta < 0 ? "#8bc34a" : (delta > 0 ? "#e05252" : "#8a9478");
-  document.getElementById("floorAge").textContent = c.floor;
-  document.getElementById("ceilAge").textContent = c.ceil;
-
-  const loss = computeExcellenceLoss();
-  const lossPct = Math.min(100, loss / 3);
-  document.getElementById("excText").textContent = lossPct.toFixed(1) + "%";
-  const bar = document.getElementById("excBar");
-  bar.style.width = lossPct + "%";
-  bar.style.background = lossPct < 15 ? "#8bc34a" : (lossPct < 40 ? "#d4b96a" : "#e05252");
-
-  document.getElementById("masterVal").textContent = age.toFixed(1) + " años";
-
-  if (currentView === "2d") {
-    history.push(age);
-    if (history.length > 30) history.shift();
-    Plotly.update("chart2d", { x: [Array.from({length: history.length}, (_,i)=>i)], y: [history] });
-  } else {
-    renderSurface3D();
-  }
+/* ============================ 6. Matemáticas ============================ */
+function calcularPDF(x, mu, sigma, suelo, techo){
+  if(x<suelo || x>techo) return 0;
+  return (1/(sigma*Math.sqrt(2*Math.PI))) * Math.exp(-0.5*Math.pow((x-mu)/sigma,2));
+}
+function recalcularAlgoritmo(){
+  const data = dbEscalas[escalaActual];
+  const v = {}; Object.keys(inputs).forEach(k=>v[k]=parseInt(inputs[k].value));
+  let varianzaEdad = v.exp*0.2 + v.carnet*0.15 + v.moto*0.1 + v.fcse*0.15 + v.func*0.2
+    - v.acad*0.25 - v.master*0.3 - v.form*0.1 - v.idiom*0.05 - v.tic*0.05 - v.adr*0.05 - v.deporte*0.1;
+  let muSimulada = data.base.mu + varianzaEdad;
+  muSimulada = Math.max(data.suelo, Math.min(data.techo, muSimulada));
+  let sigmaSimulada = data.base.sigma * (1 - v.exp/80);
+  return {mu:muSimulada, sigma:Math.max(1.5,sigmaSimulada)};
 }
 
-document.querySelectorAll(".tab-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentCat = btn.dataset.cat;
-    const c = CATEGORIES[currentCat];
-    document.getElementById("masterSlider").min = c.floor;
-    document.getElementById("masterSlider").max = c.ceil;
-    resetSliders();
-    history = [];
-    update();
+/* ============================ 7. Render UI ============================ */
+const PARAM_ORDER = ['exp','form','serv','acad','master','idiom','tic','carnet','moto','adr','deporte','fcse','func'];
+const PARAM_NAMES = ['Experiencia','Formación','T.Servicio','Académico','Máster/Doct.','Idiomas','TIC','Carnet','Moto','ADR','Deporte','FCSE','Funcionariado'];
+
+function renderizarEntorno(){
+  const data = dbEscalas[escalaActual];
+  const sim = recalcularAlgoritmo();
+  labels.edadBase.innerText = data.base.mu.toFixed(1);
+  labels.edadSim.innerText = sim.mu.toFixed(1) + " Años";
+  labels.suelo.innerText = data.suelo;
+  labels.techo.innerText = data.techo;
+  Object.keys(inputs).forEach(k=>{ labels[k].innerText = inputs[k].value + " pts"; });
+
+  const total = Object.keys(inputs).reduce((s,k)=>s+parseInt(inputs[k].value),0);
+  labels.total.innerText = total + " pts";
+
+  const vals = PARAM_ORDER.map(k=>parseInt(inputs[k].value));
+  renderBar(vals, PARAM_NAMES);
+
+  const pdfBase = edadesVector.map(x=>calcularPDF(x, data.base.mu, data.base.sigma, data.suelo, data.techo));
+  const pdfSim = edadesVector.map(x=>calcularPDF(x, sim.mu, sim.sigma, data.suelo, data.techo));
+  renderDist(pdfSim, pdfBase);
+}
+
+function cambiarEscala(escala){
+  escalaActual = escala;
+  const data = dbEscalas[escala];
+  Object.keys(inputs).forEach(k=>{ inputs[k].value = data.opt[k]; });
+  document.querySelectorAll('.selector-escala button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.escala === escala);
   });
+  renderizarEntorno();
+}
+
+/* ============================ 8. Listeners ============================ */
+document.querySelectorAll('.selector-escala button').forEach(btn=>{
+  btn.addEventListener('click', e=>cambiarEscala(e.target.dataset.escala));
 });
+Object.values(inputs).forEach(inp=>inp.addEventListener('input', renderizarEntorno));
 
-document.querySelectorAll(".view-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentView = btn.dataset.view;
-    if (currentView === "2d") {
-      document.getElementById("chart2d").style.display = "block";
-      document.getElementById("chart3d").style.display = "none";
-      initChart2D();
-      update();
-    } else {
-      document.getElementById("chart2d").style.display = "none";
-      document.getElementById("chart3d").style.display = "block";
-      renderSurface3D();
-    }
-  });
-});
-
-document.getElementById("masterSlider").addEventListener("input", (e) => {
-  const target = parseFloat(e.target.value);
-  allocateForTargetAge(target);
-  update();
-});
-
-const initCat = CATEGORIES[currentCat];
-document.getElementById("masterSlider").min = initCat.floor;
-document.getElementById("masterSlider").max = initCat.ceil;
-document.getElementById("masterSlider").value = initCat.baseAge;
-
-renderParams();
-initChart2D();
-update();
+/* ============================ Ignición ============================ */
+cambiarEscala('oficial');
+render3D();
 </script>
 </body>
 </html>
