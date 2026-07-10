@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DINOSAURIO — Simulador analítico del baremo de Reservistas Voluntarios</title>
+<title>DINOSAURIO - Simulador analítico del baremo de Reservistas Voluntarios</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js"></script>
 <style>
 :root{
@@ -58,7 +58,7 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
 
 <div class="header">
   <h1>DINOSAURIO</h1>
-  <p>Panel de sensibilidad Edad↔Mérito del baremo · Análisis sobre datos BOE 2024–2025</p>
+  <p>Panel de sensibilidad Edad ↔ Mérito del baremo · Análisis sobre datos BOE 2024–2025</p>
 </div>
 
 <div class="selector-escala" id="scale-selectors">
@@ -68,7 +68,7 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
   <button data-escala="cuerpos_comunes">Cuerpos Comunes</button>
 </div>
 <div class="info-text" style="margin:-15px 0 20px 2px;">
-  Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire — ver disclaimer.
+  Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire - ver disclaimer.
 </div>
 
 <div class="grid-container">
@@ -99,13 +99,13 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
     <div class="control-group">
       <label>Formación Específica <span class="tag" id="val-form">-- pts</span></label>
       <input type="range" id="param-form" min="0" max="16" step="1">
-      <span class="info-text">Sub-ítem de Mérito Específico. Dato importante: en los datos reales, Mérito Específico correlaciona <strong>positivamente</strong> con la edad (r=0,54): a más puntuación en este bloque, candidatos de más edad, no de menos — probablemente porque agrega experiencia profesional acumulada.</span>
+      <span class="info-text">Sub-ítem de Mérito Específico. Dato importante: en los datos reales, Mérito Específico correlaciona <strong>positivamente</strong> con la edad (r=0,54): a más puntuación en este bloque, candidatos de más edad, no de menos - probablemente porque agrega experiencia profesional acumulada.</span>
     </div>
 
     <div class="control-group">
       <label>Tiempos de Servicio <span class="tag" id="val-serv">-- pts</span></label>
       <input type="range" id="param-serv" min="0" max="10" step="1">
-      <span class="info-text">Apartado real independiente (máx. oficial: 10 pts). Corr. con edad r≈0,00 — casi nadie aporta años de servicio previo, así que apenas mueve el resultado.</span>
+      <span class="info-text">Apartado real independiente (máx. oficial: 10 pts). Corr. con edad r≈0,00 - casi nadie aporta años de servicio previo, así que apenas mueve el resultado.</span>
     </div>
 
     <div class="control-group new">
