@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DINOSAURIO — Simulador analítico del baremo de reservistas voluntarios · Optimización contrafactual del baremo</title>
+<title>DINOSAURIO — Simulador analítico del baremo de Reservistas Voluntarios</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js"></script>
 <style>
 :root{
@@ -58,7 +58,7 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
 
 <div class="header">
   <h1>DINOSAURIO</h1>
-  <p>Panel de sensibilidad Edad↔Mérito del baremo de reservistas voluntarios · Regresión sobre datos oficiales BOE 2024–2025</p>
+  <p>Panel de sensibilidad Edad↔Mérito del baremo · Análisis sobre datos BOE 2024–2025</p>
 </div>
 
 <div class="selector-escala" id="scale-selectors">
@@ -68,11 +68,7 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
   <button data-escala="cuerpos_comunes">Cuerpos Comunes</button>
 </div>
 <div class="info-text" style="margin:-15px 0 20px 2px;">
-  Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire; Cuerpos
-  Comunes (jurídico, sanidad, intervención...) es un colectivo aparte con acceso y baremación propios
-  (perfiles con titulación específica, sin candidatos clasificados menores de 30 años en la muestra
-  real). No son dimensiones equivalentes, pero el código de vacante solo permite separar con garantías
-  Cuerpos Comunes del resto — ver disclaimer.
+  Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire — ver disclaimer.
 </div>
 
 <div class="grid-container">
@@ -281,18 +277,18 @@ input[type=range]{width:100%;accent-color:var(--color-primario);cursor:pointer;}
   no como cifras medidas. La única población medida con precisión para <em>este</em> baremo es la de
   los propios aspirantes clasificados (n=750, edad 20-57, media 43,9) — es la que efectivamente pesa en
   el modelo, no las medias poblacionales genéricas, que solo aportan contexto normativo.<br><br>
-  <strong>Contexto jurídico (informativo, no es asesoramiento legal).</strong> La edad como criterio de
+  <strong>Contexto jurídico </strong> La edad como criterio de
   acceso al empleo público militar ha sido objeto de litigios recientes en España: la STS 269/2022 (Sala
   Contencioso-Administrativo, 3 de marzo de 2022) anuló los límites de edad para que los suboficiales
   accedieran a la escala de oficiales por carecer de justificación objetiva, y la SAN 3890/2025 de la
   Audiencia Nacional declaró nulas por discriminatorias resoluciones que mantenían esos límites solo
-  para Tropa y Marinería. Ambos casos versan sobre ficciones de edad forzadas explícitas (alteran la edad de ingreso real), no sobre el efecto de un baremo de méritos. Aunque no se ha localizado un recurso específico contra el baremo de la
-  convocatoria de Reservistas Voluntarios por este motivo; existe al menos un análisis académico previo
+  para Tropa y Marinería. Ambos casos versan sobre la edad (alteran la edad de ingreso real), no sobre el efecto de un baremo de méritos. Aunque no se he localizado un recurso específico contra el baremo de la
+  convocatoria de Reservistas Voluntarios por este motivo, existe al menos un análisis académico previo
   (Gil Talavera, "Reserva Voluntaria, un recurso valioso dentro de la cultura de seguridad") que ya
-  señalaba que el sistema de acceso favorece al tramo 35-58 en detrimento del tramo 23-34. Es decir, las actuales convocatorias incumplirian sistematicamente la Ley 15/2022 Sin embargo, si el diseño
-  del baremo cumple la Ley 15/2022 es, en última instancia, una cuestión que correspondería resolver a
+  señalaba que el sistema de acceso favorece al tramo 35-58 en detrimento del tramo 23-34. Es decir, las actuales convocatorias podrian estar fuera del marco de la Ley 15/2022 Sin embargo, si el diseño
+  del baremo cumple o no la Ley 15/2022 es, en última instancia, una cuestión que correspondería resolver a
   los tribunales, valorando si el peso de la experiencia acreditada responde a una justificación objetiva
-  y proporcionada al puesto — el mismo estándar que aplicó el Supremo en la STS 269/2022.
+  y proporcional al puesto, que es el estándar que aplicó el Supremo en la STS 269/2022.
 </div>
 
 <script>
