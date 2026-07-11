@@ -230,6 +230,61 @@
 
   footer{color:var(--muted);font-size:0.74rem;text-align:center;margin-top:26px;line-height:1.7;padding:0 10px;}
   footer .rex-mini{font-size:1.1rem;vertical-align:middle;margin-right:6px;}
+
+  /* ===== v7 additions: Monte Carlo / Bootstrap 10y projection panel ===== */
+  .mc-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:18px;position:relative;}
+  .mc-card::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;
+    background:var(--accent-2);border-radius:var(--radius) 0 0 var(--radius);}
+  .mc-card h2{font-size:0.98rem;margin:0 0 4px;display:flex;align-items:center;gap:9px;
+    color:var(--khaki);letter-spacing:.02em;flex-wrap:wrap;}
+  .mc-card .sub{color:var(--muted);font-size:0.8rem;margin:0 0 14px;line-height:1.5;}
+  .mc-controls{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;
+    background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+  .mc-ctrl{display:flex;flex-direction:column;gap:4px;min-width:150px;flex:1;}
+  .mc-ctrl label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
+  .mc-ctrl .mc-val{font-size:0.82rem;font-weight:700;color:var(--accent);}
+  .mc-ctrl input[type="range"]{width:100%;}
+  .mc-run-btn{background:var(--olive);color:#0e1109;border:1px solid var(--olive);
+    border-radius:7px;padding:9px 18px;font-weight:700;font-size:0.82rem;cursor:pointer;
+    transition:.15s;white-space:nowrap;}
+  .mc-run-btn:hover{background:var(--olive-light);}
+  .mc-run-btn:disabled{opacity:.5;cursor:wait;}
+  .mc-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+  @media (max-width:800px){.mc-kpi-grid{grid-template-columns:1fr 1fr;}}
+  .mc-kpi{background:var(--panel-2);border:1px solid var(--border);border-radius:11px;
+    padding:14px;text-align:center;}
+  .mc-kpi .kv{font-size:1.5rem;font-weight:800;line-height:1;margin-bottom:4px;color:var(--accent-2);}
+  .mc-kpi .kl{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+  .mc-chart-box{background:var(--panel-2);border:1px solid var(--border);border-radius:11px;
+    padding:14px;margin-bottom:14px;}
+  .mc-chart-box h3{margin:0 0 8px;font-size:0.82rem;color:var(--muted);font-weight:600;letter-spacing:.02em;}
+  .mc-legend{display:flex;gap:14px;font-size:0.72rem;color:var(--muted);margin-top:8px;flex-wrap:wrap;}
+  .mc-legend span{display:flex;align-items:center;gap:6px;}
+  .mc-legend .swatch{width:14px;height:9px;border-radius:2px;display:inline-block;}
+  .mc-legend .sw-band90{background:rgba(217,164,65,.18);border:1px solid rgba(217,164,65,.4);}
+  .mc-legend .sw-band50{background:rgba(217,164,65,.38);border:1px solid rgba(217,164,65,.6);}
+  .mc-legend .sw-median{background:none;border-top:2px solid var(--danger);width:14px;height:0;}
+  .mc-legend .sw-hist{background:none;border-top:2px dashed var(--khaki);width:14px;height:0;}
+  .mc-foot{font-size:0.7rem;color:var(--muted);margin:8px 0 0;line-height:1.5;}
+  .mc-export-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+  .mc-export-row .mode-btn{font-size:0.76rem;}
+  .mc-status{font-size:0.76rem;color:var(--accent);min-height:18px;margin-top:8px;}
+  .mc-status.err{color:var(--danger);}
+  .mc-pill{font-size:0.68rem;font-weight:700;color:#0e1109;background:var(--accent-2);
+    border-radius:999px;padding:2px 9px;letter-spacing:.02em;}
+  .mc-snap-checks{display:flex;flex-direction:column;gap:6px;}
+  .mc-snap-check{display:flex;align-items:center;gap:8px;font-size:0.82rem;color:var(--text);
+    cursor:pointer;user-select:none;}
+  .mc-snap-check input{cursor:pointer;accent-color:var(--accent);}
+  .mc-snap-dot{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none;
+    box-shadow:0 0 0 1px rgba(255,255,255,.15);}
+  .dot-a{background:#e3453f;}
+  .dot-b{background:#4a90d9;}
+  .dot-c{background:#8fae4a;}
+  .mc-multi-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:0.74rem;color:var(--muted);margin-top:6px;}
+  .mc-multi-legend span{display:flex;align-items:center;gap:6px;}
+
 </style>
 </head>
 <body>
@@ -239,14 +294,14 @@
     <div class="rex-badge">&#129430;</div>
     <div class="masthead-text">
       <h1>DINOSAURIO <span class="accent">&middot;</span> Simulador analítico del baremo de Reservistas Voluntarios</h1>
-      <p>Panel de sensibilidad Edad &harr; Mérito del baremo &middot; Regresión sobre datos oficiales BOE 2023&ndash;2025 (n=1.049 aspirantes clasificados)</p>
+      <p>Panel de sensibilidad Edad &harr; Mérito del baremo &middot; Regresión sobre datos oficiales BOE 2023&ndash;2025 (n=1.123 aspirantes clasificados)</p>
       <div class="cat-selector" id="catSelector">
         <button class="cat-btn sel" data-cat="oficiales">Oficiales</button>
         <button class="cat-btn" data-cat="suboficiales">Suboficiales</button>
         <button class="cat-btn" data-cat="tropa">Tropa y Marinería</button>
         <button class="cat-btn" data-cat="comunes">Cuerpos Comunes</button>
       </div>
-      <p class="cat-note">Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire; Cuerpos Comunes (jurídico, sanidad, intervención...) es un colectivo aparte con acceso y baremación propios - <a id="disclaimerLink">ver disclaimer</a>.</p>
+      <p class="cat-note">Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire; Cuerpos Comunes (jurídico, sanidad, intervención...) es un colectivo aparte con acceso y baremación propios &mdash; <a id="disclaimerLink">ver disclaimer</a>.</p>
     </div>
   </div>
 </header>
@@ -709,13 +764,73 @@
     </div>
   </div>
 
+  
+  <div class="mc-card" id="monteCarloCard">
+    <h2>Proyección hasta 15 años &middot; Motor Monte Carlo (paseo aleatorio) <span class="mc-pill">v7 · experimental</span></h2>
+    <p class="sub">Simulación Monte Carlo de paseo aleatorio: cada trayectoria aplica año a año la deriva configurable + un shock gaussiano aleatorio, con semilla fija para que sea reproducible. No es un bootstrap real (no remuestrea transiciones observadas de altas/bajas/reenganches, porque todavía no disponemos de esos datos) — es un ejercicio de sensibilidad con parámetros ajustables a mano. <strong>La proyección parte siempre de un snapshot guardado arriba</strong> (A, B o Referencia BOE) — así el punto de origen es tu configuración real de méritos, no una media poblacional genérica. Guarda un snapshot en el comparador de arriba antes de simular.</p>
+
+    <div class="mc-controls">
+      <div class="mc-ctrl" style="min-width:280px;">
+        <label>Snapshots a proyectar (marca uno o varios)</label>
+        <div class="mc-snap-checks">
+          <label class="mc-snap-check" data-slot="A"><input type="checkbox" id="mcUseA" class="mc-snap-cb" value="A"><span class="mc-snap-dot dot-a"></span>Snapshot A</label>
+          <label class="mc-snap-check" data-slot="B"><input type="checkbox" id="mcUseB" class="mc-snap-cb" value="B"><span class="mc-snap-dot dot-b"></span>Snapshot B</label>
+          <label class="mc-snap-check" data-slot="C"><input type="checkbox" id="mcUseC" class="mc-snap-cb" value="C"><span class="mc-snap-dot dot-c"></span>Snapshot C (Ref. BOE)</label>
+        </div>
+        <span class="mc-val" id="val-mcSourceSnap">Sin snapshots seleccionados</span>
+      </div>
+      <div class="mc-ctrl">
+        <label for="mcIterations">Iteraciones bootstrap / año</label>
+        <input type="range" id="mcIterations" min="200" max="8000" step="100" value="4000">
+        <span class="mc-val" id="val-mcIterations">4000 iteraciones</span>
+      </div>
+      <div class="mc-ctrl">
+        <label for="mcDrift">Deriva anual (&Delta; edad media / año)</label>
+        <input type="range" id="mcDrift" min="-0.5" max="0.5" step="0.05" value="0">
+        <span class="mc-val" id="val-mcDrift">0.00 años/año</span>
+      </div>
+      <div class="mc-ctrl">
+        <label for="mcHorizon">Horizonte de proyección</label>
+        <input type="range" id="mcHorizon" min="3" max="15" step="1" value="10">
+        <span class="mc-val" id="val-mcHorizon">10 años</span>
+      </div>
+      <button class="mc-run-btn" id="btnRunMC" disabled>Ejecutar simulación</button>
+    </div>
+
+    <div class="mc-kpi-grid">
+      <div class="mc-kpi"><div class="kv" id="mc-kpi-medianfinal">&ndash;</div><div class="kl">Edad mediana año 10</div></div>
+      <div class="mc-kpi"><div class="kv" id="mc-kpi-p10p90">&ndash;</div><div class="kl">Banda P10&ndash;P90 año 10</div></div>
+      <div class="mc-kpi"><div class="kv" id="mc-kpi-captacion">&ndash;</div><div class="kl">Captación joven &lt;35a (año 10)</div></div>
+      <div class="mc-kpi"><div class="kv" id="mc-kpi-runtime">&ndash;</div><div class="kl">Tiempo de cómputo</div></div>
+    </div>
+
+    <div class="mc-chart-box">
+      <h3>Abanico de percentiles &middot; edad estimada proyectada desde 2026 <span id="mcChartTitleHorizon"></span></h3>
+      <canvas id="chartMonteCarlo" width="900" height="380"></canvas>
+      <div class="mc-legend">
+        <span><span class="swatch sw-band90"></span>Banda P10&ndash;P90 (solo si hay 1 snapshot activo)</span>
+        <span><span class="swatch sw-band50"></span>Banda P25&ndash;P75 (solo si hay 1 snapshot activo)</span>
+        <span><span class="swatch sw-hist"></span>Edad base actual (norma vigente)</span>
+      </div>
+      <div class="mc-multi-legend" id="mcMultiLegend"></div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Si dos snapshots parten de una edad muy similar, sus líneas pueden casi coincidir: además del color, cada snapshot usa un trazo distinto (A sólido, B a rayas, C punteado) para poder distinguirlas siempre.</p>
+      <p class="mc-foot">Motor: Monte Carlo de paseo aleatorio (no bootstrap: no remuestrea datos reales de trayectoria, que todavía no tenemos), encadenado año a año con deriva + ruido gaussiano configurados arriba, semilla fija para reproducibilidad. Cada punto del abanico resume miles de simulaciones paramétricas independientes; no es una serie temporal observada, es un ejercicio de sensibilidad sujeto a las mismas limitaciones metodológicas descritas en el disclaimer inferior.</p>
+    </div>
+
+    <div class="mc-export-row">
+      <button class="mode-btn" id="btnExportVensim">&#128190; Exportar CSV (Vensim)</button>
+      <button class="mode-btn" id="btnExportJSON">&#128190; Exportar JSON completo</button>
+    </div>
+    <div class="mc-status" id="mcStatus"></div>
+  </div>
+
   <div class="disclaimer-block" id="disclaimerBlock">
     <h3>Notas metodológicas y disclaimer</h3>
-    <p>DINOSAURIO es un ejercicio académico basado en las resoluciones publicadas de las convocatorias de Reservistas Voluntarios (BOE 2022&ndash;2024) y en un modelo de regresión estimado sobre la muestra real combinada 2023&ndash;2025 (n=1.049 aspirantes clasificados: 299 en 2023 + 350 en 2024 + 400 en 2025).</p>
+    <p>DINOSAURIO es un ejercicio analítico basado en las resoluciones publicadas de las convocatorias de Reservistas Voluntarios (BOE 2022&ndash;2024) y en un modelo de regresión estimado sobre la muestra real combinada 2023&ndash;2025 (n=1.123 aspirantes clasificados: 373 en 2023 + 350 en 2024 + 400 en 2025).</p>
 
     <h4>Metodología y datos</h4>
     <ul>
-      <li><span class="warn-strip">MODELO</span>El coeficiente global años/pto sobre el total de méritos difiere por escala tras fusionar 2023-2025: +0,3752 años/pto en Oficial/Suboficial/Tropa (OLS, R²&asymp;0,25, n=768) y +0,4350 años/pto en Cuerpos Comunes (R²&asymp;0,42, n=281), error residual &asymp;7,0 y &asymp;5,5 años respectivamente. Son tendencias centrales estimadas, no una predicción exacta. El resto de la variación depende de factores no capturados por los apartados (orden de petición, disponibilidad de plazas, autoselección de candidatos por convocatoria, etc.).</li>
+      <li><span class="warn-strip">MODELO</span>Modelo con coeficientes por apartado (no un único coeficiente global): en Oficial/Suboficial/Tropa (n=769, R²=0,258) T.Servicio +0,165 &middot; Académicos &minus;0,297 &middot; Generales &minus;0,033 &middot; Mérito Específico +0,410 años/pto; en Cuerpos Comunes (n=354, R²=0,396) T.Servicio +1,314 &middot; Académicos +0,165 &middot; Generales +0,216 &middot; Mérito Específico +0,506 años/pto. Dispersión residual &asymp;7,03 y &asymp;6,10 años respectivamente. Son tendencias centrales estimadas (OLS), no una predicción exacta. El resto de la variación depende de factores no capturados por los apartados (orden de petición, disponibilidad de plazas, autoselección de candidatos por convocatoria, etc.). Los sliders de Idiomas, TIC, Carnets, Moto, ADR, Deportista, FCSE y Funcionariado (Bloques 3 a 6) son informativos: no suman a la edad estimada, para evitar contar dos veces lo que ya recoge el apartado agregado "Méritos Generales".</li>
       <li><span class="warn-strip">PROMEDIOS 2025</span>Los sliders parten de los valores medios observados en la muestra (basePts del modelo de regresión), no de cero, para representar el perfil típico de un aspirante clasificado.</li>
       <li><span class="warn-strip">AJUSTE PONDERADO</span>El modo "Proporcional" del ajuste global escala cada mérito según su propio valor base (delta = base &times; %), preservando la estructura relativa entre apartados grandes y pequeños. El modo "Uniforme" resta/suma el mismo delta absoluto a todos, lo que penaliza mucho más (en términos relativos) a los apartados pequeños que a los grandes &mdash; esto se refleja en el indicador de "Distorsión de igualdad", calculado como la diferencia porcentual entre el valor medio de los méritos pequeños (&lt;4 pts) y grandes (&ge;4 pts) tras el ajuste.</li>
       <li><span class="warn-strip">SATURACIÓN</span>El sub-ítem "Otros cursos/diplomas/certificados" del Mérito Específico está legalmente truncado a 4 puntos (8 cursos de 0,5 pts), según el Apéndice 3 de las convocatorias BOE 2022, 2023 y 2024.</li>
@@ -735,10 +850,12 @@
       <li>Si el diseño del baremo cumple la Ley 15/2022 es, en última instancia, una cuestión que correspondería resolver a los tribunales, valorando si el peso otorgado a la experiencia acreditada responde a una justificación objetiva y proporcionada al puesto.</li>
     </ul>
 
-</div>
+    <div class="credit">DINOSAURIO es un ejercicio académico elaborado con fines educativos e informativos por Manuel Hernández González. No constituye un documento oficial, no está avalado por el Ministerio de Defensa y no sustituye la consulta de la convocatoria vigente ni el asesoramiento jurídico profesional.</div>
+  </div>
 
   <footer>
-    <span class="rex-mini">&#129430;</span>DINOSAURIO &middot; es un ejercicio académico elaborado con fines educativos e informativos por Manuel Hernández González. No constituye un documento oficial, no está avalado por el Ministerio de Defensa y no sustituye la consulta de la convocatoria vigente ni el asesoramiento jurídico profesional.
+    <span class="rex-mini">&#129430;</span>DINOSAURIO &middot; Simulador analítico basado en el Apéndice 3 (Baremo) de las convocatorias de acceso a Reservista Voluntario
+    publicadas en el BOE 2022, 2023 y 2024, y en un modelo de regresión sobre la muestra real 2024-25.
   </footer>
 </div>
 
@@ -746,15 +863,56 @@
 (function(){
 "use strict";
 
-// Coeficientes fusionados 2023 (n=299 clasificados) + 2024-25 (n=750 clasificados) = n=1.049 total
-// Ejercitos (Oficial/Suboficial/Tropa, prefijos vacante 5/6/7): coef=0.3752 anios/pto, n=768, R2approx0.25
-// Cuerpos Comunes (prefijo vacante 4): coef=0.4350 anios/pto, n=281, R2approx0.42
-var AGE_BOUNDS = {
-  oficiales:{min:22, max:58, base:44.46, sigma:7.45, coef:0.3752},
-  suboficiales:{min:20, max:58, base:44.49, sigma:7.33, coef:0.3752},
-  tropa:{min:18, max:55, base:44.16, sigma:6.95, coef:0.3752},
-  comunes:{min:22, max:58, base:46.16, sigma:6.71, coef:0.4350}
+// Coeficientes reales por apartado (regresion OLS, Edad ~ 4 apartados oficiales), BOE 2023-2025
+// Ejercitos (Oficial/Suboficial/Tropa, prefijo vacante 5/6/7): n=769, R2=0.258
+// Cuerpos Comunes (prefijo vacante 4): n=354, R2=0.396
+var COEF_MODELOS = {
+  ejercitos:{ tserv:0.1648, macad:-0.2972, mgen:-0.0332, mesp:0.4101 },
+  comunes:{ tserv:1.3143, macad:0.1653, mgen:0.2164, mesp:0.5062 }
 };
+var BASE_CAT_MODELOS = {
+  ejercitos:{ tserv:0.51, macad:5.95, mgen:1.70, mesp:19.17 },
+  comunes:{ tserv:0.10, macad:8.02, mgen:3.13, mesp:23.79 }
+};
+var AGE_BOUNDS = {
+  oficiales:{min:22, max:58, base:43.49, sigma:7.25, modelo:'ejercitos', coefLegacy:0.2263},
+  suboficiales:{min:20, max:58, base:43.45, sigma:7.31, modelo:'ejercitos', coefLegacy:0.2263},
+  tropa:{min:18, max:55, base:42.76, sigma:6.89, modelo:'ejercitos', coefLegacy:0.2263},
+  comunes:{min:22, max:58, base:43.76, sigma:7.04, modelo:'comunes', coefLegacy:0.5506}
+};
+// coefLegacy = media de |coeficientes| por apartado del modelo real. Uso EXCLUSIVO y provisional de
+// renderSensitivityPanel (panel de sensibilidad por Bloque visual, no por apartado real), que el
+// auditor dejo señalado como pendiente de reescritura fina. No se usa en ningun otro calculo de edad.
+
+// Cada campo del panel se asigna a UNO de los 4 apartados reales, o a null si no tiene
+// tabla de puntos nacional. Los que valen null quedan como dato informativo, no suman a
+// la edad, precisamente para no contar dos veces lo que ya recoge "generales".
+var REAL_CAT = {
+  tservicio:'tserv',
+  experiencia:'mesp', titulacion:'mesp', cursos:'mesp',
+  generales:'mgen',
+  academicosbase:'macad', masterdoc:'macad',
+  idiomas:null, tic:null, carnets:null, moto:null, adr:null,
+  deportista:null, fcse:null, funcionario:null
+};
+
+function computeAgeFromCatPts(catPts, bounds){
+  var coef = COEF_MODELOS[bounds.modelo];
+  var basePts = BASE_CAT_MODELOS[bounds.modelo];
+  var delta = coef.tserv*(catPts.tserv-basePts.tserv)
+            + coef.macad*(catPts.macad-basePts.macad)
+            + coef.mgen *(catPts.mgen -basePts.mgen)
+            + coef.mesp *(catPts.mesp -basePts.mesp);
+  return clamp(bounds.base + delta, bounds.min, bounds.max);
+}
+function sumByCat(valsById){
+  var out = {tserv:0, macad:0, mgen:0, mesp:0};
+  Object.keys(valsById).forEach(function(id){
+    var cat = REAL_CAT[id];
+    if(cat){ out[cat] += valsById[id]; }
+  });
+  return out;
+}
 var currentCat = 'oficiales';
 var hypMode = false;
 var equityMode = 'proporcional';
@@ -924,6 +1082,7 @@ function drawMainChart(gN, gH, edadNorm, edadHyp, bounds){
 function computeEquity(adjustPct, mode){
   var totalPts = 0;
   var vals = [];
+  var valsById = {};
   fields.forEach(function(f){
     var base = BASE2025[f.id] || 0;
     var input = document.getElementById(f.id);
@@ -936,6 +1095,7 @@ function computeEquity(adjustPct, mode){
     }
     var v = clamp(base + delta, 0, normMax);
     vals.push(v);
+    valsById[f.id] = v;
     totalPts += v;
   });
   var bigVals = vals.filter(function(v){return v>=4;});
@@ -943,7 +1103,7 @@ function computeEquity(adjustPct, mode){
   var avgBig = bigVals.length ? bigVals.reduce(function(a,b){return a+b;},0)/bigVals.length : 0;
   var avgSmall = smallVals.length ? smallVals.reduce(function(a,b){return a+b;},0)/smallVals.length : 0;
   var distortion = avgBig>0 ? Math.abs((avgSmall/avgBig) - 1)*100 : 0;
-  return { totalPts: totalPts, distortion: distortion };
+  return { totalPts: totalPts, distortion: distortion, catPts: sumByCat(valsById) };
 }
 
 function updateEquityPanel(bounds){
@@ -953,8 +1113,8 @@ function updateEquityPanel(bounds){
   var resU = computeEquity(adjustPct, 'uniforme');
   var resP = computeEquity(adjustPct, 'proporcional');
 
-  var ageU = clamp(bounds.base - resU.totalPts*bounds.coef/10, bounds.min, bounds.max);
-  var ageP = clamp(bounds.base - resP.totalPts*bounds.coef/10, bounds.min, bounds.max);
+  var ageU = computeAgeFromCatPts(resU.catPts, bounds);
+  var ageP = computeAgeFromCatPts(resP.catPts, bounds);
 
   document.getElementById('eq-uniforme-age').textContent = ageU.toFixed(1)+' años';
   document.getElementById('eq-prop-age').textContent = ageP.toFixed(1)+' años';
@@ -1021,14 +1181,16 @@ function captureSnapshot(){
 function captureRefSnapshot(){
   var bounds = AGE_BOUNDS[currentCat];
   var gRef = {};
+  var valsById = {};
   fields.forEach(function(f){
     var base = BASE2025[f.id] || 0;
     var v = f.isCourses ? pointsForCourses(Math.min(base,8), true) : base;
     gRef[f.group] = (gRef[f.group]||0) + v;
+    valsById[f.id] = v;
   });
   var vals = BLOCK_LABELS.map(function(g){return gRef[g]||0;});
   var totalPts = vals.reduce(function(a,b){return a+b;},0);
-  var age = clamp(bounds.base - totalPts*bounds.coef/10, bounds.min, bounds.max);
+  var age = computeAgeFromCatPts(sumByCat(valsById), bounds);
   var sigma = bounds.sigma;
   var cap = normCDF((35-age)/sigma)*100;
   return { vals: vals, area: trapzArea(vals), pts: totalPts, age: age, cap: cap, cat: currentCat };
@@ -1110,8 +1272,8 @@ function renderSensitivityPanel(base){
     var vPlus = base.vals.slice(); vPlus[i] = v+1;
     var ptsPlus = vPlus.reduce(function(a,b2){return a+b2;},0);
     var ptsBase = base.vals.reduce(function(a,b2){return a+b2;},0);
-    var agePlus = clamp(bounds.base - ptsPlus*bounds.coef/10, bounds.min, bounds.max);
-    var ageBase = clamp(bounds.base - ptsBase*bounds.coef/10, bounds.min, bounds.max);
+    var agePlus = clamp(bounds.base - ptsPlus*bounds.coefLegacy/10, bounds.min, bounds.max);
+    var ageBase = clamp(bounds.base - ptsBase*bounds.coefLegacy/10, bounds.min, bounds.max);
     return Math.abs(agePlus-ageBase);
   });
   var maxSens = Math.max(0.001, Math.max.apply(null, sens));
@@ -1156,6 +1318,7 @@ function buildDeltaSummaryText(){
 function updateAll(){
   var totalNorm=0, totalHyp=0;
   var gN={}, gH={};
+  var valsNormById={}, valsHypById={};
 
   fields.forEach(function(f){
     var input = document.getElementById(f.id);
@@ -1180,6 +1343,7 @@ function updateAll(){
     document.getElementById('val-'+f.id).innerHTML = display;
     document.getElementById('val-'+f.id).classList.toggle('exceed', rawVal>normMax);
 
+    valsNormById[f.id]=ptsNorm; valsHypById[f.id]=ptsHyp;
     totalNorm += ptsNorm; totalHyp += ptsHyp;
     gN[f.group]=(gN[f.group]||0)+ptsNorm;
     gH[f.group]=(gH[f.group]||0)+ptsHyp;
@@ -1197,8 +1361,10 @@ function updateAll(){
   document.getElementById('rb-suelo').innerHTML = bounds.min+'<small>Suelo biológico (años)</small>';
   document.getElementById('rb-techo').innerHTML = bounds.max+'<small>Techo legal (años)</small>';
 
-  var edadNorm = clamp(bounds.base - totalNorm*bounds.coef/10, bounds.min, bounds.max);
-  var edadHyp = clamp(bounds.base - totalHyp*bounds.coef/10, bounds.min, bounds.max);
+  var catPtsNorm = sumByCat(valsNormById);
+  var catPtsHyp = sumByCat(valsHypById);
+  var edadNorm = computeAgeFromCatPts(catPtsNorm, bounds);
+  var edadHyp = computeAgeFromCatPts(catPtsHyp, bounds);
   document.getElementById('kpi-edad-norm').textContent = edadNorm.toFixed(1)+' años';
   document.getElementById('kpi-edad-hyp').textContent = edadHyp.toFixed(1)+' años';
 
@@ -1302,6 +1468,450 @@ document.getElementById('disclaimerLink').addEventListener('click', function(){
 applyRangeLimits();
 updateAll();
 window.addEventListener('load', updateAll);
+
+})();
+</script>
+
+<script>
+(function(){
+"use strict";
+// ===== v7.5: Motor Monte Carlo — proyección hasta 15 años, multi-snapshot superpuesto =====
+// Módulo autocontenido: no depende de variables internas del script original (closure separado).
+// Cero líneas del script original v6 son leídas, modificadas o requeridas.
+// NUEVO v7.5: permite marcar A, B y/o C simultáneamente. Se ejecuta una simulación independiente
+// por cada snapshot activo (misma semilla base, offset por snapshot para diferenciarlas sin perder
+// reproducibilidad) y se dibujan todas superpuestas, cada una con su color (A=rojo, B=azul, C=verde).
+// Con 1 solo snapshot activo se muestran también las bandas de percentiles P10-P90/P25-P75; con 2 o
+// más activos se muestran solo las líneas medias, para que el gráfico no se sature visualmente.
+
+var AGE_BOUNDS_MC = {
+  oficiales:{min:22, max:58, base:43.49, sigma:7.25},
+  suboficiales:{min:20, max:58, base:43.45, sigma:7.31},
+  tropa:{min:18, max:55, base:42.76, sigma:6.89},
+  comunes:{min:22, max:58, base:43.76, sigma:7.04}
+};
+
+var SNAP_COLORS = { A:'#e3453f', B:'#4a90d9', C:'#8fae4a' };
+var SNAP_LABELS = { A:'Snapshot A', B:'Snapshot B', C:'Snapshot C (Ref. BOE)' };
+var SNAP_SEED_OFFSET = { A:0, B:7777, C:44444 };
+
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+var rng = mulberry32(20260711);
+
+function erfMC(x){
+  var sign = x >= 0 ? 1 : -1;
+  x = Math.abs(x);
+  var a1=0.254829592, a2=-0.284496736, a3=1.421413741, a4=-1.453152027, a5=1.061405429, p=0.3275911;
+  var t = 1/(1+p*x);
+  var y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return sign*y;
+}
+function normCDF_MC(x){ return 0.5*(1+erfMC(x/Math.sqrt(2))); }
+function clampMC(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+function getCurrentCat(){
+  var sel = document.querySelector('.cat-btn.sel');
+  return (sel && sel.dataset && sel.dataset.cat) ? sel.dataset.cat : 'oficiales';
+}
+
+function randNormal(){
+  var u1 = rng(), u2 = rng();
+  return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+}
+
+function readSnapshotFromDOM(slot){
+  var lower = slot.toLowerCase();
+  var emptyEl = document.getElementById('snap-'+lower+'-empty');
+  if(emptyEl && emptyEl.style.display !== 'none'){ return null; }
+  var ageEl = document.getElementById('s'+lower+'-age');
+  var capEl = document.getElementById('s'+lower+'-cap');
+  var ptsEl = document.getElementById('s'+lower+'-pts');
+  if(!ageEl) return null;
+  var ageText = ageEl.textContent || '';
+  var ageMatch = ageText.match(/[\d.,]+/);
+  if(!ageMatch) return null;
+  var age = parseFloat(ageMatch[0].replace(',','.'));
+  if(isNaN(age)) return null;
+  var capText = (capEl && capEl.textContent) || '';
+  var capMatch = capText.match(/[\d.,]+/);
+  var cap = capMatch ? parseFloat(capMatch[0].replace(',','.')) : null;
+  var ptsText = (ptsEl && ptsEl.textContent) || '';
+  var ptsMatch = ptsText.match(/[\d.,]+/);
+  var pts = ptsMatch ? parseFloat(ptsMatch[0].replace(',','.')) : null;
+  return { age: age, cap: cap, pts: pts, slot: slot };
+}
+
+function percentile(sortedArr, p){
+  var idx = (p/100)*(sortedArr.length-1);
+  var lo = Math.floor(idx), hi = Math.ceil(idx);
+  if(lo===hi) return sortedArr[lo];
+  return sortedArr[lo] + (sortedArr[hi]-sortedArr[lo])*(idx-lo);
+}
+
+function simulatePaths(nPaths, horizon, drift, shockSigma, bounds, startAge){
+  var paths = [];
+  for(var p=0; p<nPaths; p++){
+    var path = [startAge];
+    var current = startAge;
+    for(var year=1; year<=horizon; year++){
+      current = clampMC(current + drift + randNormal()*shockSigma, bounds.min, bounds.max);
+      path.push(current);
+    }
+    paths.push(path);
+  }
+  return paths;
+}
+
+function runOneProjection(iterations, drift, horizon, shockSigma, startAge, bounds, cat, slot){
+  var t0 = performance.now();
+  rng = mulberry32(20260711 + SNAP_SEED_OFFSET[slot]);
+  var nPaths = Math.min(iterations, 8000);
+  var paths = simulatePaths(nPaths, horizon, drift, shockSigma, bounds, startAge);
+
+  var results = [{year:0, p10:startAge, p25:startAge, p50:startAge, mean:startAge, p75:startAge, p90:startAge}];
+  for(var year=1; year<=horizon; year++){
+    var valsAtYear = paths.map(function(pth){ return pth[year]; });
+    var sortedYear = valsAtYear.slice().sort(function(a,b){return a-b;});
+    var sum = 0; for(var k=0;k<valsAtYear.length;k++){ sum += valsAtYear[k]; }
+    var mean = sum/valsAtYear.length;
+    results.push({
+      year:year,
+      p10:percentile(sortedYear,10), p25:percentile(sortedYear,25),
+      p50:percentile(sortedYear,50), mean:mean,
+      p75:percentile(sortedYear,75), p90:percentile(sortedYear,90)
+    });
+  }
+  var meanLine = results.map(function(r){ return r.mean; });
+  var sampleSize = Math.min(30, paths.length);
+  var samplePaths = [];
+  var usedIdx = {};
+  while(samplePaths.length < sampleSize){
+    var idx = Math.floor(rng()*paths.length);
+    if(!usedIdx[idx]){ usedIdx[idx]=true; samplePaths.push(paths[idx]); }
+  }
+
+  var t1 = performance.now();
+  return {results:results, runtimeMs:(t1-t0), bounds:bounds, cat:cat, slot:slot,
+           samplePaths:samplePaths, meanLine:meanLine, nPaths:nPaths, startAge:startAge};
+}
+
+function pctJovenFromMean(mean, sigma){
+  var z = (35 - mean)/sigma;
+  return clampMC(normCDF_MC(z)*100, 0, 100);
+}
+
+function drawFanChart(projections){
+  var canvas = document.getElementById('chartMonteCarlo');
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  var horizon = projections[0].results.length - 1;
+  var allVals = [];
+  projections.forEach(function(proj){
+    proj.results.forEach(function(r){ allVals.push(r.p10, r.p90); });
+    proj.samplePaths.forEach(function(pth){ pth.forEach(function(v){ allVals.push(v); }); });
+  });
+  var minV = Math.min.apply(null, allVals) - 1;
+  var maxV = Math.max.apply(null, allVals) + 1;
+
+  var padL=42, padB=34, padT=14, padR=14;
+  var chartW = w-padL-padR, chartH = h-padB-padT;
+  var stepX = horizon>0 ? chartW/horizon : chartW;
+
+  function xAtMC(i){ return padL + stepX*i; }
+  function yAtMC(v){ return padT + chartH - ((v-minV)/(maxV-minV))*chartH; }
+
+  ctx.strokeStyle = '#3a4530'; ctx.lineWidth = 1; ctx.fillStyle = '#9aa085'; ctx.font = '10px Segoe UI';
+  for(var g=0; g<=4; g++){
+    var yy = padT + chartH - (g/4)*chartH;
+    ctx.beginPath(); ctx.moveTo(padL,yy); ctx.lineTo(w-padR,yy); ctx.stroke();
+    ctx.textAlign='right';
+    ctx.fillText((minV+(g/4)*(maxV-minV)).toFixed(1), padL-6, yy+3);
+  }
+  ctx.textAlign='center';
+  for(var i=0;i<=horizon;i++){
+    ctx.fillText(i===0 ? 'Hoy' : ('Año '+i), xAtMC(i), h-padB+16);
+  }
+
+  var singleMode = projections.length === 1;
+  // Dash distinto por snapshot: aunque dos lineas casi coincidan en color/posicion (mismo punto de
+  // partida), el patron de trazo permite distinguirlas igualmente. A=solido, B=guiones, C=punteado.
+  var DASH_BY_SLOT = { A:[], B:[8,4], C:[2,3] };
+
+  // FONDO: el "spaghetti" de trayectorias individuales se dibuja SIEMPRE (antes solo con 1 snapshot
+  // activo), usando el color propio de cada snapshot en baja opacidad, para no perder el contexto de
+  // dispersion real al comparar varios snapshots a la vez.
+  projections.forEach(function(proj){
+    var color = SNAP_COLORS[proj.slot];
+    var nShow = singleMode ? proj.samplePaths.length : Math.min(14, proj.samplePaths.length);
+    for(var s=0; s<nShow; s++){
+      var pth = proj.samplePaths[s];
+      ctx.beginPath();
+      pth.forEach(function(v,i){
+        var x=xAtMC(i), y=yAtMC(v);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.strokeStyle = color; ctx.globalAlpha = singleMode ? 0.16 : 0.10; ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  });
+  ctx.globalAlpha = 1;
+
+  // BANDAS de percentiles: solo si hay 1 snapshot activo (con 2-3 se solaparian y serian ilegibles).
+  if(singleMode){
+    var proj0 = projections[0];
+    var color0 = SNAP_COLORS[proj0.slot];
+    var res0 = proj0.results;
+    function drawBand(keyLo, keyHi, alphaHex){
+      ctx.beginPath();
+      res0.forEach(function(r,i){
+        var x=xAtMC(i), y=yAtMC(r[keyLo]);
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      for(var i=res0.length-1;i>=0;i--){ ctx.lineTo(xAtMC(i), yAtMC(res0[i][keyHi])); }
+      ctx.closePath();
+      ctx.fillStyle = color0+alphaHex;
+      ctx.fill();
+    }
+    drawBand('p10','p90','22');
+    drawBand('p25','p75','44');
+  }
+
+  // LINEAS MEDIAS: con halo oscuro debajo (contraste) + dash propio, para que sigan siendo
+  // distinguibles incluso cuando dos snapshots casi coinciden en valor (mismo punto de partida).
+  projections.forEach(function(proj){
+    var color = SNAP_COLORS[proj.slot];
+    var dash = DASH_BY_SLOT[proj.slot] || [];
+
+    ctx.beginPath();
+    proj.meanLine.forEach(function(v,i){
+      var x=xAtMC(i), y=yAtMC(v);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgba(10,12,8,0.55)'; ctx.lineWidth = 4.4; ctx.stroke();
+
+    ctx.beginPath();
+    proj.meanLine.forEach(function(v,i){
+      var x=xAtMC(i), y=yAtMC(v);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.setLineDash(dash);
+    ctx.strokeStyle = color; ctx.lineWidth = 2.6; ctx.stroke();
+    ctx.setLineDash([]);
+
+    proj.meanLine.forEach(function(v,i){
+      ctx.beginPath();
+      ctx.arc(xAtMC(i), yAtMC(v), 2.6, 0, Math.PI*2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
+  });
+
+  ctx.beginPath();
+  ctx.setLineDash([5,4]);
+  var startY = yAtMC(projections[0].startAge);
+  ctx.moveTo(padL, startY); ctx.lineTo(w-padR, startY);
+  ctx.strokeStyle = '#c8b878'; ctx.lineWidth = 1.4; ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function fmtAge(v){ return v.toFixed(1)+' años'; }
+
+function updateKPIs(projections){
+  var kEl = document.getElementById('mc-kpi-medianfinal');
+  var pEl = document.getElementById('mc-kpi-p10p90');
+  var cEl = document.getElementById('mc-kpi-captacion');
+  var rEl = document.getElementById('mc-kpi-runtime');
+
+  if(projections.length === 1){
+    var proj = projections[0];
+    var last = proj.results[proj.results.length-1];
+    kEl.textContent = fmtAge(last.mean);
+    pEl.textContent = last.p10.toFixed(1)+' – '+last.p90.toFixed(1);
+    var pctJ = pctJovenFromMean(last.mean, proj.bounds.sigma);
+    cEl.textContent = pctJ.toFixed(1)+'%';
+    rEl.textContent = proj.runtimeMs.toFixed(0)+' ms · '+proj.nPaths+' rutas';
+  } else {
+    var parts = projections.map(function(proj){
+      var last = proj.results[proj.results.length-1];
+      return proj.slot+': '+fmtAge(last.mean);
+    });
+    kEl.textContent = parts.join(' · ');
+    pEl.textContent = '—';
+    var totalRuntime = projections.reduce(function(a,p){return a+p.runtimeMs;},0);
+    var totalPaths = projections.reduce(function(a,p){return a+p.nPaths;},0);
+    cEl.textContent = projections.length+' snapshots';
+    rEl.textContent = totalRuntime.toFixed(0)+' ms · '+totalPaths+' rutas';
+  }
+}
+
+function updateMultiLegend(activeSlots){
+  var el = document.getElementById('mcMultiLegend');
+  el.innerHTML = activeSlots.map(function(slot){
+    return '<span><span class="mc-snap-dot dot-'+slot.toLowerCase()+'"></span>'+SNAP_LABELS[slot]+'</span>';
+  }).join('');
+}
+
+var lastProjections = null;
+
+function getActiveSlots(){
+  var slots = [];
+  ['A','B','C'].forEach(function(s){
+    var cb = document.getElementById('mcUse'+s);
+    if(cb && cb.checked) slots.push(s);
+  });
+  return slots;
+}
+
+function updateSnapLabel(){
+  var activeSlots = getActiveSlots();
+  var label = document.getElementById('val-mcSourceSnap');
+  var btn = document.getElementById('btnRunMC');
+  var status = document.getElementById('mcStatus');
+
+  if(activeSlots.length === 0){
+    label.textContent = 'Sin snapshots seleccionados';
+    btn.disabled = true;
+    status.className = 'mc-status';
+    status.textContent = 'Marca al menos un snapshot (A, B o Ref. BOE) guardado arriba para poder simular.';
+    return;
+  }
+
+  var validSlots = [], invalidSlots = [];
+  activeSlots.forEach(function(slot){
+    var snap = readSnapshotFromDOM(slot);
+    if(snap) validSlots.push(slot); else invalidSlots.push(slot);
+  });
+
+  if(validSlots.length === 0){
+    label.textContent = 'Los snapshots marcados están vacíos — guárdalos arriba primero';
+    btn.disabled = true;
+    status.className = 'mc-status err';
+    status.textContent = 'Ninguno de los snapshots marcados ('+activeSlots.join(', ')+') tiene datos guardados.';
+    return;
+  }
+
+  var descr = validSlots.map(function(slot){
+    var snap = readSnapshotFromDOM(slot);
+    return slot+': '+fmtAge(snap.age);
+  }).join(' · ');
+  label.textContent = descr + (invalidSlots.length ? ' ('+invalidSlots.join(',')+' vacío, se omite)' : '');
+  btn.disabled = false;
+  status.className = 'mc-status';
+  status.textContent = 'Listo para simular '+validSlots.length+' snapshot(s): '+validSlots.join(', ')+'.';
+}
+
+['A','B','C'].forEach(function(s){
+  var cb = document.getElementById('mcUse'+s);
+  if(cb) cb.addEventListener('change', updateSnapLabel);
+});
+updateSnapLabel();
+
+function runMC(){
+  var activeSlots = getActiveSlots();
+  var validSnaps = [];
+  activeSlots.forEach(function(slot){
+    var snap = readSnapshotFromDOM(slot);
+    if(snap) validSnaps.push(snap);
+  });
+  if(validSnaps.length === 0){ updateSnapLabel(); return; }
+
+  var btn = document.getElementById('btnRunMC');
+  var status = document.getElementById('mcStatus');
+  btn.disabled = true;
+  status.className = 'mc-status';
+  status.textContent = 'Ejecutando simulación Monte Carlo para '+validSnaps.length+' snapshot(s)...';
+
+  setTimeout(function(){
+    try{
+      var iterations = parseInt(document.getElementById('mcIterations').value,10);
+      var drift = parseFloat(document.getElementById('mcDrift').value);
+      var horizon = parseInt(document.getElementById('mcHorizon').value,10);
+      var titleSpan = document.getElementById('mcChartTitleHorizon');
+      if(titleSpan){ titleSpan.textContent = '(+'+horizon+' años, hasta '+(2026+horizon)+')'; }
+      var cat0 = getCurrentCat();
+      var bounds0 = AGE_BOUNDS_MC[cat0] || AGE_BOUNDS_MC.oficiales;
+      var shockSigma = bounds0.sigma * 0.12;
+
+      var projections = validSnaps.map(function(snap){
+        var startAge = clampMC(snap.age, bounds0.min, bounds0.max);
+        return runOneProjection(iterations, drift, horizon, shockSigma, startAge, bounds0, cat0, snap.slot);
+      });
+
+      lastProjections = projections;
+      drawFanChart(projections);
+      updateKPIs(projections);
+      updateMultiLegend(projections.map(function(p){return p.slot;}));
+
+      var totalRuntime = projections.reduce(function(a,p){return a+p.runtimeMs;},0);
+      status.textContent = 'Completado: '+projections.length+' snapshot(s) simulado(s) ('+projections.map(function(p){return p.slot;}).join(', ')+'), categoría '+cat0+' ('+totalRuntime.toFixed(0)+' ms).';
+      btn.disabled = false;
+    }catch(e){
+      status.className = 'mc-status err';
+      status.textContent = 'Error en la simulación: '+e.message;
+      btn.disabled = false;
+    }
+  }, 30);
+}
+
+function syncLabel(id, suffix, decimals){
+  var input = document.getElementById(id);
+  var label = document.getElementById('val-'+id);
+  function upd(){
+    var v = parseFloat(input.value);
+    label.textContent = (decimals!==undefined ? v.toFixed(decimals) : v) + ' ' + suffix;
+  }
+  input.addEventListener('input', upd);
+  upd();
+}
+syncLabel('mcIterations','iteraciones',0);
+syncLabel('mcDrift','años/año',2);
+syncLabel('mcHorizon','años',0);
+
+document.getElementById('btnRunMC').addEventListener('click', runMC);
+
+function buildCSV(projections){
+  var lines = ['snapshot,year,p10,p25,mean,p75,p90'];
+  projections.forEach(function(proj){
+    proj.results.forEach(function(r){
+      lines.push([proj.slot, r.year, r.p10.toFixed(3), r.p25.toFixed(3), r.mean.toFixed(3), r.p75.toFixed(3), r.p90.toFixed(3)].join(','));
+    });
+  });
+  return lines.join('\n');
+}
+
+function downloadFile(filename, content, mime){
+  var blob = new Blob([content], {type:mime});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('btnExportVensim').addEventListener('click', function(){
+  if(!lastProjections) return;
+  downloadFile('dinosaurio_proyeccion_vensim.csv', buildCSV(lastProjections), 'text/csv');
+});
+
+document.getElementById('btnExportJSON').addEventListener('click', function(){
+  if(!lastProjections) return;
+  var payload = lastProjections.map(function(proj){
+    return { snapshot: proj.slot, snapshotOrigen: proj.startAge, bounds: proj.bounds,
+             runtimeMs: proj.runtimeMs, resultados: proj.results };
+  });
+  downloadFile('dinosaurio_proyeccion.json', JSON.stringify(payload, null, 2), 'application/json');
+});
 
 })();
 </script>
