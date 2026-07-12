@@ -1,236 +1,276 @@
-MANUAL DE USUARIO
-HERRAMIENTA DINOSAURIO - SIMULADOR DE EDAD MEDIA EN CONVOCATORIAS DE RESERVISTAS
-Version orientada a personal de Defensa sin conocimientos tecnicos previos
 
-===========================================================================
+================================================================================
+  DINOSAURIO - MANUAL DE OPERACION DEL SIMULADOR ANALITICO
+  Baremo de Reservistas Voluntarios - Version 11
+================================================================================
+
+INDICE
+------
+  1. Proposito de la herramienta
+  2. Puesta en marcha
+  3. Panel de mando: categorias y modo de calculo
+  4. El modelo jerarquico bayesiano con contraccion (shrinkage)
+  5. Sistema de posiciones guardadas (snapshots A, B, C)
+  6. Panel de diferencias entre posiciones
+  7. Motor Monte Carlo: proyeccion a futuro
+  8. Lectura de indicadores clave (KPI)
+  9. Exportacion de datos
+  10. Advertencias y limites del modelo
+  11. Resolucion de incidencias frecuentes
+
+
+--------------------------------------------------------------------------------
 1. PROPOSITO DE LA HERRAMIENTA
-===========================================================================
+--------------------------------------------------------------------------------
 
-Esta herramienta permite estimar la edad media de un aspirante en funcion
-de los meritos que aporte al baremo, y proyectar como podria evolucionar
-esa edad en convocatorias futuras. No sustituye ningun calculo oficial.
-Es un instrumento de apoyo al analisis, construido sobre datos reales de
-las convocatorias 2023, 2024 y 2025.
+DINOSAURIO es un simulador analitico que permite estimar, a partir de los
+apartados del baremo (Tiempo de Servicio, Meritos Academicos, Meritos
+Generales y Merito Especifico), la puntuacion total esperada y su relacion
+con la edad media de la vacante seleccionada.
 
-Antes de operar, tenga presente esta norma basica: los resultados son
-estimaciones estadisticas, no certezas. Trate cada cifra como una
-referencia de trabajo, nunca como un dato definitivo.
+La herramienta no sustituye al baremo oficial. Es un instrumento de apoyo
+para entender como se comportan los distintos apartados y como evolucionan
+las cifras si se modifican las variables de entrada.
 
-===========================================================================
-2. PRIMEROS PASOS
-===========================================================================
 
-2.1. Seleccion de categoria
+--------------------------------------------------------------------------------
+2. PUESTA EN MARCHA
+--------------------------------------------------------------------------------
 
-En la parte superior del panel encontrara cuatro botones: Oficiales,
-Suboficiales, Tropa y Cuerpos Comunes. Seleccione la categoria sobre la
-que desea trabajar antes de introducir ningun dato. Cada categoria tiene
-su propio modelo de calculo y sus propios limites de edad (suelo
-biologico y techo legal).
+El archivo es autonomo: no requiere conexion a internet ni instalacion.
+Basta con abrirlo con cualquier navegador moderno (Chrome, Firefox, Edge).
 
-2.2. Introduccion de meritos
+Si al abrirlo la pantalla aparece en blanco o negro, cierre por completo el
+navegador y vuelva a abrir el archivo en una pestana nueva. Compruebe
+tambien que esta abriendo la ultima version entregada, ya que versiones
+anteriores pueden quedar duplicadas en la carpeta de descargas.
 
-Debajo del selector de categoria encontrara varios controles deslizantes,
-organizados en seis bloques. Cada control representa un tipo de merito
-del baremo oficial (tiempo de servicio, titulacion, cursos, idiomas,
-etc.). Desplace cada control hasta el valor que corresponda a su
-situacion real. La edad estimada se recalcula de forma automatica cada
-vez que mueve un control.
 
-Aviso importante: los controles de los Bloques 3 a 6 (idiomas, carnets,
-deportista, funcionario, entre otros) son informativos. No suman a la
-edad estimada. Esto es intencionado: dichos meritos ya estan recogidos
-dentro del apartado "Meritos Generales" del Bloque 1, y evitar la doble
-contabilidad es un requisito de correccion del modelo.
+--------------------------------------------------------------------------------
+3. PANEL DE MANDO: CATEGORIAS Y MODO DE CALCULO
+--------------------------------------------------------------------------------
 
-===========================================================================
-3. EL COMPARADOR DE INSTANTANEAS (SNAPSHOTS)
-===========================================================================
+En la parte superior se encuentran dos parametros de partida:
 
-3.1. Que es una instantanea
+  - Categoria de vacante: Oficiales, Suboficiales, Tropa o Cuerpos Comunes.
+    Cada categoria tiene sus propios limites de edad (minima y maxima) y
+    su propio comportamiento estadistico, heredado de los datos reales
+    de convocatoria.
 
-Una instantanea, tambien llamada snapshot, es una fotografia congelada
-de su configuracion de meritos en un momento dado. Sirve para comparar
-distintos escenarios sin perder ninguno de ellos.
+  - Modo de equidad: determina si el calculo prioriza captacion de
+    perfiles jovenes, equilibrio entre generaciones, o experiencia.
 
-3.2. Como guardar una instantanea
+Cualquier cambio en estos dos mandos recalcula de forma inmediata todos
+los paneles inferiores, sin necesidad de confirmar ni recargar la pagina.
 
-Configure los controles deslizantes segun el escenario que desee
-capturar y pulse el boton correspondiente:
 
-- Guardar como Snapshot A
-- Guardar como Snapshot B
-- Ref. BOE (media 2025): esta opcion no requiere configuracion manual,
-  carga automaticamente los valores medios de la convocatoria 2025.
+--------------------------------------------------------------------------------
+4. EL MODELO JERARQUICO BAYESIANO CON CONTRACCION (SHRINKAGE)
+--------------------------------------------------------------------------------
 
-3.3. Uso operativo recomendado
+EL PROBLEMA A RESOLVER
+  Los datos disponibles se agrupan en dos bloques: Ejercitos (Oficiales,
+  Suboficiales y Tropa, con 769 registros) y Cuerpos Comunes (354
+  registros). Cuando un grupo tiene pocos registros, calcular un
+  coeficiente propio para ese grupo aislado puede dar resultados poco
+  fiables, sujetos al ruido de la muestra.
 
-Guarde primero su situacion actual como Snapshot A. A continuacion,
-modifique los controles para reflejar un escenario hipotetico (por
-ejemplo, tras completar un curso o una titulacion pendiente) y guardelo
-como Snapshot B. El panel le mostrara de forma automatica la diferencia
-de edad, de puntos y de captacion joven entre ambos escenarios.
+LA SOLUCION: CONTRACCION HACIA LA MEDIA GLOBAL
+  En vez de usar el coeficiente de cada grupo de forma aislada, o el
+  coeficiente global de forma ciega, el modelo combina ambos mediante
+  un factor de ponderacion, siguiendo la logica de los modelos
+  jerarquicos bayesianos: cada grupo se apoya parcialmente en la
+  informacion del conjunto, en proporcion a la cantidad de datos propios
+  de que dispone.
 
-3.4. Boton Intercambiar A/B
+  La formula aplicada es:
 
-Permite invertir el orden de comparacion sin tener que repetir la
-configuracion. Utilicelo si desea ver el analisis desde el punto de
-vista contrario.
+      beta_grupo = lambda x beta_grupo_OLS + (1 - lambda) x beta_global
 
-3.5. Boton Borrar todo
+  donde lambda se calcula como:
 
-Elimina las tres instantaneas guardadas. Utilicelo con precaucion, la
-accion no se puede revertir.
+      lambda = n_grupo / (n_grupo + tau)
 
-===========================================================================
-4. PANEL DE SENSIBILIDAD MARGINAL
-===========================================================================
+  Aqui, n_grupo es el numero de registros del grupo, y tau es el
+  parametro de contraccion, fijado en 80. Cuanto mayor es n_grupo,
+  mas se acerca lambda a 1, y menos se contrae el coeficiente hacia la
+  media global.
 
-Debajo del comparador encontrara un panel que indica cuanto se moveria
-la edad estimada si anadiera o quitara un punto en cada bloque, partiendo
-del escenario del Snapshot B. Un valor mas alto en un bloque significa
-que ese bloque tiene mayor capacidad de desplazar la edad, para bien o
-para mal segun el signo del apartado real al que pertenezca.
+VALORES ACTUALES DEL MODELO
+  Con los datos disponibles, el resultado es:
 
-Este panel es util para identificar en que meritos concretos merece la
-pena concentrar el esfuerzo si su objetivo es modificar la edad estimada
-resultante.
+      Ejercitos      (n=769):  lambda = 0.906  (contraccion ligera)
+      Cuerpos Comunes (n=354): lambda = 0.816  (contraccion algo mayor)
 
-===========================================================================
-5. PROYECCION A FUTURO (MOTOR DE SIMULACION)
-===========================================================================
+  Es decir, "Ejercitos" conserva casi intacto su propio patron estadistico,
+  mientras que Cuerpos Comunes se apoya un poco mas en el comportamiento
+  agregado de ambos bloques, al disponer de menos registros propios.
 
-5.1. Concepto general
+DONDE SE VE EN PANTALLA
+  El recuadro "Modelo jerarquico bayesiano activo", situado junto a las
+  restricciones ineludibles, muestra en todo momento el valor de lambda
+  correspondiente a la categoria seleccionada. Si cambia de categoria y
+  ese valor no varia, el modelo no esta aplicandose correctamente.
 
-Esta seccion permite proyectar como podria evolucionar la edad media a
-lo largo de los proximos anos, hasta un horizonte maximo de quince anos.
-La proyeccion parte siempre de una instantanea guardada previamente. No
-se puede ejecutar ninguna simulacion sin al menos un snapshot valido.
+COMO COMPROBARLO DE FORMA MANUAL
+  Abriendo la consola del navegador (tecla F12, pestana Console) puede
+  escribir directamente:
 
-Advertencia de nomenclatura: el motor realiza una simulacion de tipo
-Monte Carlo mediante paseo aleatorio con parametros configurables. No es
-un remuestreo de trayectorias reales de altas, bajas y reenganches,
-porque esos datos historicos todavia no estan disponibles. Trate esta
-proyeccion como un ejercicio de sensibilidad, no como una prediccion
-cerrada.
+      LAMBDA_GRUPO
+      COEF_MODELOS
 
-5.2. Seleccion de instantaneas a proyectar
+  El primero debe devolver los dos valores de lambda citados arriba. El
+  segundo debe mostrar los coeficientes ya contraidos, distintos de los
+  coeficientes brutos guardados en COEF_OLS.
 
-Marque las casillas de Snapshot A, Snapshot B y Snapshot C (Referencia
-BOE) segun desee proyectar uno, dos o los tres escenarios de forma
-simultanea. Cada uno se dibujara en el grafico con un color propio:
 
-- Snapshot A: rojo, trazo continuo
-- Snapshot B: azul, trazo discontinuo
-- Snapshot C: verde, trazo punteado
+--------------------------------------------------------------------------------
+5. SISTEMA DE POSICIONES GUARDADAS (SNAPSHOTS A, B, C)
+--------------------------------------------------------------------------------
 
-Si dos escenarios parten de una edad muy parecida, sus lineas pueden
-casi coincidir en el grafico. Por ese motivo, ademas del color, cada uno
-utiliza un patron de trazo distinto, para que siempre sean
-distinguibles.
+La herramienta permite guardar hasta tres posiciones de calculo distintas
+para comparar escenarios sin perder ninguno de ellos:
 
-5.3. Iteraciones
+  Posicion A y B: se guardan pulsando los botones correspondientes tras
+  ajustar los mandos de entrada a su gusto. Sirven para comparar dos
+  escenarios cualquiera, por ejemplo "situacion actual" frente a
+  "situacion tras modificar tiempo de servicio".
 
-Este control determina cuantas trayectorias individuales se simulan por
-cada instantanea antes de calcular el resultado final. Un numero mayor
-de iteraciones produce una linea media mas estable y fiable, a costa de
-un tiempo de calculo ligeramente superior. Se recomienda no bajar de
-2000 iteraciones para un resultado solido.
+  Posicion C: guarda automaticamente la referencia oficial del BOE, para
+  usarla como punto de comparacion fijo frente a A o B.
 
-5.4. Deriva anual
+  Boton de intercambio: permite invertir A y B de forma instantanea, sin
+  tener que volver a guardar ambas posiciones.
 
-Este control representa una tendencia sistematica que usted decide
-imponer sobre la evolucion de la edad media, ano tras ano, mas alla del
-ruido estadistico propio de la simulacion. Un valor positivo simula un
-escenario en el que la edad media tiende a subir con el tiempo (por
-ejemplo, si prev mas competencia entre aspirantes con mas meritos
-acumulados). Un valor negativo simula lo contrario.
+  Boton de borrado: limpia las tres posiciones guardadas de una sola vez.
 
-El rango actual de este control, entre menos cero coma cinco y mas cero
-coma cinco anos por ano, es una referencia de trabajo provisional, no un
-limite derivado del historico real de convocatorias. Si necesita un
-rango calibrado con los datos observados entre 2023, 2024 y 2025,
-solicitelo al equipo de mantenimiento del panel.
 
-5.5. Horizonte de proyeccion
+--------------------------------------------------------------------------------
+6. PANEL DE DIFERENCIAS ENTRE POSICIONES
+--------------------------------------------------------------------------------
 
-Determina cuantos anos hacia el futuro se extiende la simulacion, con un
-maximo de quince anos. A mayor horizonte, mayor es tambien la
-incertidumbre acumulada, tal y como refleja el ensanchamiento de la
-banda de percentiles en el grafico.
+En cuanto hay al menos dos posiciones guardadas, aparece de forma
+automatica un panel que calcula la diferencia entre ellas: variacion de
+edad media, de puntuacion y de capacidad de captacion de perfiles
+jovenes. El boton "Copiar" traslada ese resumen al portapapeles en
+formato de texto, listo para pegar en un informe o correo.
 
-5.6. Interpretacion del grafico
 
-El grafico muestra, para cada instantanea seleccionada:
+--------------------------------------------------------------------------------
+7. MOTOR MONTE CARLO: PROYECCION A FUTURO
+--------------------------------------------------------------------------------
 
-- Una nube de lineas finas de fondo: representan trayectorias
-  individuales simuladas, y sirven para apreciar la dispersion real del
-  resultado.
-- Una banda de color mas solido (solo visible si hay una unica
-  instantanea activa): representa el rango donde se concentra la mayoria
-  de los resultados posibles.
-- Una linea gruesa destacada: representa el promedio de todas las
-  trayectorias simuladas para esa instantanea, ano por ano. Es la
-  referencia principal de lectura.
+Este panel proyecta la evolucion de la edad media a lo largo de varios
+anos, partiendo de cualquier posicion guardada (A, B o C).
 
-5.7. Indicadores numericos (KPI)
+ITERACIONES
+  El numero de simulaciones independientes por posicion se controla con
+  una barra deslizante, ajustable entre 5.000 y 15.000, con un valor por
+  defecto de 10.000. A mas iteraciones, mayor estabilidad estadistica en
+  los percentiles extremos (P10 y P90), a cambio de un tiempo de calculo
+  algo mayor. El tiempo de ejecucion real se muestra siempre en el
+  indicador "runtime" tras cada simulacion.
 
-Encima del grafico encontrara cuatro indicadores: edad mediana al final
-del horizonte, banda de percentil diez a percentil noventa, porcentaje
-de captacion joven (aspirantes por debajo de treinta y cinco anos), y
-tiempo de computo empleado. Con varias instantaneas activas a la vez,
-estos indicadores se muestran de forma resumida para cada una.
+DERIVA ANUAL
+  Controla cuanto se espera que varie la edad media cada ano, de forma
+  independiente al ruido aleatorio de la simulacion.
 
-5.8. Exportacion de resultados
+HORIZONTE
+  Numero de anos hacia adelante que se proyectan, ajustable entre 3 y 15.
 
-Al final de la seccion encontrara dos botones de exportacion:
+LECTURA DEL GRAFICO
+  Cada posicion activa aparece con su propio color y su propio trazado
+  de linea (solido para A, discontinuo para B, punteado para C), de
+  forma que se distinguen incluso cuando parten de valores muy proximos.
+  Si solo hay una posicion activa, se muestran ademas las bandas de
+  percentiles P10-P90 y P25-P75, que indican el rango de dispersion
+  esperado.
 
-- Exportar CSV: genera un archivo de valores separados por comas, con
-  los resultados ano por ano de cada instantanea proyectada. Es el
-  formato recomendado para su tratamiento en hojas de calculo o en
-  software de modelado como Vensim.
-- Exportar JSON: genera un archivo con la misma informacion en formato
-  estructurado, recomendado para su tratamiento mediante programacion o
-  integracion con otras herramientas.
+COMO ACTIVARLO
+  Marque la casilla correspondiente a cada posicion que desee simular
+  (A, B y/o C) y pulse "Ejecutar simulacion". El boton permanece
+  inactivo mientras no haya al menos una posicion guardada y marcada.
 
-===========================================================================
-6. LIMITACIONES QUE DEBE CONOCER
-===========================================================================
 
-- El modelo se basa en una regresion estadistica sobre datos reales de
-  tres convocatorias (2023, 2024 y 2025). No captura factores como el
-  orden de peticion de plaza, la disponibilidad de vacantes en cada
-  convocatoria concreta, ni la autoseleccion de candidatos.
-- Los resultados son tendencias centrales estimadas, no una prediccion
-  exacta para ningun aspirante individual.
-- La proyeccion a futuro es un ejercicio de sensibilidad de tipo Monte
-  Carlo con parametros ajustables a mano, no una prediccion basada en
-  datos historicos de trayectorias reales de personal.
-- Consulte siempre el aviso metodologico completo, disponible en la
-  parte inferior del panel, antes de emplear estos resultados en
-  cualquier informe o decision.
+--------------------------------------------------------------------------------
+8. LECTURA DE INDICADORES CLAVE (KPI)
+--------------------------------------------------------------------------------
 
-===========================================================================
-7. GLOSARIO BREVE
-===========================================================================
+  Edad mediana al final del horizonte: valor central esperado tras el
+  numero de anos proyectado.
 
-Baremo: conjunto de criterios oficiales por los que se puntuan los
-meritos de un aspirante.
+  Rango P10-P90: intervalo dentro del cual se espera que caiga la edad
+  media con alta probabilidad, descartando los extremos menos probables.
 
-Snapshot o instantanea: fotografia congelada de una configuracion de
-meritos, guardada para su comparacion posterior.
+  Capacidad de captacion joven: porcentaje estimado de perfiles por
+  debajo de 35 anos bajo el escenario proyectado.
 
-Deriva: tendencia sistematica de cambio anual que se impone de forma
-manual a una simulacion.
+  Runtime: tiempo real de calculo y numero total de rutas simuladas,
+  util para verificar que la simulacion se ha ejecutado con el numero
+  de iteraciones esperado.
 
-Percentil: valor por debajo del cual se situa un porcentaje determinado
-de los resultados simulados. Por ejemplo, el percentil diez es el valor
-que solo supera al diez por ciento de los casos mas bajos.
 
-Captacion joven: porcentaje estimado de aspirantes con edad inferior a
-treinta y cinco anos, empleado como indicador de renovacion
-generacional.
+--------------------------------------------------------------------------------
+9. EXPORTACION DE DATOS
+--------------------------------------------------------------------------------
 
-===========================================================================
-FIN DEL MANUAL
-===========================================================================
+Tras ejecutar una simulacion, dos botones permiten descargar los
+resultados completos:
+
+  Exportar CSV (formato Vensim): tabla con percentiles y media por ano
+  y por posicion simulada, lista para importar en hojas de calculo o
+  software de modelado de sistemas.
+
+  Exportar JSON: mismo contenido en formato estructurado, incluyendo
+  metadatos de la simulacion (limites de edad, tiempo de ejecucion,
+  posicion de origen).
+
+
+--------------------------------------------------------------------------------
+10. ADVERTENCIAS Y LIMITES DEL MODELO
+--------------------------------------------------------------------------------
+
+  - Los resultados son estimaciones estadisticas, no valores oficiales
+    del baremo. El BOE y la convocatoria vigente son siempre la
+    referencia legal aplicable.
+
+  - El parametro de contraccion (tau=80) del modelo bayesiano ha sido
+    fijado a partir del volumen de datos disponible. Un cambio en el
+    tamano de muestra de futuras convocatorias podria requerir su
+    revision.
+
+  - El motor Monte Carlo asume una deriva anual constante y un nivel de
+    ruido calculado a partir de la dispersion historica observada; no
+    incorpora cambios normativos futuros ni decisiones de planificacion
+    de personal.
+
+  - Las bandas de percentiles se degradan a lineas medias cuando hay mas
+    de una posicion activa, para mantener la legibilidad del grafico.
+
+
+--------------------------------------------------------------------------------
+11. RESOLUCION DE INCIDENCIAS FRECUENTES
+--------------------------------------------------------------------------------
+
+  Pantalla en blanco o negro al abrir el archivo:
+    Cierre el navegador por completo y reabra el archivo en pestana
+    nueva. Compruebe que no esta abriendo una version antigua duplicada.
+
+  El boton "Ejecutar simulacion" no responde:
+    Compruebe que ha guardado al menos una posicion (A, B o C) y que la
+    casilla correspondiente esta marcada. El boton permanece bloqueado
+    por diseno hasta que se cumplan ambas condiciones.
+
+  El panel de diferencias no aparece:
+    Es necesario guardar al menos dos posiciones distintas (por ejemplo
+    A y B) para que el panel se active de forma automatica.
+
+  Los valores de lambda no cambian al cambiar de categoria:
+    Abra la consola del navegador (F12) y compruebe el contenido de la
+    variable LAMBDA_GRUPO. Si no varia entre categorias, comunique la
+    incidencia junto con el navegador y sistema operativo empleado.
+
+
+================================================================================
+  FIN DEL MANUAL - VERSION 11 - DINOSAURIO - POR MANUEL HERNÁNDEZ
+================================================================================
