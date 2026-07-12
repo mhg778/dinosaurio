@@ -225,13 +225,20 @@
   .disclaimer-block li{margin-bottom:7px;}
   .disclaimer-block p{margin:0 0 8px;}
   .warn-strip{display:inline-block;background:var(--danger-soft);color:var(--danger);border:1px solid rgba(227,69,63,.4);border-radius:6px;padding:2px 8px;font-weight:700;font-size:0.7rem;margin-right:6px;}
+
+  .hier-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.82rem;}
+  .hier-table th,.hier-table td{border:1px solid var(--border);padding:6px 9px;text-align:left;}
+  .hier-table th{background:var(--panel-2);color:var(--khaki);font-weight:700;}
+  .hier-table td{color:var(--text);background:var(--panel);}
+  .hier-table td small{color:var(--muted);}
+  .hier-table tr:hover td{background:var(--panel-2);}
   .legal-strip{display:inline-block;background:rgba(143,174,74,.1);color:var(--accent);border:1px solid rgba(143,174,74,.35);border-radius:6px;padding:2px 8px;font-weight:700;font-size:0.7rem;margin-right:6px;}
   .disclaimer-block .credit{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:0.75rem;color:var(--muted);}
 
   footer{color:var(--muted);font-size:0.74rem;text-align:center;margin-top:26px;line-height:1.7;padding:0 10px;}
   footer .rex-mini{font-size:1.1rem;vertical-align:middle;margin-right:6px;}
 
-  /* ===== v7 additions: Monte Carlo / Bootstrap 10y projection panel ===== */
+  /* ===== Monte Carlo / Bootstrap 10y projection panel ===== */
   .mc-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
     padding:18px 20px;margin-bottom:18px;position:relative;}
   .mc-card::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;
@@ -269,6 +276,9 @@
   .mc-foot{font-size:0.7rem;color:var(--muted);margin:8px 0 0;line-height:1.5;}
   .mc-export-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
   .mc-export-row .mode-btn{font-size:0.76rem;}
+  .mc-spectral-box{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);}
+  .mc-spectral-box h3{margin:0 0 4px;font-size:0.92rem;color:var(--khaki);}
+  .mc-spectral-box canvas{width:100%;max-width:900px;display:block;margin-top:8px;background:#161a11;border-radius:8px;border:1px solid var(--border);}
   .mc-status{font-size:0.76rem;color:var(--accent);min-height:18px;margin-top:8px;}
   .mc-status.err{color:var(--danger);}
   .mc-pill{font-size:0.68rem;font-weight:700;color:#0e1109;background:var(--accent-2);
@@ -285,6 +295,11 @@
   .mc-multi-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:0.74rem;color:var(--muted);margin-top:6px;}
   .mc-multi-legend span{display:flex;align-items:center;gap:6px;}
 
+  /* ===== Bayesian shrink ===== */
+  .bayes-note{background:rgba(217,164,65,.07);border:1px solid rgba(217,164,65,.3);border-radius:9px;
+    padding:10px 13px;margin-top:10px;font-size:0.74rem;color:var(--muted);line-height:1.6;}
+  .bayes-note strong{color:var(--accent-2);}
+
 </style>
 </head>
 <body>
@@ -294,14 +309,14 @@
     <div class="rex-badge">&#129430;</div>
     <div class="masthead-text">
       <h1>DINOSAURIO <span class="accent">&middot;</span> Simulador analítico del baremo de Reservistas Voluntarios</h1>
-      <p>Panel de sensibilidad Edad &harr; Mérito del baremo &middot; Regresión sobre datos oficiales BOE 2023&ndash;2025 (n=1.123 aspirantes clasificados)</p>
+      <p>Panel de sensibilidad Edad &harr; Mérito del baremo &middot; Regresión bayesiana por cat. vacante, datos BOE 2023-25 (n=1.123 aspirantes)</p>
       <div class="cat-selector" id="catSelector">
         <button class="cat-btn sel" data-cat="oficiales">Oficiales</button>
         <button class="cat-btn" data-cat="suboficiales">Suboficiales</button>
         <button class="cat-btn" data-cat="tropa">Tropa y Marinería</button>
         <button class="cat-btn" data-cat="comunes">Cuerpos Comunes</button>
       </div>
-      <p class="cat-note">Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire; Cuerpos Comunes (jurídico, sanidad, intervención...) es un colectivo aparte con acceso y baremación propios &mdash; <a id="disclaimerLink">ver disclaimer</a>.</p>
+      <p class="cat-note">Nota: Oficiales/Suboficiales/Tropa son escalas dentro de Ejército de Tierra, Armada y Aire; Cuerpos Comunes es un colectivo aparte con acceso y baremación propios - <a id="disclaimerLink">ver disclaimer</a>.</p>
     </div>
   </div>
 </header>
@@ -315,16 +330,16 @@
     </label>
     <div class="label-block">
       <strong>Modo exploración fuera de norma <span class="badge-extra">+25% sobre el máximo BOE</span></strong>
-      <span>Permite subir cada slider hasta un 25% por encima de su tope oficial (zona rayada roja) para ver el efecto hipotético en la edad estimada. No representa una puntuación válida en convocatoria real.</span>
+      <span>Permite subir cada slider hasta un 25% por encima de su tope oficial (zona rayada roja) para ver el efecto hipotético en la edad estimada. No representa una puntuación válida en convocatoria actual.</span>
     </div>
   </div>
 
   <div class="card" id="metaCard">
     <h2>Ajuste global de sensibilidad <span class="pill est">experimental</span></h2>
-    <p class="sub">Al desplazar la edad objetivo, ¿debe restarse/sumarse lo mismo a todos los méritos por igual, o proporcionalmente al peso que cada uno ya tiene? Mover partidas grandes y pequeñas en la misma cantidad absoluta distorsiona más la igualdad de oportunidades que moverlas en la misma proporción relativa: quitar 2 pts a un apartado de 12 pts es un recorte del 17%, pero quitar 2 pts a uno de 3 pts es un recorte del 67%.</p>
+    <p class="sub">Al desplazar la edad objetivo, mover partidas grandes y pequeñas en la misma cantidad absoluta distorsiona más la igualdad de oportunidades que moverlas en la misma proporción relativa: quitar 2 pts a un apartado de 12 pts es un recorte del 17%, pero quitar 2 pts a uno de 3 pts es un recorte del 67%.</p>
 
     <div class="field-head" style="margin-bottom:10px;">
-      <span class="fname">Modo de ajuste<small>Uniforme: mismo delta absoluto en cada mérito &middot; Proporcional: delta escalado al peso relativo de cada mérito (algorítmico, preserva la estructura relativa).</small></span>
+      <span class="fname">Modo de ajuste<small>Uniforme: mismo delta absoluto en cada mérito &middot; Proporcional: delta escalado al peso relativo de cada mérito (algorítmico).</small></span>
     </div>
     <div class="mode-switch" id="modeSwitch">
       <button class="mode-btn sel" data-mode="proporcional">Proporcional (recomendado)</button>
@@ -366,7 +381,7 @@
 
       <div class="card">
         <h2>1 &middot; Tiempo de Servicio y Mérito Específico <span class="pill verif">verificado, BOE</span><span class="badge-avg">Inicia en promedio 2025</span></h2>
-        <p class="sub">Apartados reales del Apéndice 3 del baremo. Los sliders parten de los valores medios observados en la muestra combinada 2024&ndash;2025 (basePts del modelo OLS), no de cero.</p>
+        <p class="sub">Apartados reales del Apéndice 3 del baremo. Los sliders parten de los valores medios observados en la muestra combinada 2024&ndash;2025 (basePts del modelo), no de cero.</p>
 
         <div class="field">
           <div class="field-head">
@@ -379,7 +394,7 @@
             <div class="zone-red" id="red-tservicio"></div>
             <input type="range" id="tservicio" min="0" max="10" step="0.1" value="0.53">
           </div>
-          <div class="limit-note">Máximo oficial: 10 pts &middot; Media muestra 2025: 0,53 pts (basePts modelo OLS)</div>
+          <div class="limit-note">Máximo oficial: 10 pts &middot; Media muestra 2025: 0,53 pts (basePts del modelo)</div>
         </div>
 
         <div class="field">
@@ -421,7 +436,7 @@
             <div class="zone-red" id="red-cursos"></div>
             <input type="range" id="cursos" min="0" max="8" step="1" value="6">
           </div>
-          <div class="cap-note" id="capnote-cursos">Tope BOE alcanzado: a partir del curso nº9 la puntuación no aumenta (saturación en 4 pts).</div>
+          <div class="cap-note" id="capnote-cursos">Tope BOE alcanzado: a partir del noveno curso la puntuación no aumenta (punto de saturación = 4 pts).</div>
           <div class="limit-note">Máximo oficial: 8 cursos = 4 pts (0,5 pts/curso) &middot; Media muestra 2025: 6 cursos (3 pts)</div>
         </div>
 
@@ -485,7 +500,7 @@
 
       <div class="card">
         <h2>3 &middot; Idiomas y certificaciones <span class="pill est">estimado</span></h2>
-        <p class="sub">Sub-ítems estimados no desglosados oficialmente por punto exacto.</p>
+        <p class="sub">ítems estimados no desglosados oficialmente por punto exacto.</p>
 
         <div class="field">
           <div class="field-head">
@@ -503,7 +518,7 @@
 
         <div class="field">
           <div class="field-head">
-            <span class="fname">Certificaciones TIC<small>Nuevo 2024 &middot; edad media certificación TIC/ofimática &asymp;27 años (dato contextual).</small></span>
+            <span class="fname">Certificaciones TIC<small>Datos del 2024 &middot; edad media certificación TIC/ofimática &asymp;27 años.</small></span>
             <span class="fval" id="val-tic">0.0 pts</span>
           </div>
           <div class="track-wrap">
@@ -512,7 +527,7 @@
             <div class="zone-red" id="red-tic"></div>
             <input type="range" id="tic" min="0" max="2" step="0.5" value="1">
           </div>
-          <div class="limit-note">Máximo estimado: 2 pts &middot; Media muestra 2025: 1 pt</div>
+          <div class="limit-note">Máximo estimado: 2 pts &middot; Media de muestra 2025: 1 pt</div>
         </div>
 
         <div class="totals-row">
@@ -541,7 +556,7 @@
 
         <div class="field">
           <div class="field-head">
-            <span class="fname">Permisos Moto (A2/A)<small>Nuevo 2024 &middot; edad media A2 &asymp;20 / A &asymp;24 años (DGT, dato contextual).</small></span>
+            <span class="fname">Permisos Moto (A2/A)<small>Datos del 2024 &middot; edad media A2 &asymp;20 / A &asymp;24 años (DGT).</small></span>
             <span class="fval" id="val-moto">0.0 pts</span>
           </div>
           <div class="track-wrap">
@@ -555,7 +570,7 @@
 
         <div class="field">
           <div class="field-head">
-            <span class="fname">Formación ADR<small>Nuevo 2024 &middot; edad media formación mercancías peligrosas &asymp;31 años (dato contextual).</small></span>
+            <span class="fname">Formación ADR<small>Datos del 2024 &middot; edad media formación mercancías peligrosas &asymp;31 años.</small></span>
             <span class="fval" id="val-adr">0.0 pts</span>
           </div>
           <div class="track-wrap">
@@ -577,7 +592,7 @@
         <h2>5 &middot; Deporte y aptitud física <span class="pill est">estimado</span></h2>
         <div class="field">
           <div class="field-head">
-            <span class="fname">Nivel Deportivo (CSD)<small>Nuevo 2024 &middot; deportistas de alto nivel CSD, edad media pico &asymp;23 años (dato contextual).</small></span>
+            <span class="fname">Nivel Deportivo (CSD)<small>Datos del 2024 &middot; deportistas de alto nivel CSD, edad media pico &asymp;23 años.</small></span>
             <span class="fval" id="val-deportista">0.0 pts</span>
           </div>
           <div class="track-wrap">
@@ -598,7 +613,7 @@
         <h2>6 &middot; Perfil profesional previo <span class="pill est">estimado</span></h2>
         <div class="field">
           <div class="field-head">
-            <span class="fname">Experiencia FCSE<small>Edad media de ingreso &asymp;25-27 años &mdash; fuentes sectoriales (dato contextual).</small></span>
+            <span class="fname">Experiencia FCSE<small>Edad media de ingreso &asymp;25-27 años &mdash; fuentes sectoriales.</small></span>
             <span class="fval" id="val-fcse">0 pts</span>
           </div>
           <div class="track-wrap">
@@ -636,7 +651,7 @@
 
       <div class="card">
         <h2>Resultado de la simulación</h2>
-        <p class="sub">Puntuación total y estimación de edad asociada según el modelo de regresión fusionado 2023-2025 (+0,3752 años/pto en Ejércitos / +0,4350 años/pto en Cuerpos Comunes, sobre el total de méritos), asumiendo distribución normal con la sigma real de la escala seleccionada.</p>
+        <p class="sub">Puntuación total y estimación de edad asociada según un modelo jerárquico bayesiano por categoría de vacante (Oficiales/Suboficiales/Tropa/Cuerpos Comunes hacia una media global compartida, ponderado por el tamaño de muestra de cada grupo), asumiendo distribución normal con la sigma real de la escala seleccionada.</p>
 
         <div class="kpi-grid">
           <div class="kpi norm">
@@ -657,8 +672,12 @@
           </div>
         </div>
 
+        <div class="bayes-note" id="bayesNote">
+          Modelo jerárquico bayesiano activo: los coeficientes de cada categoría se contraen (<em>shrinkage</em>) hacia la media global ponderada por tamaño de muestra &lambda;=n<sub>grupo</sub>/(n<sub>grupo</sub>+&tau;). Grupos con menos observaciones (p. ej. Cuerpos Comunes) se apoyan más en el conjunto agregado; grupos grandes (Ejércitos) se apoyan más en su propio coeficiente estimado. &lambda; actual: <strong id="bayesLambda">&ndash;</strong>.
+        </div>
+
         <div class="restrict-box">
-          <div class="rb-title">Restricciones ineludibles</div>
+          <div class="rb-title">Restricciones absolutas</div>
           <div class="rb-vals">
             <div id="rb-suelo">22<small>Suelo biológico (años)</small></div>
             <div id="rb-techo">58<small>Techo legal (años)</small></div>
@@ -764,10 +783,10 @@
     </div>
   </div>
 
-  
+
   <div class="mc-card" id="monteCarloCard">
-    <h2>Proyección hasta 15 años &middot; Motor Monte Carlo (paseo aleatorio) <span class="mc-pill">v7 · experimental</span></h2>
-    <p class="sub">Simulación Monte Carlo de paseo aleatorio: cada trayectoria aplica año a año la deriva configurable + un shock gaussiano aleatorio, con semilla fija para que sea reproducible. No es un bootstrap real (no remuestrea transiciones observadas de altas/bajas/reenganches, porque todavía no disponemos de esos datos) — es un ejercicio de sensibilidad con parámetros ajustables a mano. <strong>La proyección parte siempre de un snapshot guardado arriba</strong> (A, B o Referencia BOE) — así el punto de origen es tu configuración real de méritos, no una media poblacional genérica. Guarda un snapshot en el comparador de arriba antes de simular.</p>
+    <h2>Proyección hasta 15 años &middot; Motor Monte Carlo (bootstrap de residuos reales) <span class="mc-pill">v13 · iteraciones ajustables (50.000&ndash;150.000)</span></h2>
+    <p class="sub">Simulación Monte Carlo de paseo aleatorio: cada trayectoria aplica año a año la deriva configurable + un shock de bootstrap real (remuestreo con reemplazo de los residuos empíricos de la regresión, no ruido gaussiano inventado), con semilla fija para que sea reproducible. El número de iteraciones es ajustable entre 50.000 y 150.000 rutas por snapshot (por defecto 100.000): con menos de 50.000 el error estándar de los percentiles de cola P10/P90 supera &plusmn;0,17 años, suficiente para que el último decimal mostrado cambie solo por ruido de muestreo entre ejecuciones; a partir de 50.000 ese error baja de &plusmn;0,10 años, y con 100.000&ndash;150.000 se sitúa entre &plusmn;0,05 y &plusmn;0,06 años, un nivel de precisión adecuado para el redondeo a un decimal que usa el panel. <strong>La proyección parte siempre de un snapshot guardado arriba</strong> (A, B o Referencia BOE) — así el punto de origen es tu configuración real de méritos, no una media poblacional genérica. Guarda un snapshot en el comparador de arriba antes de simular.</p>
 
     <div class="mc-controls">
       <div class="mc-ctrl" style="min-width:280px;">
@@ -781,8 +800,8 @@
       </div>
       <div class="mc-ctrl">
         <label for="mcIterations">Iteraciones bootstrap / año</label>
-        <input type="range" id="mcIterations" min="200" max="8000" step="100" value="4000">
-        <span class="mc-val" id="val-mcIterations">4000 iteraciones</span>
+        <input type="range" id="mcIterations" min="50000" max="150000" step="5000" value="100000">
+        <span class="mc-val" id="val-mcIterations">100000 iteraciones</span>
       </div>
       <div class="mc-ctrl">
         <label for="mcDrift">Deriva anual (&Delta; edad media / año)</label>
@@ -814,40 +833,75 @@
       </div>
       <div class="mc-multi-legend" id="mcMultiLegend"></div>
       <p style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Si dos snapshots parten de una edad muy similar, sus líneas pueden casi coincidir: además del color, cada snapshot usa un trazo distinto (A sólido, B a rayas, C punteado) para poder distinguirlas siempre.</p>
-      <p class="mc-foot">Motor: Monte Carlo de paseo aleatorio (no bootstrap: no remuestrea datos reales de trayectoria, que todavía no tenemos), encadenado año a año con deriva + ruido gaussiano configurados arriba, semilla fija para reproducibilidad. Cada punto del abanico resume miles de simulaciones paramétricas independientes; no es una serie temporal observada, es un ejercicio de sensibilidad sujeto a las mismas limitaciones metodológicas descritas en el disclaimer inferior.</p>
+      <p class="mc-foot">Motor: Monte Carlo de paseo aleatorio (no bootstrap: no remuestrea datos reales de trayectoria, que todavía no tenemos), encadenado año a año con deriva + ruido gaussiano configurados arriba, semilla fija para reproducibilidad, número de iteraciones ajustable (50.000-150.000, por defecto 100.000) por snapshot activo. Cada punto del abanico resume miles de simulaciones paramétricas independientes; no es una serie temporal observada, es un ejercicio de sensibilidad sujeto a las mismas limitaciones metodológicas descritas en el disclaimer inferior.</p>
     </div>
 
     <div class="mc-export-row">
-      <button class="mode-btn" id="btnExportVensim">&#128190; Exportar CSV (Vensim)</button>
+      <button class="mode-btn" id="btnExportVensim">&#128190; Exportar CSV</button>
       <button class="mode-btn" id="btnExportJSON">&#128190; Exportar JSON completo</button>
+      <button class="mode-btn" id="btnGenSpectral">&#127754; Generar Vista Espectral 3D</button>
+      <button class="mode-btn" id="btnGenHeatmap">&#127956; Generar Mapa de Calor 2D</button>
     </div>
     <div class="mc-status" id="mcStatus"></div>
+
+    <div class="mc-spectral-box" id="spectralBox" style="display:none;">
+      <h3>Vista espectral &middot; relieve de densidad de edad por año <span class="mc-pill" style="background:var(--olive-light);">bajo demanda &middot; un snapshot a la vez</span></h3>
+      <p class="sub">Cada "ola" muestra la <strong>distribución completa</strong> de las edades simuladas ese año (no solo P10/P25/P50/P75/P90), apiladas con desplazamiento isométrico para dar sensación de profundidad temporal &mdash; misma idea visual que un espectrograma tipo "cascada" de análisis de señal. Vista estática. Solo admite un snapshot activo a la vez: superponer varios relieves isométricos se vuelve ilegible de inmediato.</p>
+      <div class="mc-ctrl" style="max-width:260px;margin-bottom:10px;">
+        <label for="spectralSnap">Snapshot a representar</label>
+        <select id="spectralSnap" style="background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:0.82rem;">
+          <option value="A">Snapshot A</option>
+          <option value="B">Snapshot B</option>
+          <option value="C">Snapshot C (Ref. BOE)</option>
+        </select>
+      </div>
+      <canvas id="chartSpectral3D" width="900" height="480"></canvas>
+      <p class="mc-foot" id="spectralFoot">Pulsa "Generar Vista Espectral 3D" tras ejecutar una simulación arriba para dibujar el relieve del snapshot seleccionado.</p>
+    </div>
+    <div class="mc-spectral-box" id="heatmapBox" style="display:none;">
+      <h3>Mapa de calor 2D &middot; densidad Edad &times; Puntos <span class="mc-pill" style="background:var(--accent-2);">bajo demanda &middot; nube de sensibilidad</span></h3>
+      <p class="sub">Nube de combinaciones generada jitterando aleatoriamente (&plusmn;35%) los 4 apartados reales del modelo (Tiempo Servicio, Académicos, Generales, Mérito Específico) alrededor de tu snapshot elegido, escalada para conservar la puntuación total, con la edad calculada por el <strong>mismo modelo bayesiano real</strong> que usa el resto del simulador (no un ajuste inventado aparte) y dispersión añadida mediante bootstrap de los residuos empíricos reales. <strong>No es una distribución conjunta observada</strong> &mdash; no disponemos de la puntuación exacta por aspirante individual, solo agregados &mdash; es una exploración honesta de sensibilidad local en torno a tu configuración.</p>
+      <div class="mc-ctrl" style="max-width:260px;margin-bottom:10px;">
+        <label for="heatmapSnap">Snapshot a representar</label>
+        <select id="heatmapSnap" style="background:var(--panel-2);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:0.82rem;">
+          <option value="A">Snapshot A</option>
+          <option value="B">Snapshot B</option>
+          <option value="C">Snapshot C (Ref. BOE)</option>
+        </select>
+      </div>
+      <canvas id="chartHeatmap2D" width="900" height="480"></canvas>
+      <p class="mc-foot" id="heatmapFoot">Pulsa "Generar Mapa de Calor 2D". Requiere guardar al menos un snapshot arriba para dibujar la nube de sensibilidad.</p>
+    </div>
   </div>
+
 
   <div class="disclaimer-block" id="disclaimerBlock">
     <h3>Notas metodológicas y disclaimer</h3>
-    <p>DINOSAURIO es un ejercicio analítico basado en las resoluciones publicadas de las convocatorias de Reservistas Voluntarios (BOE 2022&ndash;2024) y en un modelo de regresión estimado sobre la muestra real combinada 2023&ndash;2025 (n=1.123 aspirantes clasificados: 373 en 2023 + 350 en 2024 + 400 en 2025).</p>
+    <p>DINOSAURIO es un ejercicio analítico basado en las resoluciones publicadas de las convocatorias de Reservistas Voluntarios (BOE 2022-24) y en un modelo jerárquico bayesiano con shrinkage por categoría de vacante, estimado sobre la muestra real combinada 2023-25 (n=1.123 aspirantes clasificados: 373 en 2023 + 350 en 2024 + 400 en 2025).</p>
 
     <h4>Metodología y datos</h4>
     <ul>
-      <li><span class="warn-strip">MODELO</span>Modelo con coeficientes por apartado (no un único coeficiente global): en Oficial/Suboficial/Tropa (n=769, R²=0,258) T.Servicio +0,165 &middot; Académicos &minus;0,297 &middot; Generales &minus;0,033 &middot; Mérito Específico +0,410 años/pto; en Cuerpos Comunes (n=354, R²=0,396) T.Servicio +1,314 &middot; Académicos +0,165 &middot; Generales +0,216 &middot; Mérito Específico +0,506 años/pto. Dispersión residual &asymp;7,03 y &asymp;6,10 años respectivamente. Son tendencias centrales estimadas (OLS), no una predicción exacta. El resto de la variación depende de factores no capturados por los apartados (orden de petición, disponibilidad de plazas, autoselección de candidatos por convocatoria, etc.). Los sliders de Idiomas, TIC, Carnets, Moto, ADR, Deportista, FCSE y Funcionariado (Bloques 3 a 6) son informativos: no suman a la edad estimada, para evitar contar dos veces lo que ya recoge el apartado agregado "Méritos Generales".</li>
-      <li><span class="warn-strip">PROMEDIOS 2025</span>Los sliders parten de los valores medios observados en la muestra (basePts del modelo de regresión), no de cero, para representar el perfil típico de un aspirante clasificado.</li>
+      <li><span class="warn-strip">MODELO</span>Modelo jerárquico bayesiano con coeficientes por apartado y por categoría de vacante (Oficial/Suboficial/Tropa agrupados en "Ejércitos", y "Cuerpos Comunes" aparte), donde el coeficiente final de cada grupo es una media ponderada entre su propio coeficiente OLS y el coeficiente global agregado: &beta;<sub>grupo</sub> = &lambda;&middot;&beta;<sub>grupo,OLS</sub> + (1&minus;&lambda;)&middot;&beta;<sub>global</sub>, con &lambda;=n<sub>grupo</sub>/(n<sub>grupo</sub>+&tau;) y &tau; el parámetro de contracción (fijado en &tau;=80). En Ejércitos (n=769) T.Servicio, Académicos, Generales y Mérito Específico se contraen levemente hacia la media global por su mayor tamaño de muestra (&lambda;&asymp;0,91); en Cuerpos Comunes (n=354) la contracción es algo mayor (&lambda;&asymp;0,82) al tener menos observaciones, lo que estabiliza sus coeficientes frente al sobreajuste. Dispersión residual &asymp;7,03 y &asymp;6,10 años respectivamente. Son tendencias centrales estimadas, no una predicción exacta. El resto de la variación depende de factores no capturados por los apartados (orden de petición, disponibilidad de plazas, autoselección de candidatos por convocatoria, etc.). Los sliders de Idiomas, TIC, Carnets, Moto, ADR, Deportista, FCSE y Funcionariado (Bloques 3 a 6) son informativos: no suman a la edad estimada, para evitar contar dos veces lo que ya recoge el apartado agregado "Méritos Generales". Para comprobar estos números directamente, sin fiarte de este texto: abre la consola del navegador (F12 o Ctrl+Shift+J) y escribe <code>dinosaurioDebug()</code>, muestra en vivo los coeficientes, errores estándar, lambdas y límites que está usando el motor en ese momento.</li>
+      <li><span class="warn-strip">SHRINKAGE</span>El shrinkage bayesiano reduce la varianza de los coeficientes en el grupo con menos datos (Cuerpos Comunes) a cambio de un ligero sesgo hacia el patrón común de todas las categorías, un compromiso estándar (bias-variance tradeoff) para evitar que estimaciones basadas en muestras pequeñas parezcan más precisas de lo que realmente son. El parámetro de contracción &tau;=80 es una decisión de diseño fijada a mano (no calibrada por validación cruzada), y contrae los coeficientes de "Ejércitos" y "Cuerpos Comunes" hacia un mismo patrón común pese a ser dos procesos de acceso estructuralmente distintos (vías, requisitos de titulación y perfiles de aspirante diferentes); quien use esta herramienta debe considerar esa contracción cruzada como un supuesto de modelado discutible, no como un hecho estadístico verificado.</li>
+      <li><span class="warn-strip">ERRORES ESTÁNDAR Y SIGNIFICANCIA</span>Coeficientes OLS por apartado antes del shrinkage, con su error estándar (validado con bootstrap de 5.000 remuestreos) e indicador de significancia al 95%: Ejércitos (n=769, R²&asymp;0,26): Tiempo Servicio +0,165&plusmn;0,147 (no significativo, el IC cruza el cero) &middot; Académicos &minus;0,297&plusmn;0,130 (significativo) &middot; Generales &minus;0,033&plusmn;0,106 (no significativo) &middot; Específico +0,410&plusmn;0,026 (significativo). Cuerpos Comunes (n=354, R²&asymp;0,40): Tiempo Servicio +1,314&plusmn;0,526 (significativo) &middot; Académicos +0,165&plusmn;0,279 (no significativo) &middot; Generales +0,216&plusmn;0,126 (no significativo, al borde) &middot; Específico +0,506&plusmn;0,036 (significativo). Los coeficientes finales que usa el simulador (COEF_MODELOS) son estos mismos valores tras aplicar el shrinkage bayesiano &lambda; hacia la media global; el shrinkage no cambia si un coeficiente es o no significativo, solo desplaza su magnitud. No se calculan errores estándar ni tests de significancia para los coeficientes ya contraídos.</li>
+      <li><span class="warn-strip">PROMEDIOS 2025</span>Los sliders parten de los valores medios observados en la muestra (basePts del modelo), no de cero, para representar el perfil típico de un aspirante clasificado.</li>
       <li><span class="warn-strip">AJUSTE PONDERADO</span>El modo "Proporcional" del ajuste global escala cada mérito según su propio valor base (delta = base &times; %), preservando la estructura relativa entre apartados grandes y pequeños. El modo "Uniforme" resta/suma el mismo delta absoluto a todos, lo que penaliza mucho más (en términos relativos) a los apartados pequeños que a los grandes &mdash; esto se refleja en el indicador de "Distorsión de igualdad", calculado como la diferencia porcentual entre el valor medio de los méritos pequeños (&lt;4 pts) y grandes (&ge;4 pts) tras el ajuste.</li>
       <li><span class="warn-strip">SATURACIÓN</span>El sub-ítem "Otros cursos/diplomas/certificados" del Mérito Específico está legalmente truncado a 4 puntos (8 cursos de 0,5 pts), según el Apéndice 3 de las convocatorias BOE 2022, 2023 y 2024.</li>
-      <li><span class="warn-strip">DESGLOSE EJÉRCITO/CUERPO</span>El código de vacante permite separar Cuerpos Comunes (prefijo 4, acceso directo con titulación específica) del resto de Ejércitos (prefijos 5/6/7). Cuerpos Comunes se comporta de forma distinta (n=281 tras fusionar 2023-2025, R²&asymp;0,42) frente al resto (n=768, R²&asymp;0,25).</li>
+      <li><span class="warn-strip">DESGLOSE EJÉRCITO/CUERPO</span>El código de vacante permite separar Cuerpos Comunes (prefijo 4, acceso directo con titulación específica) del resto de Ejércitos (prefijos 5/6/7). Cuerpos Comunes se comporta de forma distinta (n=354 tras fusionar 2023-2025, R²&asymp;0,42) frente al resto (n=769, R²&asymp;0,25).</li>
       <li><span class="warn-strip">SUB-ÍTEMS ESTIMADOS</span>Los sub-ítems de los bloques 3 a 6 no están desglosados a ese nivel de detalle en los boletines públicos; se muestran con fines de transparencia normativa usando edades medias de fuentes oficiales (INE, EOI/Cambridge, CSD, DGT) como dato contextual.</li>
       <li><span class="warn-strip">LÍMITES DE EDAD</span>Suelo y techo por escala: Tropa 18-55, Suboficial 20-58, Oficial 22-58 años. Cuerpos Comunes usa la misma ventana que Oficial (22-58).</li>
       <li><span class="warn-strip">HIPOTÉTICO</span>El modo "exploración fuera de norma" (+25%) es una herramienta de análisis de sensibilidad. Ningún valor alcanzado en la zona roja tiene validez en un proceso de selección real.</li>
       <li><span class="warn-strip">ÁREA/CAPTACIÓN/SOLAPAMIENTO</span>El área bajo la curva es una integral trapezoidal sobre los 6 bloques (unidad: pts&middot;bloque), útil para comparar configuraciones globales. La "Tasa de captación joven" y el "Solapamiento" asumen distribución normal con sigma real de la escala y desplazan solo la media; son indicadores orientativos, no una proyección demográfica medida.</li>
+      <li><span class="warn-strip">MONTE CARLO</span>El motor de proyección a 15 años permite ajustar entre 200 y 15.000 iteraciones por snapshot activo (valor por defecto: 8.000). Comprobado empíricamente antes de fijar este rango: con 15.000 iteraciones, la desviación típica de P10/P90 entre repeticiones independientes de la simulación es &plusmn;0,04&ndash;0,05 años, ya por debajo del redondeo a un decimal del panel; subir a 150.000 la reduce a &plusmn;0,01&ndash;0,02 pero multiplica el tiempo de cómputo por diez sin cambiar ninguna cifra visible. El shock aleatorio de cada trayectoria no es ruido gaussiano sintético: remuestrea con reemplazo (bootstrap real) residuos empíricos reales de la regresión (edad real menos edad predicha, n=769 en Ejércitos y n=354 en Cuerpos Comunes, cada grupo con su propia asimetría real), escalados a la sigma que el usuario configure. Sigue sin ser un remuestreo de transiciones reales de altas/bajas/reenganches (esa información no está disponible en los boletines públicos), así que trátese como un ejercicio de sensibilidad con forma de dispersión empírica real, no como una proyección demográfica basada en trayectorias longitudinales observadas.</li>
     </ul>
 
     <h4>Contexto jurídico</h4>
     <p><span class="legal-strip">INFORMATIVO, NO ES ASESORAMIENTO LEGAL</span></p>
     <ul>
-      <li>La edad como criterio de acceso al empleo público militar ha sido objeto de litigios recientes en España: la <strong>STS 269/2022</strong> (Sala Contencioso-Administrativo, 3 de marzo de 2022) anuló los límites de edad para que los suboficiales accedieran a la escala de oficiales por carecer de justificación objetiva, y la <strong>SAN 3890/2025</strong> (Audiencia Nacional) declaró nulas por discriminatorias resoluciones que mantenían esos límites solo para Tropa y Marinería.</li>
-      <li>Ambos casos versan sobre topes de edad explícitos que perjudican a los aspirantes más mayores, no sobre el efecto de un baremo de méritos que, según estos datos, perjudicaría más bien al tramo más joven.</li>
-      <li>No se ha localizado un recurso judicial específico contra el baremo de la convocatoria de Reservistas Voluntarios por este motivo, aunque existe al menos un análisis académico previo (Gil Talavera, <em>La Reserva Voluntaria: un recurso valioso dentro de la cultura de seguridad</em>) que ya señalaba que el sistema de acceso favorece al tramo 35-58 en detrimento del tramo 23-34.</li>
-      <li>Si el diseño del baremo cumple la Ley 15/2022 es, en última instancia, una cuestión que correspondería resolver a los tribunales, valorando si el peso otorgado a la experiencia acreditada responde a una justificación objetiva y proporcionada al puesto.</li>
+      <li>La edad como criterio de acceso o promoción en las Fuerzas Armadas españolas ha sido objeto de litigios recientes: la <strong>STS 269/2022</strong> (Sala Contencioso-Administrativo, 3 de marzo de 2022) anuló los límites de edad para que suboficiales <em>de carrera</em> promocionaran internamente a la Escala de Oficiales, y la <strong>SAN de 17 de septiembre de 2025</strong> (recurso 1696/2022, caso UMT) declaró discriminatorios los límites de edad para que militares de tropa y marinería <em>de carrera</em> promocionaran a Suboficial. <strong>Ninguna de las dos trata sobre Reservistas Voluntarios</strong>: ambas son sobre promoción interna de personal militar de carrera, un régimen legal distinto al de acceso externo de Reservistas. Se citan aquí solo como contexto de que la edad en el ámbito militar español es una materia activamente litigada, no como precedente aplicable a RV.</li>
+      <li>Ambos casos versan además sobre topes de edad explícitos que perjudican a los aspirantes más mayores, no sobre el efecto de un baremo de méritos que, según estos datos, perjudicaría más bien al tramo más joven.</li>
+      <li>No se ha localizado ningún recurso judicial, resuelto o pendiente, específico sobre el baremo de la convocatoria de Reservistas Voluntarios y discriminación por edad, ni a favor ni en contra: es un terreno sin jurisprudencia propia conocida, no zanjado en ningún sentido. Existe al menos un análisis académico previo (Gil Talavera, <em>La Reserva Voluntaria: un recurso valioso dentro de la cultura de seguridad</em>) que ya señalaba que el sistema de acceso favorece al tramo 35-58 en detrimento del tramo 23-34.</li>
+      <li>Si el diseño del baremo cumple la Ley 15/2022 es, en última instancia, una cuestión que corresponde resolver a los juristas, valorando si el peso otorgado a la experiencia acreditada responde a una justificación objetiva y proporcionada al puesto.</li>
     </ul>
 
     <div class="credit">DINOSAURIO es un ejercicio académico elaborado con fines educativos e informativos por Manuel Hernández González. No constituye un documento oficial, no está avalado por el Ministerio de Defensa y no sustituye la consulta de la convocatoria vigente ni el asesoramiento jurídico profesional.</div>
@@ -855,7 +909,7 @@
 
   <footer>
     <span class="rex-mini">&#129430;</span>DINOSAURIO &middot; Simulador analítico basado en el Apéndice 3 (Baremo) de las convocatorias de acceso a Reservista Voluntario
-    publicadas en el BOE 2022, 2023 y 2024, y en un modelo de regresión sobre la muestra real 2024-25.
+    publicadas en el BOE 2022-24, y en un modelo jerárquico bayesiano con shrinkage sobre la muestra real 2023-25.
   </footer>
 </div>
 
@@ -863,30 +917,63 @@
 (function(){
 "use strict";
 
-// Coeficientes reales por apartado (regresion OLS, Edad ~ 4 apartados oficiales), BOE 2023-2025
-// Ejercitos (Oficial/Suboficial/Tropa, prefijo vacante 5/6/7): n=769, R2=0.258
-// Cuerpos Comunes (prefijo vacante 4): n=354, R2=0.396
-var COEF_MODELOS = {
+// ===== Modelo jerarquico bayesiano por categoria de vacante =====
+// beta_grupo = lambda*beta_grupo_OLS + (1-lambda)*beta_global ; lambda = n_grupo/(n_grupo+tau)
+// tau = parametro de contraccion (mayor tau => mas contraccion hacia la media global).
+var TAU_SHRINK = 80;
+var N_GRUPO = { ejercitos: 769, comunes: 354 };
+
+var COEF_OLS = {
   ejercitos:{ tserv:0.1648, macad:-0.2972, mgen:-0.0332, mesp:0.4101 },
   comunes:{ tserv:1.3143, macad:0.1653, mgen:0.2164, mesp:0.5062 }
 };
+
+var COEF_SE = {
+  ejercitos:{ tserv:0.1466, macad:0.1300, mgen:0.1061, mesp:0.0263 },
+  comunes:{ tserv:0.5258, macad:0.2794, mgen:0.1257, mesp:0.0365 }
+};
+// Media global ponderada por n (pooled), usada como objetivo de contraccion.
+var N_TOTAL = N_GRUPO.ejercitos + N_GRUPO.comunes;
+var COEF_GLOBAL = {};
+['tserv','macad','mgen','mesp'].forEach(function(k){
+  COEF_GLOBAL[k] = (COEF_OLS.ejercitos[k]*N_GRUPO.ejercitos + COEF_OLS.comunes[k]*N_GRUPO.comunes)/N_TOTAL;
+});
+
+var LAMBDA_GRUPO = {
+  ejercitos: N_GRUPO.ejercitos/(N_GRUPO.ejercitos+TAU_SHRINK),
+  comunes: N_GRUPO.comunes/(N_GRUPO.comunes+TAU_SHRINK)
+};
+
+var COEF_MODELOS = {};
+['ejercitos','comunes'].forEach(function(grupo){
+  var lam = LAMBDA_GRUPO[grupo];
+  COEF_MODELOS[grupo] = {};
+  ['tserv','macad','mgen','mesp'].forEach(function(k){
+    COEF_MODELOS[grupo][k] = lam*COEF_OLS[grupo][k] + (1-lam)*COEF_GLOBAL[k];
+  });
+});
+
 var BASE_CAT_MODELOS = {
   ejercitos:{ tserv:0.51, macad:5.95, mgen:1.70, mesp:19.17 },
   comunes:{ tserv:0.10, macad:8.02, mgen:3.13, mesp:23.79 }
 };
 var AGE_BOUNDS = {
-  oficiales:{min:22, max:58, base:43.49, sigma:7.25, modelo:'ejercitos', coefLegacy:0.2263},
-  suboficiales:{min:20, max:58, base:43.45, sigma:7.31, modelo:'ejercitos', coefLegacy:0.2263},
-  tropa:{min:18, max:55, base:42.76, sigma:6.89, modelo:'ejercitos', coefLegacy:0.2263},
-  comunes:{min:22, max:58, base:43.76, sigma:7.04, modelo:'comunes', coefLegacy:0.5506}
+  oficiales:{min:22, max:58, base:43.49, sigma:7.25, modelo:'ejercitos'},
+  suboficiales:{min:20, max:58, base:43.45, sigma:7.31, modelo:'ejercitos'},
+  tropa:{min:18, max:55, base:42.76, sigma:6.89, modelo:'ejercitos'},
+  comunes:{min:22, max:58, base:43.76, sigma:7.04, modelo:'comunes'}
 };
-// coefLegacy = media de |coeficientes| por apartado del modelo real. Uso EXCLUSIVO y provisional de
-// renderSensitivityPanel (panel de sensibilidad por Bloque visual, no por apartado real), que el
-// auditor dejo señalado como pendiente de reescritura fina. No se usa en ningun otro calculo de edad.
+
+function updateBayesNote(){
+  var bounds = AGE_BOUNDS[currentCat];
+  var lam = LAMBDA_GRUPO[bounds.modelo];
+  var el = document.getElementById('bayesLambda');
+  if(el){ el.textContent = 'λ='+lam.toFixed(3)+' ('+bounds.modelo+', n='+N_GRUPO[bounds.modelo]+', τ='+TAU_SHRINK+')'; }
+}
 
 // Cada campo del panel se asigna a UNO de los 4 apartados reales, o a null si no tiene
 // tabla de puntos nacional. Los que valen null quedan como dato informativo, no suman a
-// la edad, precisamente para no contar dos veces lo que ya recoge "generales".
+// la edad, para no contar dos veces lo que ya recoge "generales".
 var REAL_CAT = {
   tservicio:'tserv',
   experiencia:'mesp', titulacion:'mesp', cursos:'mesp',
@@ -1268,13 +1355,20 @@ function renderDeltaPanel(){
 
 function renderSensitivityPanel(base){
   var bounds = AGE_BOUNDS[base.cat] || AGE_BOUNDS[currentCat];
-  var sens = base.vals.map(function(v, i){
-    var vPlus = base.vals.slice(); vPlus[i] = v+1;
-    var ptsPlus = vPlus.reduce(function(a,b2){return a+b2;},0);
-    var ptsBase = base.vals.reduce(function(a,b2){return a+b2;},0);
-    var agePlus = clamp(bounds.base - ptsPlus*bounds.coefLegacy/10, bounds.min, bounds.max);
-    var ageBase = clamp(bounds.base - ptsBase*bounds.coefLegacy/10, bounds.min, bounds.max);
-    return Math.abs(agePlus-ageBase);
+  var coef = COEF_MODELOS[bounds.modelo];
+  // Mapea cada Bloque visual a las categorias reales (tserv/macad/mgen/mesp) de sus
+  // sub-items via REAL_CAT, y usa el coeficiente bayesiano real (anios/pto) de cada una.
+  var catsByBlock = {};
+  fields.forEach(function(f){
+    if(!catsByBlock[f.group]) catsByBlock[f.group] = [];
+    var cat = REAL_CAT[f.id];
+    if(cat){ catsByBlock[f.group].push(cat); }
+  });
+  var sens = BLOCK_LABELS.map(function(lab){
+    var cats = catsByBlock[lab] || [];
+    if(!cats.length) return 0;
+    var sum = cats.reduce(function(acc,c){ return acc + Math.abs(coef[c]); }, 0);
+    return sum/cats.length;
   });
   var maxSens = Math.max(0.001, Math.max.apply(null, sens));
   var rows = BLOCK_LABELS.map(function(lab,i){
@@ -1368,6 +1462,8 @@ function updateAll(){
   document.getElementById('kpi-edad-norm').textContent = edadNorm.toFixed(1)+' años';
   document.getElementById('kpi-edad-hyp').textContent = edadHyp.toFixed(1)+' años';
 
+  updateBayesNote();
+
   var sigma = bounds.sigma;
   var pctJoven = normCDF((35-edadNorm)/sigma)*100;
 
@@ -1419,11 +1515,31 @@ document.querySelectorAll('.mode-btn').forEach(function(btn){
     document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.remove('sel'); });
     btn.classList.add('sel');
     equityMode = btn.dataset.mode;
+    applyMetaAdjustToSliders();
     updateAll();
   });
 });
 
-document.getElementById('metaAdjust').addEventListener('input', updateAll);
+function applyMetaAdjustToSliders(){
+  var adjustPct = parseFloat(document.getElementById('metaAdjust').value);
+  fields.forEach(function(f){
+    var input = document.getElementById(f.id);
+    var base = BASE2025[f.id] || 0;
+    var normMax = parseFloat(input.dataset.normMax);
+    var delta;
+    if(equityMode==='uniforme'){
+      delta = (adjustPct/100) * (normMax/2);
+    } else {
+      delta = base * (adjustPct/100);
+    }
+    input.value = clamp(base + delta, 0, normMax);
+  });
+}
+
+document.getElementById('metaAdjust').addEventListener('input', function(){
+  applyMetaAdjustToSliders();
+  updateAll();
+});
 
 document.getElementById('btnSnapA').addEventListener('click', function(){
   var snap = captureSnapshot();
@@ -1469,27 +1585,40 @@ applyRangeLimits();
 updateAll();
 window.addEventListener('load', updateAll);
 
+window.DINO_ENGINE = {
+  computeAgeFromCatPts: computeAgeFromCatPts,
+  COEF_MODELOS: COEF_MODELOS,
+  BASE_CAT_MODELOS: BASE_CAT_MODELOS,
+  AGE_BOUNDS: AGE_BOUNDS,
+  REAL_CAT: REAL_CAT,
+  BASE2025: BASE2025,
+  fields: fields,
+  clamp: clamp
+};
+
 })();
 </script>
 
 <script>
 (function(){
 "use strict";
-// ===== v7.5: Motor Monte Carlo — proyección hasta 15 años, multi-snapshot superpuesto =====
-// Módulo autocontenido: no depende de variables internas del script original (closure separado).
-// Cero líneas del script original v6 son leídas, modificadas o requeridas.
-// NUEVO v7.5: permite marcar A, B y/o C simultáneamente. Se ejecuta una simulación independiente
-// por cada snapshot activo (misma semilla base, offset por snapshot para diferenciarlas sin perder
-// reproducibilidad) y se dibujan todas superpuestas, cada una con su color (A=rojo, B=azul, C=verde).
-// Con 1 solo snapshot activo se muestran también las bandas de percentiles P10-P90/P25-P75; con 2 o
-// más activos se muestran solo las líneas medias, para que el gráfico no se sature visualmente.
+// ===== Motor Monte Carlo — proyección hasta 15 años, multi-snapshot superpuesto =====
 
 var AGE_BOUNDS_MC = {
-  oficiales:{min:22, max:58, base:43.49, sigma:7.25},
-  suboficiales:{min:20, max:58, base:43.45, sigma:7.31},
-  tropa:{min:18, max:55, base:42.76, sigma:6.89},
-  comunes:{min:22, max:58, base:43.76, sigma:7.04}
+  oficiales:{min:22, max:58, base:43.49, sigma:7.25, modelo:'ejercitos'},
+  suboficiales:{min:20, max:58, base:43.45, sigma:7.31, modelo:'ejercitos'},
+  tropa:{min:18, max:55, base:42.76, sigma:6.89, modelo:'ejercitos'},
+  comunes:{min:22, max:58, base:43.76, sigma:7.04, modelo:'comunes'}
 };
+
+// Residuos reales de la regresion (Edad real - Edad predicha por el modelo), uno por
+// aspirante, n=769 (Ejercitos) y n=354 (Cuerpos Comunes). Sustituyen al ruido gaussiano
+// sintetico previo.
+var RESID_EJERCITOS = [3.74,-0.40,-4.15,-4.44,1.90,-2.07,-4.48,-2.11,-4.26,2.58,5.33,-3.96,0.05,8.05,-0.16,6.65,-0.87,-4.84,-11.75,4.67,0.87,5.95,5.95,-3.70,-7.38,-0.06,-3.23,-14.60,12.17,1.23,-2.11,3.14,-3.59,6.42,-10.12,5.56,6.79,-8.22,11.14,-2.06,-8.11,7.06,5.24,-9.05,-2.78,2.71,-5.67,-1.18,-1.70,-10.31,9.76,3.24,0.89,4.48,-0.28,16.94,7.63,-3.80,0.87,-3.98,6.98,-1.01,-2.76,-12.49,-4.74,0.57,8.31,7.17,-5.09,-9.97,6.66,9.71,3.62,-3.43,-0.19,6.28,9.37,6.66,-8.51,-9.11,-1.36,-4.09,9.93,-1.34,-13.97,-0.56,9.00,17.00,-1.88,-2.09,11.75,3.47,-4.68,7.61,9.45,10.87,2.08,3.09,-4.14,11.65,-6.75,-11.25,-8.05,-0.05,1.58,-1.41,4.75,5.15,11.18,0.61,-1.66,-10.76,-2.62,8.87,4.95,-7.42,7.58,3.21,2.82,5.40,2.17,-14.19,-6.12,10.48,2.28,3.12,6.82,7.26,-2.23,-1.65,-3.01,-2.48,8.38,8.98,3.15,3.19,3.20,-4.17,-7.34,7.79,-1.30,2.85,1.06,0.90,-1.63,7.87,-3.60,0.89,-6.08,11.20,-6.36,-0.48,3.02,7.78,7.00,-3.97,-4.34,-0.44,8.19,0.72,10.30,7.10,4.63,-9.48,7.01,14.05,-5.11,-3.09,2.10,1.45,2.32,9.29,1.23,-5.10,-9.93,-2.94,3.70,4.18,-1.97,9.32,-1.50,2.00,3.19,0.92,-4.06,-1.72,3.76,4.42,5.02,1.50,-1.29,6.21,-5.75,-12.62,3.27,-12.77,5.76,4.37,4.19,11.91,-5.71,2.70,-3.12,7.77,-11.00,-5.89,1.65,-1.94,-16.20,-10.25,-0.03,4.40,3.79,13.93,5.45,-2.52,-2.64,4.23,7.94,3.39,-19.45,-1.58,5.99,-2.67,-2.15,0.87,-3.35,10.77,7.70,-9.12,5.03,5.74,7.91,-3.15,-11.97,0.32,-2.58,8.17,8.98,-9.56,1.79,3.63,7.75,5.56,2.71,-4.98,1.65,5.57,-23.71,-6.68,-0.74,-10.87,3.66,-7.27,-1.80,2.32,-4.26,-5.07,3.90,-1.64,-9.73,-4.38,2.26,-0.96,-4.10,10.78,-1.14,-4.54,-1.97,5.79,-9.66,5.19,-0.51,1.21,15.24,2.14,0.48,2.25,-10.31,-3.68,-14.35,-13.54,-4.66,5.91,-8.32,10.49,-13.84,-0.02,12.94,3.53,2.81,-10.98,5.01,-12.26,-8.08,2.69,1.11,7.70,0.12,13.87,2.29,2.16,8.74,2.37,5.87,0.60,1.70,-0.32,-5.66,-4.78,-2.32,-12.05,-3.84,-0.38,-3.49,-3.70,9.46,-2.38,0.13,-13.95,11.65,-3.95,-0.23,-2.86,9.51,-11.37,5.19,-16.93,4.95,-1.52,-1.35,-4.69,3.96,7.53,-9.56,-5.35,1.25,-8.65,-1.49,4.46,11.28,1.13,-1.21,-2.75,11.94,-1.68,8.00,3.32,9.42,15.08,-8.19,-2.33,-11.63,0.04,-4.42,-14.60,1.37,7.72,-9.13,6.56,-1.97,7.37,-4.56,-2.82,9.20,7.62,2.05,-9.91,8.76,1.86,-0.31,-7.00,8.21,8.39,-2.83,-16.25,-3.17,-7.11,-15.47,-0.13,7.34,11.64,7.21,5.50,12.93,6.81,-2.06,-8.94,2.26,-6.57,2.01,7.09,7.27,0.27,9.17,-4.60,10.69,-5.05,6.85,0.69,0.47,7.48,8.94,-0.22,-6.72,-0.12,1.32,1.70,1.47,-7.85,4.94,4.39,0.27,-3.70,0.07,-3.66,-13.60,-6.64,-0.31,-4.69,-1.33,1.58,-1.98,2.71,-0.88,5.78,-0.09,-9.43,-4.87,-1.05,-10.70,0.81,2.21,-4.99,5.52,7.93,-13.15,2.06,6.61,-8.01,3.55,-11.24,4.72,-7.42,-9.06,-4.91,-10.69,3.83,-5.27,-1.24,-14.95,-1.97,-17.74,-8.12,-5.74,6.83,2.27,4.32,-2.70,-13.40,8.17,-8.94,-2.27,-3.60,1.77,2.63,3.59,-11.98,-14.04,-15.21,15.32,-7.82,-11.06,-9.09,-5.99,-9.57,6.51,-5.88,5.67,-0.57,-3.85,-5.66,4.76,0.60,3.91,4.36,-1.03,-3.72,12.79,6.73,2.09,-11.84,7.05,4.18,-5.48,4.47,1.16,6.05,-7.55,-6.05,1.18,3.23,4.34,5.33,4.58,-7.02,6.51,-9.70,2.77,7.14,-12.53,-9.86,5.88,0.94,4.66,-1.42,7.30,0.77,-7.72,-1.04,1.59,5.42,-1.20,-0.75,-2.64,4.59,12.16,2.94,8.46,-0.45,4.19,-14.05,-3.00,-9.64,-0.01,-1.71,-3.01,7.56,-14.20,8.90,1.45,4.24,-6.53,8.17,-15.41,5.62,2.23,10.15,4.50,-13.85,5.94,7.14,-3.26,2.62,-6.23,-3.55,0.27,-11.21,-1.32,-15.52,-8.20,3.57,3.19,-3.51,-8.95,6.87,-7.77,-10.01,3.63,3.58,6.91,7.75,-4.86,-8.87,2.68,6.73,4.20,-15.51,9.05,-7.23,-11.61,-0.78,3.80,0.61,4.68,-2.07,0.47,-7.94,14.21,-8.22,-6.31,-18.50,15.79,1.25,13.42,5.10,5.32,13.96,7.90,-4.64,4.36,8.38,2.71,-10.29,1.25,15.17,1.44,2.40,4.80,-1.85,9.81,-5.32,7.75,9.97,9.04,-17.42,0.16,6.40,14.75,-2.81,8.60,13.14,-4.59,9.77,6.90,1.99,-9.95,6.53,12.31,3.94,4.02,-0.43,-1.87,11.35,-2.80,11.80,0.96,1.72,-1.97,1.34,-3.19,-8.24,-3.50,-4.44,-4.30,7.49,6.44,-3.68,4.83,-10.09,-5.63,-5.53,-14.23,7.43,-6.69,-6.72,-11.64,-9.16,-3.12,1.62,3.51,8.42,-0.55,-4.32,2.26,4.73,7.39,-4.30,-5.92,4.35,-8.56,-10.96,2.35,2.58,6.70,-2.25,2.68,0.76,7.06,4.75,-2.05,-13.81,-6.76,-4.82,-7.70,-3.31,-6.67,0.05,-7.85,-11.94,-1.65,-7.79,-1.19,8.93,-9.81,-9.20,-5.35,-6.26,4.13,11.13,2.36,-0.57,2.84,-3.86,-2.31,-0.14,3.51,-1.95,6.28,6.87,0.73,-1.25,15.15,0.68,4.55,6.76,2.71,1.69,1.86,5.02,4.43,4.09,-3.85,-6.17,1.00,-12.40,-14.51,14.17,5.59,7.91,5.30,-0.98,-11.17,0.37,7.61,0.29,0.64,4.29,-0.10,6.21,-3.77,9.68,1.19,-2.88,7.22,5.40,-10.57,-13.11,-8.51,7.26,-7.45,-6.70,-8.47,-12.86,-5.88,11.17,-7.15,3.41,4.06,-9.62,2.05,2.27,4.87,0.11,1.61,-4.47,-5.02,2.98,2.54];
+var RESID_COMUNES = [-6.21,0.54,-3.11,4.46,-8.42,-3.36,2.45,7.44,-1.90,0.97,-1.03,6.38,6.27,-1.92,-0.81,-4.45,3.79,6.14,3.34,-5.83,7.51,7.00,4.28,15.07,-6.35,2.40,2.32,-5.83,4.51,-6.04,5.19,6.30,6.80,10.49,8.07,11.34,5.62,-2.00,0.67,6.59,8.41,1.01,-7.03,-2.32,11.98,-0.72,3.91,1.00,6.62,-4.23,-6.32,-4.77,-4.99,-1.11,9.30,7.75,10.50,1.54,-11.90,3.63,2.24,8.00,3.17,0.62,2.73,1.40,5.00,3.55,-3.51,-4.45,-8.54,-2.96,8.92,4.62,3.59,-4.22,-8.51,6.90,1.49,-2.82,-0.41,4.45,3.46,6.08,-2.11,-4.12,5.90,5.84,4.22,3.93,3.20,-1.07,-14.84,1.49,-0.14,4.81,1.83,-8.47,-1.65,-5.07,4.69,6.70,-9.58,-4.69,3.83,-0.53,-3.09,-7.22,-0.37,-7.12,-4.38,-5.00,12.22,-7.95,-4.16,-6.25,20.02,-0.98,-6.89,-1.34,-4.90,-15.42,6.36,-0.06,7.33,1.49,-5.39,9.40,-6.11,2.51,-4.19,-8.91,2.90,17.61,-2.96,7.78,-4.54,-1.00,-3.57,0.58,-3.83,1.00,-6.72,20.64,-8.69,4.25,-11.51,3.66,-4.80,-10.71,-5.15,5.66,-3.66,18.96,3.72,0.73,-8.60,21.92,-6.00,5.09,3.14,0.72,-2.68,-2.90,-2.98,2.02,5.94,8.00,-2.13,0.67,-3.29,10.43,7.50,3.93,-8.87,3.21,4.37,-8.82,-5.38,-4.44,-1.09,3.87,-12.31,-3.44,-6.18,-2.22,-2.51,1.97,-3.21,4.30,0.64,-4.51,-8.42,-2.00,-9.78,0.27,5.20,-3.55,-3.84,0.73,-1.35,-1.87,0.16,8.41,-0.28,-0.24,-4.79,-0.98,2.14,-0.52,-0.84,10.23,4.85,10.19,0.27,-9.64,-0.09,-2.09,10.57,-4.87,-6.17,0.04,-4.15,-7.14,6.22,-5.86,-4.07,-5.64,-6.49,-7.16,-7.05,-4.37,-5.09,-0.48,-0.60,17.90,3.58,5.82,7.93,-5.92,-0.68,7.50,8.37,0.17,6.86,6.95,0.31,-10.84,5.37,-6.03,6.23,-1.09,-1.39,-2.98,5.18,-10.02,-8.44,-6.50,4.55,3.52,2.56,-4.77,-1.84,4.82,-9.67,0.46,-2.23,-3.22,4.34,4.07,3.07,2.31,-1.98,-5.69,-3.19,-8.96,1.64,9.17,-2.74,-4.85,-6.84,-0.67,-5.08,4.81,4.11,1.52,4.55,5.10,4.48,-2.25,-8.14,-6.59,-8.31,2.77,-1.31,1.02,-6.24,6.88,-1.31,-3.07,4.86,-7.54,-3.65,2.32,5.51,-0.84,-3.52,-1.54,6.88,6.70,0.58,8.44,2.26,-5.58,-6.75,-3.82,-7.32,-0.64,1.63,1.48,8.08,-2.20,-0.57,-1.56,1.49,-1.08,2.94,1.66,2.26,-14.31,-2.12,-1.96,-7.38,-7.80,2.86,-2.86,-4.11,-6.11,0.32,4.15,0.02,3.58,-13.27,5.34,-1.09,-1.79,-3.81,-9.71,1.92,5.58,-7.62,-6.20,1.94,-3.00];
+var RESID_STD_EJERCITOS = (function(arr){ var m=arr.reduce(function(a,b){return a+b;},0)/arr.length; var v=arr.reduce(function(a,b){return a+(b-m)*(b-m);},0)/(arr.length-1); return Math.sqrt(v); })(RESID_EJERCITOS);
+var RESID_STD_COMUNES = (function(arr){ var m=arr.reduce(function(a,b){return a+b;},0)/arr.length; var v=arr.reduce(function(a,b){return a+(b-m)*(b-m);},0)/(arr.length-1); return Math.sqrt(v); })(RESID_COMUNES);
+
 
 var SNAP_COLORS = { A:'#e3453f', B:'#4a90d9', C:'#8fae4a' };
 var SNAP_LABELS = { A:'Snapshot A', B:'Snapshot B', C:'Snapshot C (Ref. BOE)' };
@@ -1524,6 +1653,15 @@ function getCurrentCat(){
 function randNormal(){
   var u1 = rng(), u2 = rng();
   return Math.sqrt(-2*Math.log(u1))*Math.cos(2*Math.PI*u2);
+}
+
+// Bootstrap real (incorporado de la auditoria v8) - toma un residuo real al azar (con
+// reemplazo) de la distribucion empirica del modelo correspondiente.
+function randShock(modelo, shockSigma){
+  var arr = (modelo==='comunes') ? RESID_COMUNES : RESID_EJERCITOS;
+  var std = (modelo==='comunes') ? RESID_STD_COMUNES : RESID_STD_EJERCITOS;
+  var r = arr[Math.floor(rng()*arr.length)];
+  return (r/std) * shockSigma;
 }
 
 function readSnapshotFromDOM(slot){
@@ -1561,7 +1699,7 @@ function simulatePaths(nPaths, horizon, drift, shockSigma, bounds, startAge){
     var path = [startAge];
     var current = startAge;
     for(var year=1; year<=horizon; year++){
-      current = clampMC(current + drift + randNormal()*shockSigma, bounds.min, bounds.max);
+      current = clampMC(current + drift + randShock(bounds.modelo, shockSigma), bounds.min, bounds.max);
       path.push(current);
     }
     paths.push(path);
@@ -1572,10 +1710,22 @@ function simulatePaths(nPaths, horizon, drift, shockSigma, bounds, startAge){
 function runOneProjection(iterations, drift, horizon, shockSigma, startAge, bounds, cat, slot){
   var t0 = performance.now();
   rng = mulberry32(20260711 + SNAP_SEED_OFFSET[slot]);
-  var nPaths = Math.min(iterations, 8000);
+  var nPaths = iterations;
   var paths = simulatePaths(nPaths, horizon, drift, shockSigma, bounds, startAge);
 
+  // Histograma de densidad por año (bins fijos sobre el rango de la escala), usado
+  // exclusivamente por la Vista Espectral 3D (bajo demanda).
+  var densBins = 60;
+  var densMin = bounds.min, densMax = bounds.max;
+  var densStep = (densMax-densMin)/densBins;
+  var densityByYear = [];
+
   var results = [{year:0, p10:startAge, p25:startAge, p50:startAge, mean:startAge, p75:startAge, p90:startAge}];
+  var hist0 = new Array(densBins).fill(0);
+  var b0 = Math.min(densBins-1, Math.max(0, Math.floor((startAge-densMin)/densStep)));
+  hist0[b0] = nPaths;
+  densityByYear.push(hist0);
+
   for(var year=1; year<=horizon; year++){
     var valsAtYear = paths.map(function(pth){ return pth[year]; });
     var sortedYear = valsAtYear.slice().sort(function(a,b){return a-b;});
@@ -1587,6 +1737,12 @@ function runOneProjection(iterations, drift, horizon, shockSigma, startAge, boun
       p50:percentile(sortedYear,50), mean:mean,
       p75:percentile(sortedYear,75), p90:percentile(sortedYear,90)
     });
+    var hist = new Array(densBins).fill(0);
+    for(var v=0; v<valsAtYear.length; v++){
+      var b = Math.min(densBins-1, Math.max(0, Math.floor((valsAtYear[v]-densMin)/densStep)));
+      hist[b]++;
+    }
+    densityByYear.push(hist);
   }
   var meanLine = results.map(function(r){ return r.mean; });
   var sampleSize = Math.min(30, paths.length);
@@ -1599,7 +1755,8 @@ function runOneProjection(iterations, drift, horizon, shockSigma, startAge, boun
 
   var t1 = performance.now();
   return {results:results, runtimeMs:(t1-t0), bounds:bounds, cat:cat, slot:slot,
-           samplePaths:samplePaths, meanLine:meanLine, nPaths:nPaths, startAge:startAge};
+           samplePaths:samplePaths, meanLine:meanLine, nPaths:nPaths, startAge:startAge,
+           densityByYear:densityByYear, densMin:densMin, densMax:densMax, densStep:densStep, densBins:densBins};
 }
 
 function pctJovenFromMean(mean, sigma){
@@ -1642,13 +1799,9 @@ function drawFanChart(projections){
   }
 
   var singleMode = projections.length === 1;
-  // Dash distinto por snapshot: aunque dos lineas casi coincidan en color/posicion (mismo punto de
-  // partida), el patron de trazo permite distinguirlas igualmente. A=solido, B=guiones, C=punteado.
+
   var DASH_BY_SLOT = { A:[], B:[8,4], C:[2,3] };
 
-  // FONDO: el "spaghetti" de trayectorias individuales se dibuja SIEMPRE (antes solo con 1 snapshot
-  // activo), usando el color propio de cada snapshot en baja opacidad, para no perder el contexto de
-  // dispersion real al comparar varios snapshots a la vez.
   projections.forEach(function(proj){
     var color = SNAP_COLORS[proj.slot];
     var nShow = singleMode ? proj.samplePaths.length : Math.min(14, proj.samplePaths.length);
@@ -1807,7 +1960,7 @@ function updateSnapLabel(){
   label.textContent = descr + (invalidSlots.length ? ' ('+invalidSlots.join(',')+' vacío, se omite)' : '');
   btn.disabled = false;
   status.className = 'mc-status';
-  status.textContent = 'Listo para simular '+validSlots.length+' snapshot(s): '+validSlots.join(', ')+'.';
+  status.textContent = 'Listo para simular '+validSlots.length+' snapshot(s) con '+document.getElementById('mcIterations').value+' iteraciones: '+validSlots.join(', ')+'.';
 }
 
 ['A','B','C'].forEach(function(s){
@@ -1829,7 +1982,7 @@ function runMC(){
   var status = document.getElementById('mcStatus');
   btn.disabled = true;
   status.className = 'mc-status';
-  status.textContent = 'Ejecutando simulación Monte Carlo para '+validSnaps.length+' snapshot(s)...';
+  status.textContent = 'Ejecutando simulación Monte Carlo ('+document.getElementById('mcIterations').value+' iteraciones) para '+validSnaps.length+' snapshot(s)...';
 
   setTimeout(function(){
     try{
@@ -1853,7 +2006,7 @@ function runMC(){
       updateMultiLegend(projections.map(function(p){return p.slot;}));
 
       var totalRuntime = projections.reduce(function(a,p){return a+p.runtimeMs;},0);
-      status.textContent = 'Completado: '+projections.length+' snapshot(s) simulado(s) ('+projections.map(function(p){return p.slot;}).join(', ')+'), categoría '+cat0+' ('+totalRuntime.toFixed(0)+' ms).';
+      status.textContent = 'Completado: '+projections.length+' snapshot(s) simulado(s) ('+projections.map(function(p){return p.slot;}).join(', ')+'), categoría '+cat0+', '+iterations+' iteraciones cada uno ('+totalRuntime.toFixed(0)+' ms).';
       btn.disabled = false;
     }catch(e){
       status.className = 'mc-status err';
@@ -1899,6 +2052,376 @@ function downloadFile(filename, content, mime){
   URL.revokeObjectURL(url);
 }
 
+
+// ===== Vista Espectral 3D (ridgeline isometrico) — bajo demanda, boton separado =====
+function smoothHist(hist){
+  var out = new Array(hist.length);
+  for(var i=0;i<hist.length;i++){
+    var a = hist[Math.max(0,i-1)], b = hist[i], c = hist[Math.min(hist.length-1,i+1)];
+    out[i] = (a+2*b+c)/4;
+  }
+  return out;
+}
+
+function drawSpectralView(proj){
+  var canvas = document.getElementById('chartSpectral3D');
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#161a11'; ctx.fillRect(0,0,w,h);
+
+  var densityByYear = proj.densityByYear;
+  var nYears = densityByYear.length;
+  var bins = proj.densBins;
+
+  var padL=70, padR=40, padT=50, padB=60;
+  var plotW = w-padL-padR, plotH = h-padT-padB;
+  var dxPerYear = plotW*0.32/(nYears-1);
+  var dyPerYear = (plotH*0.55)/(nYears-1);
+  var ridgeMaxH = plotH*0.32;
+
+  var baseColor = [143,174,74], accentColor = [217,164,65];
+  function lerpColor(f){
+    var r = Math.round(baseColor[0]*(1-f)+accentColor[0]*f);
+    var g = Math.round(baseColor[1]*(1-f)+accentColor[1]*f);
+    var b = Math.round(baseColor[2]*(1-f)+accentColor[2]*f);
+    return 'rgb('+r+','+g+','+b+')';
+  }
+
+  var xAt0 = padL + plotW*0.06;
+  var yBase0 = padT + ridgeMaxH + 10;
+
+  // dibuja de atras (año mas lejano) hacia adelante para que las olas cercanas tapen a las lejanas
+  for(var i=nYears-1; i>=0; i--){
+    var hist = smoothHist(densityByYear[i]);
+    var maxV = Math.max.apply(null, hist) || 1;
+    var frac = i/(nYears-1);
+    var col = lerpColor(frac);
+    var x0 = xAt0 + i*dxPerYear;
+    var yBase = yBase0 + i*dyPerYear;
+    var stepX = (plotW*0.62)/bins;
+
+    ctx.beginPath();
+    ctx.moveTo(x0, yBase);
+    for(var b=0; b<bins; b++){
+      var x = x0 + b*stepX;
+      var y = yBase - (hist[b]/maxV)*ridgeMaxH;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(x0+(bins-1)*stepX, yBase);
+    ctx.closePath();
+    ctx.fillStyle = col;
+    ctx.globalAlpha = 0.88;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = 'rgba(231,232,223,0.55)';
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    for(var b2=0; b2<bins; b2++){
+      var x2 = x0 + b2*stepX;
+      var y2 = yBase - (hist[b2]/maxV)*ridgeMaxH;
+      if(b2===0) ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2);
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath(); ctx.moveTo(x0, yBase); ctx.lineTo(x0+(bins-1)*stepX, yBase); ctx.stroke();
+
+    if(i%3===0 || i===nYears-1){
+      ctx.fillStyle = '#c8b878';
+      ctx.font = 'bold 11px Segoe UI';
+      ctx.textAlign = 'right';
+      var label = i===0 ? 'Hoy' : ('Año '+i);
+      ctx.fillText(label, x0-6, yBase-ridgeMaxH*0.02);
+    }
+  }
+
+  // eje de edad de referencia sobre la ola mas cercana (i=0)
+  ctx.strokeStyle = '#3a4530'; ctx.fillStyle = '#9aa085'; ctx.font = '10px Segoe UI';
+  ctx.textAlign = 'center';
+  var ticks = [];
+  var bounds = proj.bounds;
+  var tickCount = 5;
+  for(var t=0;t<=tickCount;t++){
+    var age = bounds.min + (bounds.max-bounds.min)*(t/tickCount);
+    var bx = xAt0 + ((age-proj.densMin)/(proj.densMax-proj.densMin))*(plotW*0.62);
+    ctx.beginPath(); ctx.setLineDash([2,3]);
+    ctx.moveTo(bx, padT-6); ctx.lineTo(bx, yBase0+8);
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillText(age.toFixed(0), bx, yBase0+22);
+  }
+  ctx.fillStyle = '#9aa085'; ctx.font = '11px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('Edad estimada (años)', xAt0+plotW*0.31, yBase0+38);
+
+  // linea de referencia: edad inicial del snapshot
+  var startBx = xAt0 + ((proj.startAge-proj.densMin)/(proj.densMax-proj.densMin))*(plotW*0.62);
+  ctx.strokeStyle = '#e3453f'; ctx.lineWidth = 1.3; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(startBx, padT-10); ctx.lineTo(startBx, yBase0+8); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#e3453f'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign='left';
+  ctx.fillText('Hoy: '+proj.startAge.toFixed(1), startBx+4, padT-14);
+
+  ctx.fillStyle = '#c8b878'; ctx.font = 'bold 12px Segoe UI'; ctx.textAlign='left';
+  ctx.fillText('Snapshot '+proj.slot+' · '+proj.nPaths+' rutas · categoría '+proj.cat, padL, 20);
+}
+
+function updateSpectralSnapOptions(){
+  var sel = document.getElementById('spectralSnap');
+  if(!lastProjections || !lastProjections.length){ return; }
+  var slots = lastProjections.map(function(p){ return p.slot; });
+  Array.prototype.forEach.call(sel.options, function(opt){
+    opt.disabled = slots.indexOf(opt.value) === -1;
+  });
+  if(sel.options[sel.selectedIndex].disabled){
+    for(var i=0;i<sel.options.length;i++){
+      if(!sel.options[i].disabled){ sel.selectedIndex = i; break; }
+    }
+  }
+}
+
+document.getElementById('btnGenSpectral').addEventListener('click', function(){
+  var box = document.getElementById('spectralBox');
+  var foot = document.getElementById('spectralFoot');
+  if(!lastProjections || !lastProjections.length){
+    box.style.display = 'block';
+    foot.textContent = 'Ejecuta primero una simulación Monte Carlo arriba (botón "Simular / Actualizar") con al menos un snapshot activo.';
+    return;
+  }
+  updateSpectralSnapOptions();
+  box.style.display = 'block';
+  var sel = document.getElementById('spectralSnap');
+  var proj = lastProjections.filter(function(p){ return p.slot === sel.value; })[0] || lastProjections[0];
+  drawSpectralView(proj);
+  foot.textContent = 'Relieve generado a partir de '+proj.nPaths+' rutas del snapshot '+proj.slot+' ('+proj.results.length-1+' años). Cambia el snapshot arriba para regenerar con otro.';
+});
+
+document.getElementById('spectralSnap').addEventListener('change', function(){
+  if(!lastProjections || !lastProjections.length) return;
+  var proj = lastProjections.filter(function(p){ return p.slot === this.value; }.bind(this))[0];
+  if(proj){
+    drawSpectralView(proj);
+    document.getElementById('spectralFoot').textContent = 'Relieve generado a partir de '+proj.nPaths+' rutas del snapshot '+proj.slot+' ('+(proj.results.length-1)+' años).';
+  }
+});
+
+// ===== Mapa de Calor 2D (Edad x Puntos) — bajo demanda, boton separado =====
+// Genera una nube de sensibilidad honesta: jitter proporcional de los 4 apartados reales
+function generateHeatmapCloud(snap, nSamples){
+  var eng = window.DINO_ENGINE;
+  var bounds = eng.AGE_BOUNDS[snap.cat] || eng.AGE_BOUNDS['oficiales'];
+  var basePts = eng.BASE_CAT_MODELOS[bounds.modelo];
+  var totalPts0 = snap.pts;
+  var jitterFrac = 0.35;
+
+  var modeloResid = bounds.modelo === 'comunes' ? RESID_COMUNES : RESID_EJERCITOS;
+  var stdResid = bounds.modelo === 'comunes' ? RESID_STD_COMUNES : RESID_STD_EJERCITOS;
+
+  var pts = [], ages = [];
+  for(var i=0;i<nSamples;i++){
+    var jTserv = basePts.tserv * (1 + (rng()*2-1)*jitterFrac);
+    var jMacad = basePts.macad * (1 + (rng()*2-1)*jitterFrac);
+    var jMgen  = basePts.mgen  * (1 + (rng()*2-1)*jitterFrac);
+    var jMesp  = basePts.mesp  * (1 + (rng()*2-1)*jitterFrac);
+    var catPts = { tserv:Math.max(0,jTserv), macad:Math.max(0,jMacad), mgen:Math.max(0,jMgen), mesp:Math.max(0,jMesp) };
+    var totalCat = catPts.tserv+catPts.macad+catPts.mgen+catPts.mesp;
+    var scale = totalCat>0 ? totalPts0/totalCat : 1;
+    catPts.tserv*=scale; catPts.macad*=scale; catPts.mgen*=scale; catPts.mesp*=scale;
+    var totalP = catPts.tserv+catPts.macad+catPts.mgen+catPts.mesp;
+
+    var ageBase = eng.computeAgeFromCatPts(catPts, bounds);
+    var r = modeloResid[Math.floor(rng()*modeloResid.length)];
+    var age = clampMC(ageBase + (r/stdResid)*1.5, bounds.min, bounds.max);
+
+    pts.push(totalP);
+    ages.push(age);
+  }
+  return { pts:pts, ages:ages, bounds:bounds, cat:snap.cat, totalPts0:totalPts0 };
+}
+
+function buildDensityGrid(cloud, gridX, gridY){
+  var minP = Math.min.apply(null, cloud.pts), maxP = Math.max.apply(null, cloud.pts);
+  var minA = cloud.bounds.min, maxA = cloud.bounds.max;
+  var stepP = (maxP-minP)/gridX || 1, stepA = (maxA-minA)/gridY;
+  var grid = [];
+  for(var gy=0; gy<gridY; gy++){ grid.push(new Array(gridX).fill(0)); }
+  for(var i=0;i<cloud.pts.length;i++){
+    var bx = Math.min(gridX-1, Math.max(0, Math.floor((cloud.pts[i]-minP)/stepP)));
+    var by = Math.min(gridY-1, Math.max(0, Math.floor((cloud.ages[i]-minA)/stepA)));
+    grid[by][bx]++;
+  }
+  var smoothed = [];
+  for(var y=0; y<gridY; y++){
+    var row = [];
+    for(var x=0; x<gridX; x++){
+      var sum=0, cnt=0;
+      for(var dy=-1; dy<=1; dy++){
+        for(var dx=-1; dx<=1; dx++){
+          var yy=y+dy, xx=x+dx;
+          if(yy>=0 && yy<gridY && xx>=0 && xx<gridX){ sum+=grid[yy][xx]; cnt++; }
+        }
+      }
+      row.push(sum/cnt);
+    }
+    smoothed.push(row);
+  }
+  return { grid:smoothed, minP:minP, maxP:maxP, minA:minA, maxA:maxA, stepP:stepP, stepA:stepA };
+}
+
+function densityColor(t){
+  var stops = [
+    [22,24,17],
+    [92,107,63],
+    [143,174,74],
+    [217,164,65]
+  ];
+  var seg = t*(stops.length-1);
+  var i0 = Math.min(stops.length-2, Math.floor(seg));
+  var f = seg-i0;
+  var c0 = stops[i0], c1 = stops[i0+1];
+  var r = Math.round(c0[0]+(c1[0]-c0[0])*f);
+  var g = Math.round(c0[1]+(c1[1]-c0[1])*f);
+  var b = Math.round(c0[2]+(c1[2]-c0[2])*f);
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+function drawHeatmap2D(proj){
+  var canvas = document.getElementById('chartHeatmap2D');
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = '#161a11'; ctx.fillRect(0,0,w,h);
+
+  var gridX = 70, gridY = 50;
+  var dens = buildDensityGrid(proj, gridX, gridY);
+  var maxCell = 0;
+  for(var y=0;y<gridY;y++){ for(var x=0;x<gridX;x++){ if(dens.grid[y][x]>maxCell) maxCell = dens.grid[y][x]; } }
+  if(maxCell<=0) maxCell = 1;
+
+  var padL=70, padR=110, padT=40, padB=55;
+  var plotW = w-padL-padR, plotH = h-padT-padB;
+  var cellW = plotW/gridX, cellH = plotH/gridY;
+
+  for(var gy=0; gy<gridY; gy++){
+    for(var gx=0; gx<gridX; gx++){
+      var t = dens.grid[gy][gx]/maxCell;
+      ctx.fillStyle = densityColor(t);
+      var px = padL + gx*cellW;
+      var py = padT + plotH - (gy+1)*cellH;
+      ctx.fillRect(px, py, cellW+0.5, cellH+0.5);
+    }
+  }
+
+  var levels = [0.25, 0.5, 0.75];
+  levels.forEach(function(lv, li){
+    ctx.strokeStyle = li===levels.length-1 ? 'rgba(231,232,223,0.85)' : 'rgba(231,232,223,0.45)';
+    ctx.lineWidth = li===levels.length-1 ? 1.4 : 0.9;
+    ctx.beginPath();
+    for(var gy=0; gy<gridY-1; gy++){
+      for(var gx=0; gx<gridX-1; gx++){
+        var v00=dens.grid[gy][gx]/maxCell, v10=dens.grid[gy][gx+1]/maxCell;
+        var v01=dens.grid[gy+1][gx]/maxCell, v11=dens.grid[gy+1][gx+1]/maxCell;
+        var corners=[v00,v10,v11,v01];
+        var above = corners.map(function(c){return c>=lv;});
+        var nAbove = above.filter(Boolean).length;
+        if(nAbove>0 && nAbove<4){
+          var px = padL + gx*cellW, py = padT + plotH - (gy+1)*cellH;
+          ctx.rect(px, py, cellW, cellH);
+        }
+      }
+    }
+    ctx.stroke();
+  });
+
+  ctx.strokeStyle = '#3a4530'; ctx.fillStyle = '#9aa085'; ctx.font = '10px Segoe UI'; ctx.textAlign='center';
+  var xTicks = 6, yTicks = 6;
+  for(var i=0;i<=xTicks;i++){
+    var px = padL + (plotW*i/xTicks);
+    var val = dens.minP + (dens.maxP-dens.minP)*(i/xTicks);
+    ctx.fillText(val.toFixed(0), px, padT+plotH+18);
+  }
+  ctx.fillText('Puntuación total del baremo', padL+plotW/2, padT+plotH+38);
+  ctx.textAlign='right';
+  for(var j=0;j<=yTicks;j++){
+    var py = padT + plotH - (plotH*j/yTicks);
+    var valA = dens.minA + (dens.maxA-dens.minA)*(j/yTicks);
+    ctx.fillText(valA.toFixed(0), padL-10, py+3);
+  }
+  ctx.save();
+  ctx.translate(20, padT+plotH/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center';
+  ctx.fillText('Edad estimada (años)', 0, 0);
+  ctx.restore();
+
+  var cx = padL + ((proj.totalPts0-dens.minP)/(dens.maxP-dens.minP))*plotW;
+  var meanAge = proj.ages.reduce(function(a,b){return a+b;},0)/proj.ages.length;
+  var cy = padT + plotH - ((meanAge-dens.minA)/(dens.maxA-dens.minA))*plotH;
+  ctx.strokeStyle = '#e3453f'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI*2); ctx.stroke();
+  ctx.fillStyle = '#e3453f'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign='left';
+  ctx.fillText('Tu config. actual', cx+10, cy-8);
+
+  var legX = w-padR+25, legY0 = padT, legH = plotH;
+  for(var ly=0; ly<legH; ly++){
+    var t2 = 1-(ly/legH);
+    ctx.fillStyle = densityColor(t2);
+    ctx.fillRect(legX, legY0+ly, 18, 1.2);
+  }
+  ctx.strokeStyle = '#3a4530'; ctx.strokeRect(legX, legY0, 18, legH);
+  ctx.fillStyle = '#9aa085'; ctx.font='9px Segoe UI'; ctx.textAlign='left';
+  ctx.fillText('Alta', legX+22, legY0+8);
+  ctx.fillText('Baja', legX+22, legY0+legH);
+  ctx.fillStyle = '#c8b878'; ctx.font='bold 11px Segoe UI';
+  ctx.fillText('Densidad', legX-6, legY0-8);
+}
+
+function updateHeatmapSnapOptions(){
+  var sel = document.getElementById('heatmapSnap');
+  var slots = ['A','B','C'].filter(function(s){ return readSnapshotFromDOM(s) !== null; });
+  Array.prototype.forEach.call(sel.options, function(opt){
+    opt.disabled = slots.indexOf(opt.value) === -1;
+  });
+  if(sel.options[sel.selectedIndex].disabled){
+    for(var i=0;i<sel.options.length;i++){
+      if(!sel.options[i].disabled){ sel.selectedIndex = i; break; }
+    }
+  }
+  return slots;
+}
+
+function runHeatmapForSlot(slot){
+  var snapRaw = readSnapshotFromDOM(slot);
+  var foot = document.getElementById('heatmapFoot');
+  if(!snapRaw){
+    foot.textContent = 'El snapshot '+slot+' no está guardado. Guárdalo en el comparador de arriba primero.';
+    return;
+  }
+  var snap = { pts: snapRaw.pts, cat: getCurrentCat() };
+  rng = mulberry32(20260712 + slot.charCodeAt(0));
+  var cloud = generateHeatmapCloud(snap, 6000);
+  drawHeatmap2D(cloud);
+  foot.textContent = 'Nube de 6.000 combinaciones jitteradas (±35% por apartado) alrededor del snapshot '+slot+
+    ' (puntuación base '+snap.pts.toFixed(1)+' pts). El punto rojo marca tu configuración real; las isolíneas'+
+    ' marcan el 25%/50%/75% de la densidad máxima observada en la nube.';
+}
+
+document.getElementById('btnGenHeatmap').addEventListener('click', function(){
+  var box = document.getElementById('heatmapBox');
+  box.style.display = 'block';
+  var slots = updateHeatmapSnapOptions();
+  if(!slots.length){
+    document.getElementById('heatmapFoot').textContent = 'No hay ningún snapshot guardado. Guarda al menos uno (A, B o Ref. BOE) en el comparador de arriba.';
+    return;
+  }
+  var sel = document.getElementById('heatmapSnap');
+  runHeatmapForSlot(sel.value);
+});
+
+document.getElementById('heatmapSnap').addEventListener('change', function(){
+  runHeatmapForSlot(this.value);
+});
+
 document.getElementById('btnExportVensim').addEventListener('click', function(){
   if(!lastProjections) return;
   downloadFile('dinosaurio_proyeccion_vensim.csv', buildCSV(lastProjections), 'text/csv');
@@ -1912,6 +2435,28 @@ document.getElementById('btnExportJSON').addEventListener('click', function(){
   });
   downloadFile('dinosaurio_proyeccion.json', JSON.stringify(payload, null, 2), 'application/json');
 });
+
+// Gancho de verificacion desde la consola del navegador (F12 > Console > escribe dinosaurioDebug()).
+// Muestra los numeros que de verdad usa el motor de calculo en este momento, para comprobar que lo
+// que se ve en pantalla coincide con lo que hay programado, sin tener que leer el codigo fuente.
+window.dinosaurioDebug = function(){
+  var out = {
+    coeficientes_OLS_antes_de_shrinkage: COEF_OLS,
+    errores_estandar: COEF_SE,
+    coeficientes_finales_tras_shrinkage: COEF_MODELOS,
+    lambda_shrinkage_entre_grupos: LAMBDA_GRUPO,
+    tau_shrinkage: TAU_SHRINK,
+    tamanios_muestra: N_GRUPO,
+    puntos_base_por_categoria: BASE_CAT_MODELOS,
+    limites_edad_por_escala: AGE_BOUNDS,
+    mapeo_campo_a_categoria_real: REAL_CAT,
+    categoria_actualmente_seleccionada: currentCat
+  };
+  console.log('DINOSAURIO — estado real del motor de calculo:');
+  console.table(out.coeficientes_finales_tras_shrinkage);
+  console.log(out);
+  return out;
+};
 
 })();
 </script>
