@@ -909,7 +909,7 @@
 
   <footer>
     <span class="rex-mini">&#129430;</span>DINOSAURIO &middot; Simulador analítico basado en el Apéndice 3 (Baremo) de las convocatorias de acceso a Reservista Voluntario
-    publicadas en el BOE 2022-24, y en un modelo jerárquico bayesiano sobre la muestra real 2023-25.
+    publicadas en el BOE 2022-24, y en un modelo jerárquico bayesiano sobre la muestra 2023-25.
   </footer>
 </div>
 
@@ -1510,13 +1510,6 @@ document.querySelectorAll('.cat-btn').forEach(function(btn){
   });
 });
 
-// FIX v16->v17: este listener estaba enganchado a TODOS los botones con clase "mode-btn",
-// que es una clase puramente de estilo compartida por muchos botones sin relacion (guardar
-// snapshot, exportar, generar graficas...). Como esos botones tambien la llevan, un click en
-// cualquiera de ellos disparaba TAMBIEN este reset de sliders antes de ejecutar su propia accion,
-// que es exactamente el fallo reportado (Snapshot A/B grababa el valor por defecto, no el actual).
-// Acotado a su contenedor real (#modeSwitch), que solo envuelve los dos botones que de verdad
-// deben resetear sliders (Proporcional / Uniforme).
 document.querySelectorAll('#modeSwitch .mode-btn').forEach(function(btn){
   btn.addEventListener('click', function(){
     document.querySelectorAll('#modeSwitch .mode-btn').forEach(function(b){ b.classList.remove('sel'); });
