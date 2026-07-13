@@ -1510,9 +1510,16 @@ document.querySelectorAll('.cat-btn').forEach(function(btn){
   });
 });
 
-document.querySelectorAll('.mode-btn').forEach(function(btn){
+// FIX v16->v17: este listener estaba enganchado a TODOS los botones con clase "mode-btn",
+// que es una clase puramente de estilo compartida por muchos botones sin relacion (guardar
+// snapshot, exportar, generar graficas...). Como esos botones tambien la llevan, un click en
+// cualquiera de ellos disparaba TAMBIEN este reset de sliders antes de ejecutar su propia accion,
+// que es exactamente el fallo reportado (Snapshot A/B grababa el valor por defecto, no el actual).
+// Acotado a su contenedor real (#modeSwitch), que solo envuelve los dos botones que de verdad
+// deben resetear sliders (Proporcional / Uniforme).
+document.querySelectorAll('#modeSwitch .mode-btn').forEach(function(btn){
   btn.addEventListener('click', function(){
-    document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.remove('sel'); });
+    document.querySelectorAll('#modeSwitch .mode-btn').forEach(function(b){ b.classList.remove('sel'); });
     btn.classList.add('sel');
     equityMode = btn.dataset.mode;
     applyMetaAdjustToSliders();
