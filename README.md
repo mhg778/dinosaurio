@@ -342,6 +342,6 @@ resultados completos:
 
 ============================================================================
 
-  FIN DEL MANUAL - DINOSAURIO - POR MANUEL HERNÁNDEZ GONZÁLEZ
+          FIN DEL MANUAL - DINOSAURIO - POR MANUEL HERNÁNDEZ
   
 ============================================================================
