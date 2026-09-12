@@ -171,7 +171,7 @@ asimetría y ofrecido una falsa sensación de precisión.
 En la práctica, esto no exige ninguna acción por su parte: el motor lo
 aplica de forma automática según la categoría elegida.
 
-MURO LEGAL SUSTITUIDO POR EXCLUSIÓN REAL (CORREGIDO EN V8)
+MURO LEGAL SUSTITUIDO POR EXCLUSIÓN REAL
   En versiones anteriores, cuando una trayectoria simulada alcanzaba el
   techo o el suelo legal de la escala, se quedaba artificialmente
   "congelada" en ese límite para el resto de la proyección. Esto
@@ -207,7 +207,7 @@ para comparar escenarios sin perder ninguno de ellos:
 
   Botón de borrado: limpia las tres posiciones guardadas de una sola vez.
 
-CADA POSICIÓN GUARDA SU PROPIO ESCENARIO Y CATEGORÍA (CORREGIDO EN V8)
+CADA POSICIÓN GUARDA SU PROPIO ESCENARIO Y CATEGORÍA
   Antes, si guardaba una posición con el modo "exploración fuera de
   norma" activado, la posición terminaba almacenando los valores
   normativos en vez de los del escenario real que estaba viendo en
@@ -284,7 +284,6 @@ Este panel aplica un desplazamiento porcentual a todos los méritos a la
 vez, en modo Uniforme o Proporcional, para comparar el efecto de ambos
 criterios sobre la igualdad de oportunidades.
 
-CORREGIDO EN V8: YA NO BORRA SU CONFIGURACIÓN MANUAL
   En versiones anteriores, mover este slider sobrescribía de forma
   permanente el valor de cada slider individual. Si había dedicado
   tiempo a configurar un perfil concreto y después tocaba el ajuste
@@ -366,7 +365,6 @@ LECTURA DEL GRÁFICO
   que se distinguen aun cuando parten de valores muy próximos.
 
 BANDAS DE INCERTIDUMBRE VISIBLES CON VARIAS POSICIONES A LA VEZ
-  (CORREGIDO EN V8)
   Antes, la banda de percentiles P10-P90 solo se dibujaba cuando había
   una única posición activa; con varias a la vez, solo se veían las
   líneas de media, lo que podía dar la falsa impresión de que la
@@ -434,7 +432,7 @@ máxima precisión para un informe formal, suba la barra al tope de
 150.000. Si solo quiere hacer pruebas rápidas moviendo sliders, el valor
 por defecto de 100.000 es más que sobrado.
 
-NOTA DE VISIBILIDAD (CORREGIDO EN V8)
+NOTA DE VISIBILIDAD
   Este slider, junto con el de deriva anual y el de horizonte, tenía un
   fallo de estilo que dejaba invisible la barra deslizante (solo se veía
   el círculo de arrastre, sin ningún trazo detrás). Ahora los tres
