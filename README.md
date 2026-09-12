@@ -45,6 +45,11 @@ Es un instrumento de apoyo para entender el terreno antes de presentar
 instancia: cómo se comporta cada apartado y cómo se mueve la edad estimada
 si se modifican las variables de entrada.
 
+DINOSAURIO demuestra que el baremo de méritos constituye una palanca
+indirecta de composición demográfica. Sin modificar la edad legal de acceso
+ni introducir la edad como criterio de puntuación, una redistribución de
+los valores relativos de los apartados del baremo puede desplazar de forma
+cuantificable la edad media estimada del colectivo seleccionado.
 
 ----------------------------------------------------------------------------
 2. PUESTA EN MARCHA
