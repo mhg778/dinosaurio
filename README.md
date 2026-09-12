@@ -70,6 +70,10 @@ Espectral se redibujan ahora a la resolución física real de la pantalla
 (Retina, 4K), por lo que se ven nítidos en cualquier equipo moderno sin
 ajuste adicional por su parte.
 
+La magnitud real del desplazamiento dependerá de la distribución de
+aspirantes, la oferta de plazas, la aplicación concreta de cada
+convocatoria y la validez externa de los datos disponibles; pero la
+existencia del mecanismo de cambio queda demostrada dentro del modelo.
 
 ----------------------------------------------------------------------------
 3. PANEL DE MANDO: CATEGORÍA Y MODO DE CÁLCULO
