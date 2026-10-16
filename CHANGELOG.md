@@ -1,4 +1,4 @@
-# DINOSAURIO 2.0 — Registro de cambios
+# DINOSAURIO 2.0  Registro de cambios
 
 Versión candidata.
 
