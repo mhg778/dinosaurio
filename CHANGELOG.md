@@ -1,4 +1,67 @@
-# DINOSAURIO — Release v1.18 (corregida)
+# DINOSAURIO 2.0 — Registro de cambios
+
+Versión candidata.
+
+El artefacto `DINOSAURIO2.html` consolida toda la plataforma analítica de seis módulos en un único fichero mantenible, con el catálogo longitudinal BOE 2023-2026 íntegro (`1.238` registros, `1.550` plazas) y `1.123` residuos empíricos IEEE-754.
+
+
+## 1. Arquitectura de compactación y mantenibilidad humana
+
+- **Compresión de datos sin pérdida de legibilidad lógica**
+
+- **Preservación de identificadores de dominio y mapa de 50 hitos**
+
+- **Intervención CSS de Nivel A (una regla por línea)**
+
+- **Poda de código muerto**
+
+
+## 2. Cierre de regresiones de auditoría y defectos de visibilidad heredados
+
+- **RC2-01 (Generación real de PDF en 2D y 3D)**
+
+- **RC2-02 (Cascada responsive en móvil a 390 px)**
+
+- **VIS-01 (Aviso de presión extrema en Half-Life `#halfLifeWarn`)**
+
+- **VIS-02 (Gráfica «Simulación real 2025» `#simRealBox` / `#chartSimReal`)**
+
+
+
+## 3. Motores matemáticos, Laboratorio Inverso y Frontera de Pareto
+
+- **Identidad de arranque y aislamiento de referencia (`T1`, `T2`, `T3`, `T15`)**
+
+- **Calibración del modelo y presets dinámicos (`T4`)**
+
+- **Solvers de políticas `QP L2`, `Solo Experiencia` y `Sparse L1` (`T6`, `T13`, `T14`)**
+
+- **Firma de contexto e historial de deshacer (`T7`, `T16`)**
+
+
+
+## 4. Monte Carlo, Comparador de Densidades y Contrato de Exportación
+
+- **Semillas deterministas y conservación de masa (`T5`, `T8`, `T17`)**
+
+- **Separación de extinción en `Delta PDF` y pasos sin supervivientes (`T11`, `T18`)**
+
+- **Generador MATLAB reproducible (`T11`)**
+
+
+
+## 5. Catálogo BOE 2023-2026, Asistente y Decodificador
+
+- **Sincronización de escala y trazabilidad longitudinal**
+
+- **Asistente sensible al currículo y supuesto `2026_perfil` (`T12`)**
+
+- **Decodificador inverso con unión formal de intervalos (`T9`)**
+
+
+
+
+# DINOSAURIO — Release v1.18
 
 Release candidata verificada contra regresión respecto a la última versión estable en GitHub (`dinosaurio16.html`, idéntica byte a byte al punto de partida de esta serie de correcciones). 41 cambios acumulados: 0 pérdidas de funcionalidad no intencionadas.
 
