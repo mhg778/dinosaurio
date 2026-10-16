@@ -1,669 +1,516 @@
 ============================================================================
 
-  DINOSAURIO - MANUAL DE OPERACIÓN DEL SIMULADOR ANALÍTICO
-  Versión 1.18 (corregida)
+  DINOSAURIO 2.0 · MANUAL DE OPERACIÓN DEL SIMULADOR ANALÍTICO
 
 ============================================================================
+
+============================================================================
+¿Cuánto cambia la edad de una promoción cuando se altera la pendiente de un
+solo mérito sin tocar un día los límites legales de ingreso? Entre las
+convocatorias de Reservistas Voluntarios publicadas en el BOE de 2023 a 2026,
+sobre un total de 1.238 registros y 1.550 plazas ofertadas, la reforma del
+Apéndice 3 reduce en cinco años el tramo necesario para alcanzar la máxima
+puntuación por experiencia civil. El articulado no menciona la edad en una
+sola línea, pero el desplazamiento demográfico sobre la cohorte seleccionada
+es inmediato y medible.
+============================================================================
+
 
 ÍNDICE
 ------
-  1. Misión de la herramienta
-  2. Puesta en marcha
-  3. Panel de mando: categoría y modo de cálculo
-  4. El modelo jerárquico bayesiano con contracción (shrinkage)
-  5. Motor de remuestreo con datos reales (bootstrap de residuos)
-  6. Sistema de posiciones guardadas (snapshots A, B, C)
-  7. Panel de diferencias entre posiciones
-  8. Modo exploración fuera de norma (+25%)
-  9. Decaimiento temporal académico (Half-Life)
-  10. Ajuste global de sensibilidad (no destructivo)
-  11. Waterfall de la edad: desglose exacto por bloque
-  12. Oráculo de Reclutamiento: simulador inverso
-  13. Motor Monte Carlo: proyección a futuro
-  14. Deriva empírica real (2023-2025)
-  15. Número de simulaciones: ajuste de la barra de iteraciones
-  16. Vista Espectral: lectura de la proyección en relieve
-  17. Lectura de indicadores clave (KPI)
-  18. Generación de informe imprimible
-  19. Exportación de datos
-  20. Advertencias y límites del modelo
-  21. Resolución de incidencias frecuentes
-  22. Historial de correcciones (versión 8)
+  1. Exposición de motivos y propósito del instrumento
+  2. Puesta en marcha y arquitectura del archivo autónomo
+  3. Marco regulatorio (BOE 2023-2025 frente a BOE 2026)
+  4. Los dos recorridos del Laboratorio (Directo e Inverso)
+  5. Modelo jerárquico bayesiano con contracción hacia la media
+  6. Palancas de política y bloqueo de factores no significativos
+  7. Posiciones guardadas (A, B, C) y contraste de escenarios
+  8. Exploración fuera de norma (+25%), vida media académica y equidad
+  9. Oráculo de Reclutamiento (resolución algebraica directa)
+  10. Motor Monte Carlo, exclusión en barrera y vistas 2D y 3D
+  11. Desglose en cascada, mapa de calor y comparador de densidades
+  12. Observatorio de sensibilidad de políticas
+  13. Simulador de oportunidades y redistribución de vacantes
+  14. Alternativas del aspirante por ajuste curricular y territorial
+  15. Catálogo longitudinal BOE 2023-2026 y alerta de renumeración
+  16. Optimización multicriterio de Pareto y decodificador inverso
+  17. Informe imprimible en PDF y exportación reproducible
+  18. Batería de verificación matemática (T1-T18) y diagnóstico
+  19. Límites metodológicos y lectura de resultados
+  20. Resolución de incidencias operativas
+  21. Reflexión final
 
 
 ----------------------------------------------------------------------------
-1. MISIÓN DE LA HERRAMIENTA
+1. EXPOSICIÓN DE MOTIVOS Y PROPÓSITO DEL INSTRUMENTO
 ----------------------------------------------------------------------------
 
-DINOSAURIO es un simulador analítico que permite estimar, a partir de los
-apartados reales del baremo (Tiempo de Servicio, Méritos Académicos,
-Méritos Generales y Mérito Específico), la puntuación total esperada y su
-relación con la edad media de la vacante seleccionada.
+Cualquier baremo de concurso que puntúe el tiempo de servicio o los años de
+ejercicio profesional lleva implícito un filtro biológico. Quien diseña la
+norma suele tratar los apartados de méritos como compartimentos estancos de
+capacidad técnica, pero el tiempo necesario para acumular esos puntos ata la
+puntuación final a la fecha de nacimiento del candidato.
 
-La herramienta no sustituye al baremo oficial ni a la convocatoria vigente.
-Es un instrumento de apoyo para entender el terreno antes de presentar
-instancia: cómo se comporta cada apartado y cómo se mueve la edad estimada
-si se modifican las variables de entrada.
+DINOSAURIO 2.0 nace para medir esa atadura con datos reales. No sustituye al
+baremo oficial ni interpreta la voluntad del legislador, sino que modela la
+relación estadística entre los cuatro bloques de puntuación (Tiempo de
+Servicio, Méritos Académicos, Méritos Generales y Mérito Específico) y la
+edad resultante en cada escala.
 
-DINOSAURIO demuestra que el baremo de méritos constituye una palanca
-indirecta de composición demográfica. Sin modificar la edad legal de acceso
-ni introducir la edad como criterio de puntuación, una redistribución de
-los valores relativos de los apartados del baremo puede desplazar de forma
-cuantificable la edad media estimada del colectivo seleccionado.
-
-La magnitud real del desplazamiento dependerá de la distribución de
-aspirantes, la oferta de plazas, la aplicación concreta de cada
-convocatoria y la validez externa de los datos disponibles; pero la
-existencia del mecanismo de cambio queda demostrada dentro del modelo.
-
-----------------------------------------------------------------------------
-2. PUESTA EN MARCHA
-----------------------------------------------------------------------------
-
-El archivo es autónomo. No requiere conexión a internet ni instalación de
-ningún tipo. Se abre con cualquier navegador moderno (Chrome, Firefox, Edge)
-con un doble clic, como cualquier documento.
-
-Si al abrirlo la pantalla queda en blanco o en negro, cierre el navegador
-por completo y vuelva a abrir el archivo en una pestaña nueva. Verifique
-también que está usando la última versión entregada, porque las versiones
-anteriores suelen quedar duplicadas en la carpeta de descargas y es fácil
-confundirlas.
-
-Los gráficos de superficie, Waterfall, abanico Monte Carlo y Vista
-Espectral se redibujan ahora a la resolución física real de la pantalla
-(Retina, 4K), por lo que se ven nítidos en cualquier equipo moderno sin
-ajuste adicional por su parte.
-
-----------------------------------------------------------------------------
-3. PANEL DE MANDO: CATEGORÍA Y MODO DE CÁLCULO
-----------------------------------------------------------------------------
-
-En la parte superior se fijan dos parámetros de partida, antes de tocar
-ningún otro mando:
-
-  - Categoría de vacante: Oficiales, Suboficiales, Tropa y Marinería, o
-    Cuerpos Comunes. Cada categoría tiene su propio rango de edad legal
-    (suelo y techo) y su propio comportamiento estadístico, heredado de
-    los datos reales de convocatoria.
-
-  - Modo de ajuste global: Uniforme o Proporcional. Determina cómo se
-    reparte cualquier desplazamiento de méritos entre los distintos
-    apartados. El modo Proporcional respeta el peso relativo de cada
-    apartado y es el recomendado por defecto.
-
-Cualquier cambio en estos dos mandos recalcula al instante todos los
-paneles inferiores. No hace falta confirmar ni recargar la página.
+El simulador sirve por igual a dos perfiles de usuario. Al aspirante le
+permite comprobar dónde rinde más su currículo antes de firmar la instancia,
+mientras que al analista de planificación le ofrece un banco de pruebas para
+cuantificar qué provoca cada retoque normativo sobre la pirámide de edad.
 
 
 ----------------------------------------------------------------------------
-4. EL MODELO JERÁRQUICO BAYESIANO CON CONTRACCIÓN (SHRINKAGE)
+2. PUESTA EN MARCHA Y ARQUITECTURA DEL ARCHIVO AUTÓNOMO
 ----------------------------------------------------------------------------
 
-EL PROBLEMA A RESOLVER
-  Los datos disponibles se agrupan en dos bloques: Ejércitos (Oficiales,
-  Suboficiales y Tropa, con 769 registros) y Cuerpos Comunes (354
-  registros). Cuando un grupo dispone de pocos registros, calcular un
-  coeficiente propio para ese grupo aislado da resultados poco fiables,
-  sujetos al ruido de la muestra.
+La herramienta se entrega en un único fichero HTML autónomo de unos 338 KB.
+No necesita servidor, instalación previa ni conexión a internet, basta con
+abrirlo mediante doble clic en cualquier navegador actual (Chrome, Edge,
+Firefox o Safari), tanto en equipos de escritorio como en teléfonos móviles.
 
-LA SOLUCIÓN: CONTRACCIÓN HACIA LA MEDIA GLOBAL
-  En vez de usar el coeficiente de cada grupo en solitario, o el
-  coeficiente global sin distinción, el modelo combina ambos con un
-  factor de ponderación, siguiendo la lógica de los modelos jerárquicos
-  bayesianos: cada grupo se apoya en la información del conjunto, en
-  proporción a los datos propios de que dispone.
+Para lograr ese tamaño sin destruir la legibilidad del código fuente, la
+arquitectura separa los datos brutos de la lógica de negocio. Los textos de
+la interfaz, las 1.238 filas del catálogo oficial y los 1.123 residuos
+empíricos viajan comprimidos en bloques estáticos, mientras que el motor
+matemático conserva íntegros los nombres de sus funciones, estructurados en
+cincuenta hitos comentados (S1.1 a S3.21) y una hoja de estilos dispuesta a
+una regla por línea.
 
-  La fórmula aplicada es:
-
-      beta_grupo = lambda x beta_grupo_OLS + (1 - lambda) x beta_global
-
-  donde lambda se calcula como:
-
-      lambda = n_grupo / (n_grupo + tau)
-
-  n_grupo es el número de registros del grupo y tau es el parámetro de
-  contracción, fijado en 80. A más registros propios, lambda se acerca a
-  1 y el grupo depende menos de la media global.
-
-VALORES ACTUALES DEL MODELO
-      Ejércitos       (n=769):  lambda = 0.906  (contracción ligera)
-      Cuerpos Comunes (n=354):  lambda = 0.816  (contracción algo mayor)
-
-  Ejércitos conserva casi intacto su propio patrón. Cuerpos Comunes se
-  apoya algo más en el comportamiento conjunto, al tener menos registros
-  propios sobre los que asentar el cálculo.
-
-DÓNDE SE VE EN PANTALLA
-  El recuadro "Modelo jerárquico bayesiano activo" muestra en todo
-  momento el valor de lambda de la categoría seleccionada. Si cambia de
-  categoría y ese valor no varía, el modelo no se está aplicando bien.
-
-AVISO DE CALIBRACIÓN (NUEVO)
-  Justo debajo aparece, solo cuando procede, un recuadro rojo de "Aviso
-  de calibración". Se activa automáticamente si la suma de los valores
-  de partida de Experiencia + Titulación + Cursos no coincide con la
-  constante de calibración interna del modelo para Mérito Específico.
-  Cuando esto ocurre, la edad que se ve al cargar la página, antes de
-  tocar ningún slider, no coincide exactamente con la "edad base"
-  anunciada arriba. El recuadro explica el desfase exacto en años, sin
-  alterar ningún valor por defecto para forzar el cuadre: es preferible
-  mostrar la discrepancia real que fabricar una cifra de muestra que no
-  se pueda verificar.
+Todos los lienzos gráficos leen la densidad real de píxeles de la pantalla
+para dibujar textos y curvas con nitidez en monitores de alta resolución,
+adaptando las rejillas de controles desde anchos móviles de 390 píxeles sin
+desbordamientos laterales.
 
 
 ----------------------------------------------------------------------------
-5. MOTOR DE REMUESTREO CON DATOS REALES (BOOTSTRAP DE RESIDUOS)
+3. MARCO REGULATORIO (BOE 2023-2025 FRENTE A BOE 2026)
 ----------------------------------------------------------------------------
 
-El motor Monte Carlo no asume una campana de Gauss simétrica para simular
-el margen de error de cada estimación. En su lugar, toma prestado al
-azar, con reemplazo, uno de los errores reales observados entre la edad
-real y la edad que predice el modelo, para cada uno de los aspirantes de
-la muestra (769 en Ejércitos, 354 en Cuerpos Comunes).
+En la barra superior del Laboratorio se conmuta el marco normativo entre las
+convocatorias de 2023-2025 y la regulación introducida en 2026.
 
-Esta forma de proceder respeta la asimetría real de los datos: los
-residuos de Ejércitos tienen una ligera cola hacia edades más bajas
-(asimetría de -0.26), y los de Cuerpos Comunes hacia edades más altas
-(asimetría de 0.42). Una campana de Gauss perfecta habría borrado esa
-asimetría y ofrecido una falsa sensación de precisión.
+La diferencia crítica entre ambos marcos se concentra en el Apéndice 3 del
+Mérito Específico. Hasta 2025, la experiencia laboral civil afín exigía más
+de veinte años de ejercicio para alcanzar el techo de 25 puntos oficiales, y
+un perfil intermedio de siete años sumaba 10 puntos. Con el baremo de 2026,
+el techo de 25 puntos se alcanza a los quince años de experiencia, y esos
+mismos siete años pasan a otorgar 15 puntos oficiales (un salto de +2,0
+puntos en la escala interna del modelo).
 
-En la práctica, esto no exige ninguna acción por su parte: el motor lo
-aplica de forma automática según la categoría elegida.
-
-MURO LEGAL SUSTITUIDO POR EXCLUSIÓN REAL
-  En versiones anteriores, cuando una trayectoria simulada alcanzaba el
-  techo o el suelo legal de la escala, se quedaba artificialmente
-  "congelada" en ese límite para el resto de la proyección. Esto
-  generaba un pico de densidad irreal justo en la frontera de edad, que
-  no corresponde a ningún fenómeno real: en la práctica, quien supera el
-  límite de edad legal queda excluido del proceso de selección, no se
-  queda "esperando" en el límite.
-
-  Ahora, cuando una trayectoria supera el techo o cae por debajo del
-  suelo legal, queda marcada como excluida y deja de contar en los
-  percentiles, la media y el histograma de densidad de ese año en
-  adelante. El indicador de edad mediana muestra, cuando procede, el
-  porcentaje de trayectorias excluidas en el último año proyectado.
+Al marcar la casilla de vinculación de años BOE dentro de la tarjeta de
+experiencia civil, el simulador traduce al instante cualquier antigüedad
+entre 0 y 30 años a su puntuación normativa vigente, manteniendo intacta la
+referencia de partida para poder medir el salto neto.
 
 
 ----------------------------------------------------------------------------
-6. SISTEMA DE POSICIONES GUARDADAS (SNAPSHOTS A, B, C)
+4. LOS DOS RECORRIDOS DEL LABORATORIO (DIRECTO E INVERSO)
 ----------------------------------------------------------------------------
 
-La herramienta permite guardar hasta tres posiciones de cálculo distintas
-para comparar escenarios sin perder ninguno de ellos:
+El espacio de trabajo del Laboratorio permite abordar el problema desde dos
+direcciones opuestas según la pregunta que se quiera responder.
 
-  Posición A y B: se guardan pulsando el botón correspondiente tras
-  ajustar los mandos a su gusto. Sirven para enfrentar dos escenarios
-  cualquiera, por ejemplo "situación actual" contra "situación tras
-  reforzar tiempo de servicio".
+El Recorrido A (Directo) está pensado para explorar qué ocurre cuando se
+mueven las palancas. El usuario modifica manualmente cualquiera de los
+quince controles de mérito del aspirante o los tres hiperparámetros de
+política de la convocatoria, y el motor devuelve al instante el desplazamiento
+producido sobre la puntuación total y sobre la edad estimada.
 
-  Posición C: guarda de forma automática la referencia oficial del BOE,
-  para usarla como punto fijo de comparación frente a A o B.
-
-  Botón de intercambio: invierte A y B al instante, sin tener que volver
-  a guardar ninguna de las dos.
-
-  Botón de borrado: limpia las tres posiciones guardadas de una sola vez.
-
-CADA POSICIÓN GUARDA SU PROPIO ESCENARIO Y CATEGORÍA
-  Antes, si guardaba una posición con el modo "exploración fuera de
-  norma" activado, la posición terminaba almacenando los valores
-  normativos en vez de los del escenario real que estaba viendo en
-  pantalla. Ahora cada posición recuerda fielmente si se guardó en modo
-  normativo o en modo exploración, y ese dato se refleja correctamente
-  en el Waterfall y en el resto de paneles que la consultan.
-
-  Del mismo modo, si guarda posiciones en distintas categorías de
-  vacante (por ejemplo A en Tropa y B en Cuerpos Comunes), cada una
-  conserva su propio límite legal y su propio modelo estadístico al
-  proyectarla en el motor Monte Carlo, en vez de heredar por error la
-  categoría que esté activa en pantalla en ese momento.
+El Recorrido B (Inverso) invierte la operación. El analista fija primero
+cuántos años desea rejuvenecer o envejecer la media respecto a la referencia
+(usando los botones dinámicos calibrados para cada escala o introduciendo la
+cifra exacta), y el optimizador cuadrático despeja qué combinación de topes
+y multiplicadores de política alcanza esa meta alterando lo mínimo posible
+la estructura del baremo.
 
 
 ----------------------------------------------------------------------------
-7. PANEL DE DIFERENCIAS ENTRE POSICIONES
+5. MODELO JERÁRQUICO BAYESIANO CON CONTRACCIÓN HACIA LA MEDIA
 ----------------------------------------------------------------------------
 
-En cuanto hay al menos dos posiciones guardadas, aparece de forma
-automática un panel que calcula la diferencia entre ambas: variación de
-edad media, de puntuación total y de capacidad de captación de perfiles
-jóvenes. El botón "Copiar" traslada ese resumen al portapapeles en
-formato de texto, listo para pegar en un informe o en un correo.
+La base empírica reconstruida consta de dos subpoblaciones con distinto
+tamaño muestral, Ejércitos (Oficiales, Suboficiales y Tropa, con 769
+observaciones) y Cuerpos Comunes (con 354 observaciones). Si se estimaran
+las pendientes de cada grupo por mínimos cuadrados ordinarios de forma
+aislada, el grupo menor quedaría excesivamente expuesto a la varianza de su
+propia muestra.
 
+Para evitar ese sobreajuste sin borrar las diferencias reales entre escalas,
+el motor pondera la regresión propia de cada grupo con la regresión global
+conjunta (N = 1.123) mediante un factor de contracción bayesiana regulado
+por la constante tau = 80. El peso propio de cada subpoblación se obtiene
+dividiendo su tamaño muestral entre la suma de dicho tamaño más ochenta.
 
-----------------------------------------------------------------------------
-8. MODO EXPLORACIÓN FUERA DE NORMA (+25%)
-----------------------------------------------------------------------------
-
-El interruptor situado bajo el panel de mando permite subir cada slider
-hasta un 25% por encima de su tope oficial, para simular escenarios
-hipotéticos. La zona ampliada se marca en rojo rayado en cada barra, y
-ningún valor alcanzado ahí representa una puntuación válida en
-convocatoria real.
-
-Al activar este modo aparecen automáticamente tres paneles adicionales,
-descritos en los apartados 9, 10 y 12 de este manual, que solo tienen
-sentido en el contexto de un escenario exploratorio.
-
-
-----------------------------------------------------------------------------
-9. DECAIMIENTO TEMPORAL ACADÉMICO (HALF-LIFE)
-----------------------------------------------------------------------------
-
-Este panel, visible solo en modo exploración fuera de norma, permite
-simular cómo pierde valor con el tiempo un título académico, usando una
-curva de decaimiento exponencial (vida media, o "half-life") en vez de
-restar puntos de forma lineal e inventada.
-
-SLIDER MAESTRO DE PRESIÓN
-  Tiene 6 niveles fijos: desactivado (sin decaimiento), y cinco niveles
-  de presión creciente (H=20, H=12, H=8, H=5, H=3 años de vida media).
-  A menor H, más rápido pierde valor el título con los años.
-
-AÑOS DESDE LA OBTENCIÓN
-  Tres controles independientes fijan cuántos años han pasado desde el
-  Grado, el CFGS y el Máster/Doctorado. Vienen precargados con valores
-  típicos (12, 15 y 6 años respectivamente) para que el efecto de la
-  presión sea visible de inmediato al activar el modo: si estos tres
-  controles estuvieran en cero, el slider maestro no tendría nada que
-  decaer y no se apreciaría ningún cambio.
-
-SIMULACIÓN REAL (MUESTRA 2025)
-  Un botón adicional muestra, con las edades medias de titulación reales
-  (INE, EOI, CSD), qué porcentaje de puntuación conservaría un aspirante
-  típico de cada categoría bajo la presión elegida.
+De este modo, Ejércitos retiene un factor de peso propio de 0,906, mientras
+que Cuerpos Comunes se apoya algo más en el comportamiento general con un
+factor de 0,816. El recuadro técnico situado bajo el gráfico radial muestra
+en vivo el factor activo y despliega un aviso de calibración si la suma de
+los valores iniciales de experiencia, titulación y cursos se aparta de la
+media histórica empleada para centrar la ordenada en el origen.
 
 
 ----------------------------------------------------------------------------
-10. AJUSTE GLOBAL DE SENSIBILIDAD (NO DESTRUCTIVO)
+6. PALANCAS DE POLÍTICA Y BLOQUEO DE FACTORES NO SIGNIFICATIVOS
 ----------------------------------------------------------------------------
 
-Este panel aplica un desplazamiento porcentual a todos los méritos a la
-vez, en modo Uniforme o Proporcional, para comparar el efecto de ambos
-criterios sobre la igualdad de oportunidades.
+El panel de intervención normativa actúa sobre tres parámetros agregados de
+la convocatoria. El primero regula el tope máximo de experiencia civil entre
+15 y 35 puntos BOE (con valor central en 25), el segundo aplica un factor
+multiplicador de 0,5x a 1,5x sobre el mérito académico, y el tercero pondera
+entre 0,0x y 2,0x el peso del tiempo de servicio militar previo.
 
-  En versiones anteriores, mover este slider sobrescribía de forma
-  permanente el valor de cada slider individual. Si había dedicado
-  tiempo a configurar un perfil concreto y después tocaba el ajuste
-  global por curiosidad, perdía esa configuración sin posibilidad de
-  deshacer.
+En la subpoblación de Cuerpos Comunes, la pendiente estimada para el bloque
+académico presenta un error estándar alto (0,165 ± 0,279) que impide darla
+por estadísticamente distinta de cero al 95% de confianza. La casilla de
+bloqueo situada bajo el selector de coeficientes permite anclar esa palanca
+en su valor actual para impedir que los algoritmos de optimización apoyen
+sus soluciones sobre un coeficiente ruidoso.
 
-  Ahora el ajuste global se aplica matemáticamente "al vuelo" en cada
-  recálculo, sin tocar nunca el valor guardado en los sliders
-  individuales. Al devolver el ajuste global a 0%, recupera exactamente
-  la configuración manual que tenía antes de tocarlo.
-
-
-----------------------------------------------------------------------------
-11. WATERFALL DE LA EDAD: DESGLOSE EXACTO POR BLOQUE
-----------------------------------------------------------------------------
-
-Sustituye al antiguo "Mapa de calor 2D". A partir de un botón en el panel
-del motor Monte Carlo, genera un gráfico en cascada que descompone la
-edad estimada de un snapshot guardado en su edad base más la
-contribución exacta de cada uno de los cuatro apartados reales del
-modelo (Tiempo de Servicio, Académicos, Generales, Mérito Específico).
-
-No es una simulación ni una nube de sensibilidad: es el cálculo exacto,
-barra a barra, de cómo se llega del punto de partida al resultado final,
-con el coeficiente estadístico y su significancia mostrados junto a cada
-barra. Si el snapshot se guardó en modo exploración (+25%), el propio
-gráfico lo indica en el título y desglosa los valores de ese escenario,
-no los normativos.
+Desde ese mismo bloque se puede conmutar entre los coeficientes contraídos
+por grupo (configuración por defecto) y los coeficientes fijos de la
+regresión clásica de Ejércitos cuando se desee contrastar el impacto puro de
+la contracción bayesiana.
 
 
 ----------------------------------------------------------------------------
-12. ORÁCULO DE RECLUTAMIENTO: SIMULADOR INVERSO
+7. POSICIONES GUARDADAS (A, B, C) Y CONTRASTE DE ESCENARIOS
 ----------------------------------------------------------------------------
 
-Panel visible en modo exploración fuera de norma. En vez de mover
-sliders a mano para acercarse a una edad objetivo, aquí se introduce
-directamente la edad que se desea alcanzar y el Oráculo calcula la
-combinación de méritos que produce esa edad de forma exacta, maximizando
-al mismo tiempo el total de puntos.
+Debajo del gráfico de superficie se sitúan las tres ranuras de memoria del
+Laboratorio. Las posiciones A y B fotografían el estado completo que se
+encuentra activo en pantalla en el momento de pulsar el botón, conservando
+su escala, su marco regulatorio, sus políticas, el estado del modo
+exploratorio y el valor exacto de las quince palancas. La posición C
+reconstruye siempre la referencia canónica oficial (39,722135 años en la
+escala de Oficiales), con independencia de los cambios que se hayan hecho en
+los controles.
 
-CÓMO FUNCIONA
-  El modelo de edad es una función lineal de los puntos por apartado, lo
-  que permite resolver el problema mediante álgebra directa (un sistema
-  de ecuaciones con límites de rango), no mediante ensayo y error
-  aleatorio. El resultado se aplica de inmediato a los sliders
-  correspondientes.
-
-SI EL OBJETIVO ES INALCANZABLE
-  El Oráculo lo indica de forma explícita, en vez de devolver una
-  aproximación silenciosa. Puede ocurrir si la edad pedida está fuera
-  del rango legal de la escala, o fuera del rango que permiten los
-  límites actuales de los sliders (en cuyo caso, activar el modo fuera
-  de norma amplía el margen disponible).
-
-  El Oráculo trabaja únicamente sobre los coeficientes agregados del
-  modelo estadístico, no sobre los perfiles individuales de los
-  aspirantes reales de la muestra (ese nivel de detalle no está
-  disponible, solo los datos agregados por apartado).
+Cuando el usuario guarda al menos dos posiciones, se despliega el panel de
+contraste automático. Este bloque mide las diferencias netas en área
+integrada, puntuación total, edad estimada y cuota de captación menor de 35
+años, dibuja las barras de variación por apartado y permite copiar el
+informe comparativo en texto plano al portapapeles.
 
 
 ----------------------------------------------------------------------------
-13. MOTOR MONTE CARLO: PROYECCIÓN A FUTURO
+8. EXPLORACIÓN FUERA DE NORMA (+25%), VIDA MEDIA ACADÉMICA Y EQUIDAD
 ----------------------------------------------------------------------------
 
-Este panel proyecta la evolución de la edad media a lo largo de varios
-años, partiendo de cualquier posición guardada (A, B o C).
+Al activar el interruptor de exploración fuera de norma (+25%), los controles
+de mérito amplían su recorrido un 25% por encima del tope oficial del BOE y
+se desbloquean las herramientas avanzadas de simulación al final de la
+columna izquierda.
 
-DERIVA ANUAL
-  Controla cuánto se espera que varíe la edad media cada año, al margen
-  del ruido aleatorio propio de la simulación. Véase el apartado 14 para
-  la alternativa de deriva empírica real.
+El módulo de decaimiento académico por vida media permite simular la pérdida
+de vigencia de las titulaciones (Grado, Titulación Específica y Posgrado) en
+función de los años transcurridos desde que se obtuvieron. El control maestro
+recorre seis escalones de exigencia, desde la validez perpetua actual hasta
+una vida media de solo tres años. Si se seleccionan presiones severas (vida
+media igual o inferior a cinco años), el panel abre automáticamente una
+alerta de escenario extremo, y el botón de simulación real dibuja la
+retención de puntos aplicando las edades medias de titulación observadas en
+España.
 
-HORIZONTE
-  Número de años hacia adelante que se proyectan, ajustable entre 3 y 15.
-
-LECTURA DEL GRÁFICO
-  Cada posición activa aparece con su propio color y su propio trazado de
-  línea (sólido para A, discontinuo para B, punteado para C), de forma
-  que se distinguen aun cuando parten de valores muy próximos.
-
-BANDAS DE INCERTIDUMBRE VISIBLES CON VARIAS POSICIONES A LA VEZ
-  Antes, la banda de percentiles P10-P90 solo se dibujaba cuando había
-  una única posición activa; con varias a la vez, solo se veían las
-  líneas de media, lo que podía dar la falsa impresión de que la
-  simulación "no hacía nada" (una línea recta si la deriva es cero,
-  aunque la dispersión real crezca año a año). Ahora esa banda también
-  se dibuja con varias posiciones activas, en un tono más tenue para no
-  saturar el gráfico, para que la incertidumbre real siga siendo
-  visible en todos los casos.
-
-CÓMO ACTIVARLO
-  Marque la casilla de cada posición que desee simular (A, B y/o C) y
-  pulse "Ejecutar simulación". El botón queda bloqueado por diseño hasta
-  que haya al menos una posición guardada y marcada.
+A su lado, el control de ajuste global aplica desplazamientos porcentuales
+(-50% a +50%) al vuelo sin sobrescribir la configuración manual de las
+palancas. El panel enfrenta el reparto uniforme (proporcional al máximo de
+cada ítem) contra el reparto proporcional (relativo a los puntos actuales
+del candidato) y cuantifica cuánto distorsiona cada método la desigualdad de
+partida. Asimismo, cuando el control de cursos administrativos alcanza las
+ocho unidades, se muestra el aviso que recuerda el tope normativo de 4,00
+puntos en régimen ordinario.
 
 
 ----------------------------------------------------------------------------
-14. DERIVA EMPÍRICA REAL (2023-2025)
+9. ORÁCULO DE RECLUTAMIENTO (RESOLUCIÓN ALGEBRAICA DIRECTA)
 ----------------------------------------------------------------------------
 
-Junto al slider manual de deriva anual hay una casilla "Usar deriva
-empírica real 2023-2025". Al activarla, cada posición simulada deja de
-usar el valor manual del slider y pasa a usar una deriva estimada a
-partir de fechas de nacimiento reales de los aspirantes Clasificados de
-las tres últimas convocatorias resueltas (n=373 en 2023, n=350 en 2024,
-n=400 en 2025), calculada por separado para Ejércitos y para Cuerpos
-Comunes.
+El Oráculo de Reclutamiento resuelve el problema inverso desde el lado de
+los méritos del aspirante. En lugar de tanteos manuales, el usuario escribe
+la edad exacta que desea obtener dentro de los límites legales de la escala
+y pulsa el botón de cálculo.
 
-VALORES ACTUALES
-      Ejércitos:       -0.98 años/año  (la cohorte se rejuvenece)
-      Cuerpos Comunes: +0.74 años/año  (la cohorte envejece)
+Dado que la ecuación de edad es una combinación lineal de los cuatro bloques
+causales acotada por intervalos cerrados, el algoritmo evalúa los vértices
+de saturación de tres bloques y despeja algebraicamente el cuarto,
+eligiendo la solución exacta que maximiza la puntuación total del candidato
+y trasladándola a los controles deslizantes.
 
-AVISO OBLIGATORIO SOBRE ESTA CIFRA
-  Con solo tres convocatorias de datos, esta pendiente no tiene respaldo
-  estadístico robusto: un solo año atípico puede invertir el signo por
-  completo. De hecho, en Ejércitos el patrón real ni siquiera es
-  monótono (la edad baja de 2023 a 2024 y vuelve a subir ligeramente de
-  2024 a 2025). Trátela como una estimación orientativa de orden de
-  magnitud, no como un hecho estadístico consolidado. Cuando se disponga
-  de cinco o más convocatorias, esta estimación podrá refinarse.
-
-  Al activar la casilla, el slider manual se atenúa visualmente y queda
-  deshabilitado; el texto de estado, al finalizar la simulación, indica
-  explícitamente qué deriva se aplicó a cada posición.
+Si la edad solicitada queda fuera del alcance físico de los topes vigentes,
+el Oráculo informa de la imposibilidad sin alterar los controles ni borrar
+el porcentaje de ajuste global que estuviera activo.
 
 
 ----------------------------------------------------------------------------
-15. NÚMERO DE SIMULACIONES: AJUSTE DE LA BARRA DE ITERACIONES
+10. MOTOR MONTE CARLO, EXCLUSIÓN EN BARRERA Y VISTAS 2D Y 3D
 ----------------------------------------------------------------------------
 
-Junto al motor Monte Carlo hay una barra deslizante que fija cuántas
-rutas independientes se calculan por cada posición activa.
+El bloque inferior del Laboratorio aloja el motor de proyección estocástica
+a futuro. Permite lanzar entre 50.000 y 150.000 trayectorias por cada
+posición marcada (A, B o C) a lo largo de un horizonte de 3 a 15 años. En
+vez de fabricar errores mediante una campana gaussiana teórica, el motor
+extrae al azar con reemplazo los residuos reales de las convocatorias (769
+en Ejércitos y 354 en Cuerpos Comunes) mediante un generador determinista de
+semilla fija, preservando la asimetría real de cada población.
 
-  Mínimo:            50.000 iteraciones
-  Valor por defecto: 100.000 iteraciones
-  Máximo:            150.000 iteraciones
+Las edades mínima y máxima de cada categoría actúan como barreras de
+exclusión real. Cuando una trayectoria simulada rebasa el techo legal o cae
+por debajo del suelo, el candidato sale de la cohorte activa y pasa a
+contabilizarse en el porcentaje de excluidos de ese año, evitando los falsos
+acumulados en la frontera que produciría un recorte artificial.
 
-A más iteraciones, los percentiles extremos (P10 y P90) ganan
-estabilidad y dejan de moverse de una ejecución a otra por simple azar de
-muestreo. La contrapartida es un tiempo de cálculo algo mayor, aunque
-sigue siendo cuestión de segundos en cualquier equipo moderno.
-
-El tiempo real de cada ejecución se muestra siempre en el indicador
-"runtime", junto con el número total de rutas calculadas. Si necesita
-máxima precisión para un informe formal, suba la barra al tope de
-150.000. Si solo quiere hacer pruebas rápidas moviendo sliders, el valor
-por defecto de 100.000 es más que sobrado.
-
-NOTA DE VISIBILIDAD
-  Este slider, junto con el de deriva anual y el de horizonte, tenía un
-  fallo de estilo que dejaba invisible la barra deslizante (solo se veía
-  el círculo de arrastre, sin ningún trazo detrás). Ahora los tres
-  controles muestran su barra correctamente, como el resto de sliders
-  del panel.
-
-
-----------------------------------------------------------------------------
-16. VISTA ESPECTRAL: LECTURA DE LA PROYECCIÓN EN RELIEVE
-----------------------------------------------------------------------------
-
-La Vista Espectral es una pestaña alternativa al gráfico de abanico
-habitual del motor Monte Carlo. Muestra, año por año, la distribución
-completa de edades simuladas como una serie de siluetas apiladas en
-perspectiva, cada una un poco desplazada respecto a la anterior, de forma
-que el conjunto se lee como un relieve de montañas en fila.
-
-QUÉ APORTA ESTA VISTA
-  El abanico de percentiles (P10-P90) resume la dispersión en cuatro
-  números por año. La Vista Espectral enseña la forma completa de esa
-  dispersión: si es simétrica, si tiene cola hacia un lado, si está muy
-  concentrada o muy repartida.
-
-CÓMO LEERLA
-  Cada silueta corresponde a un año de la proyección, ordenadas de
-  delante hacia atrás desde el año de partida hasta el horizonte
-  elegido. El eje horizontal de cada silueta es la edad. Una línea de
-  referencia marca la mediana actual, para que se aprecie de un vistazo
-  hacia qué lado se desplaza el conjunto con el paso de los años.
-
-LIMITACIÓN A TENER EN CUENTA
-  Esta vista trabaja con una sola posición a la vez (A, B o C). Si tiene
-  varias posiciones activas para comparar, use el abanico multilínea
-  del apartado 13, que es el pensado para ese cometido.
+El selector de modo visual permite conmutar el lienzo principal entre el
+gráfico de abanico bidimensional (con bandas P10-P90, rango intercuartílico
+P25-P75 y rutas individuales) y cinco superficies tridimensionales
+interactivas que proyectan la probabilidad de cumplir un umbral de edad
+configurable, la amplitud de la incertidumbre, la tasa de rutas válidas
+supervivientes, la asimetría distribucional de Bowley y el margen restante
+hasta el techo legal. La casilla de deriva empírica reemplaza la pendiente
+manual por la observada entre 2023 y 2025 (-0,9847 años por año en Ejércitos
+y +0,7369 en Cuerpos Comunes), acompañada de su ficha metodológica en
+ventana modal.
 
 
 ----------------------------------------------------------------------------
-17. LECTURA DE INDICADORES CLAVE (KPI)
+11. DESGLOSE EN CASCADA, MAPA DE CALOR Y COMPARADOR DE DENSIDADES
 ----------------------------------------------------------------------------
 
-  Edad mediana al final del horizonte: valor central esperado tras el
-  número de años proyectado. Si hay trayectorias excluidas por superar
-  el límite legal (véase apartado 5), el porcentaje excluido se muestra
-  junto a la cifra.
+En la parte inferior de la tarjeta Monte Carlo se ubican dos visores
+complementarios para inspeccionar la estructura interna de las proyecciones.
 
-  Rango P10-P90: intervalo dentro del cual cae la edad media con alta
-  probabilidad, descartando los extremos menos probables.
+El visor espectral tridimensional apila en perspectiva isométrica los
+histogramas completos de edad de cada año proyectado, permitiendo rotar la
+figura con el ratón o el dedo para observar cómo se deforma la campana de la
+cohorte con el paso del tiempo.
 
-  Capacidad de captación joven: porcentaje estimado de perfiles por
-  debajo de 35 años bajo el escenario proyectado. Con varias posiciones
-  activas a la vez, se muestra el valor real de cada una por separado
-  (antes, este recuadro se sustituía por un simple contador de
-  posiciones, un error corregido en la versión 8).
-
-  Runtime: tiempo real de cálculo y número total de rutas simuladas,
-  útil para comprobar que la simulación se ha ejecutado con el número de
-  iteraciones que usted mismo ha fijado en la barra del apartado 15.
-
-
-----------------------------------------------------------------------------
-18. GENERACIÓN DE INFORME IMPRIMIBLE
-----------------------------------------------------------------------------
-
-Junto al comparador de posiciones hay tres casillas (A, B, Ref. BOE) y un
-botón "Generar Informe". Marque las posiciones que quiera documentar y
-pulse el botón: se abrirá el diálogo de impresión del navegador con un
-documento en fondo blanco y tinta oscura, pensado para entregar en papel
-o exportar a PDF (use la opción "Guardar como PDF" del propio diálogo de
-impresión de su navegador).
-
-QUÉ INCLUYE EL INFORME
-  Por cada posición marcada: la categoría de escala, el escenario
-  (norma vigente o exploración +25%), los puntos totales, la edad
-  estimada, el área integrada y un desglose por bloque con un gráfico de
-  superficie en tinta oscura sobre fondo blanco. Si marca exactamente dos
-  posiciones, se añade además una tabla comparativa entre ambas.
-
-  Al final del documento, una nota breve indica el modelo estadístico
-  empleado y aclara que los valores de exploración fuera de norma no
-  representan una puntuación válida en convocatoria real.
-
-QUÉ NO INCLUYE EL INFORME (A PROPÓSITO)
-  El informe no reproduce los sliders, botones ni el fondo oscuro de la
-  interfaz de trabajo, ni el bloque de disclaimer o de autoría de esta
-  herramienta. El documento resultante queda en blanco, listo para que
-  quien lo genere lo revise, lo firme y asuma la responsabilidad de su
-  contenido antes de distribuirlo.
+El visor contiguo conmuta entre tres representaciones diagnósticas. La
+primera es el gráfico en cascada, que descompone la edad de cualquier
+posición guardada sumando a la edad base el aporte exacto de cada bloque de
+méritos y de las políticas activas. La segunda es el mapa de calor
+bidimensional de densidades anuales, y la tercera es el comparador de
+distribuciones de probabilidad, que enfrenta dos posiciones entre sí o el
+inicio contra el final del horizonte, calculando el solapamiento de Weitzman
+y la distancia de variación total, e informando por separado cuando alguna
+de las cohortes se extingue por completo en el límite legal.
 
 
 ----------------------------------------------------------------------------
-19. EXPORTACIÓN DE DATOS
+12. OBSERVATORIO DE SENSIBILIDAD DE POLÍTICAS
 ----------------------------------------------------------------------------
 
-Tras ejecutar una simulación, dos botones permiten descargar los
-resultados completos:
+La segunda pestaña superior traslada el análisis desde el perfil individual
+hacia el agregado de la convocatoria. Enfrenta en tres columnas la línea
+base histórica 2023-2025 (N = 1.123), la proyección bajo los parámetros de
+política seleccionados y el diferencial neto resultante sobre la edad media
+de Ejércitos, la edad media de Cuerpos Comunes, la dispersión
+intercuartílica y las cuotas de aspirantes menores de 35 años y mayores de
+50 años.
 
-  Exportar CSV (formato Vensim): tabla con percentiles y media por año y
-  por posición simulada, lista para importar en una hoja de cálculo o en
-  software de modelado de sistemas.
-
-  Exportar JSON: mismo contenido en formato estructurado, con los
-  metadatos de la simulación incluidos (límites de edad, tiempo de
-  ejecución, posición de origen, número de iteraciones empleado).
-
-
-----------------------------------------------------------------------------
-20. ADVERTENCIAS Y LÍMITES DEL MODELO
-----------------------------------------------------------------------------
-
-  - Los resultados son estimaciones estadísticas, no valores oficiales
-    del baremo. El BOE y la convocatoria vigente son siempre la
-    referencia legal que manda.
-
-  - El parámetro de contracción (tau=80) del modelo bayesiano se ha
-    fijado a partir del volumen de datos disponible hoy. Un cambio
-    notable en el tamaño de muestra de futuras convocatorias podría
-    exigir su revisión.
-
-  - El motor Monte Carlo reproduce el margen de error observado en
-    convocatorias reales, pero no puede anticipar cambios normativos
-    futuros ni decisiones de planificación de personal que aún no se han
-    publicado. La deriva empírica del apartado 14 es orientativa, no
-    concluyente, por estar calculada sobre solo tres convocatorias.
-
-  - Los sliders de Idiomas, TIC, Carnets, Moto, ADR, Deportista, FCSE y
-    Funcionariado son informativos: no afectan a la edad estimada
-    porque su peso ya está incluido en el apartado agregado de Méritos
-    Generales. Cada uno de ellos muestra ahora un aviso visual junto a
-    su nombre para dejarlo claro (corrección incorporada en la versión
-    8, antes no había ningún aviso y el efecto podía parecer un fallo).
-
-  - Las bandas de percentiles se muestran de forma más tenue cuando hay
-    más de una posición activa en el abanico, para no saturar el
-    gráfico, pero ya no desaparecen del todo. La Vista Espectral, por
-    diseño, solo trabaja con una posición a la vez.
-
-  - El Oráculo de Reclutamiento y el aviso de calibración trabajan sobre
-    los coeficientes agregados del modelo, no sobre los perfiles
-    individuales de los aspirantes de la muestra real, que no están
-    disponibles a ese nivel de detalle.
+En la mitad inferior, el lienzo superpone la curva bimodal de densidad de la
+muestra histórica frente a la curva desplazada por la reforma normativa,
+manteniendo sus mandos sincronizados en ambos sentidos con el Laboratorio y
+con el módulo de Optimización.
 
 
 ----------------------------------------------------------------------------
-21. RESOLUCIÓN DE INCIDENCIAS FRECUENTES
+13. SIMULADOR DE OPORTUNIDADES Y REDISTRIBUCIÓN DE VACANTES
 ----------------------------------------------------------------------------
 
-  Pantalla en blanco o negro al abrir el archivo:
-    Cierre el navegador por completo y reabra el archivo en una pestaña
-    nueva. Compruebe que no está abriendo una versión antigua duplicada
-    en la carpeta de descargas.
+La tercera pestaña analiza el problema de las plazas que quedan sin cubrir
+en las convocatorias oficiales. Permite filtrar la oferta histórica por
+periodo (2023-2025, 2026 o serie completa) y por escala, aplicando una tasa
+de vacantes desiertas (iniciada en el 17,52% empírico) y un porcentaje de
+recuperación bajo tres posibles criterios de reasignación (prelación de
+baremo, proximidad geográfica de la unidad o reserva interna de escala).
 
-  El botón "Ejecutar simulación" no responde:
-    Compruebe que ha guardado al menos una posición (A, B o C) y que la
-    casilla correspondiente está marcada. El botón queda bloqueado por
-    diseño hasta que se cumplan ambas condiciones.
-
-  El panel de diferencias no aparece:
-    Es necesario guardar al menos dos posiciones distintas (por ejemplo
-    A y B) para que el panel se active de forma automática.
-
-  La simulación tarda más de lo esperado:
-    Revise el valor de la barra de iteraciones. Con el máximo de 150.000
-    y varias posiciones activas a la vez, el cálculo puede tardar unos
-    segundos más de lo habitual. Es un comportamiento normal, no un
-    fallo.
-
-  El slider maestro de Half-Life no parece cambiar nada:
-    Compruebe que los tres controles de "años desde la obtención" (Grado,
-    CFGS, Máster) no están en cero. Sin antigüedad no hay nada que
-    decaer, aunque suba la presión al máximo. Vienen precargados por
-    defecto precisamente para evitar esta confusión.
-
-  El botón "Generar Informe" no produce ningún documento visible:
-    Compruebe que al menos una de las tres casillas (A, B, Ref. BOE)
-    está marcada y que la posición correspondiente está guardada. El
-    mensaje de estado bajo el botón indica el motivo exacto si el
-    informe no puede generarse.
-
-  El Oráculo indica que el objetivo es "inalcanzable":
-    La edad pedida está fuera del rango legal de la escala seleccionada,
-    o fuera de lo que permiten los límites actuales de los sliders.
-    Pruebe a activar el modo exploración fuera de norma para ampliar el
-    margen disponible, o elija una edad más cercana a la edad base de la
-    categoría.
-
-  Los valores de lambda no cambian al cambiar de categoría:
-    Abra la consola del navegador (tecla F12) y compruebe el contenido
-    de la variable LAMBDA_GRUPO. Si no varía entre categorías, informe
-    de la incidencia indicando navegador y sistema operativo empleados.
+La tabla resultante desglosa para Tierra, Armada, Aire y Espacio y Cuerpos
+Comunes el total de códigos convocados, las plazas ofertadas, las vacantes
+desiertas estimadas, la bolsa de candidatos sin asignación y las plazas que
+se cubrirían efectivamente con la regla elegida.
 
 
 ----------------------------------------------------------------------------
-22. HISTORIAL DE CORRECCIONES (VERSIÓN 8)
+14. ALTERNATIVAS DEL ASPIRANTE POR AJUSTE CURRICULAR Y TERRITORIAL
 ----------------------------------------------------------------------------
 
-Esta versión corrige, respecto a la anterior entregada:
+La cuarta pestaña opera como un recomendador táctico sobre la convocatoria
+2026. El candidato introduce su escala, sus años de experiencia civil, su
+titulación académica oficial, su número de cursos administrativos, su familia
+funcional y su preferencia geográfica.
 
-  - Un error de precedencia que mostraba "NaN años" en el pie de la
-    Vista Espectral en determinadas condiciones.
-  - La pérdida de fidelidad de las posiciones guardadas en modo
-    exploración fuera de norma (guardaban valores normativos en vez de
-    los reales del escenario visto en pantalla).
-  - La contaminación cruzada de categorías en el motor Monte Carlo
-    cuando se simulaban posiciones guardadas en distintas escalas a la
-    vez.
-  - Un error de unidades en el panel de ajuste global que sumaba
-    "número de cursos" directamente como si fueran puntos.
-  - La sustitución del contador de posiciones activas en el indicador
-    de "Captación joven", que ocultaba el dato demográfico real.
-  - La destrucción silenciosa de la configuración manual de sliders al
-    mover el ajuste global de sensibilidad.
-  - El pico de densidad irreal en el límite legal de edad del motor
-    Monte Carlo (sustituido por exclusión real de trayectorias).
-  - La invisibilidad de las bandas de incertidumbre con varias
-    posiciones Monte Carlo activas a la vez.
-  - La falta de contraste visual en tres barras deslizantes del panel
-    Monte Carlo (iteraciones, deriva, horizonte).
-  - La ausencia de aviso en los sliders informativos que no afectan a
-    la edad estimada.
-  - Código duplicado y funciones sin uso en el motor de cálculo interno,
-    sin efecto visible pero relevante para el mantenimiento futuro.
+El motor evalúa las 440 líneas de plazas de 2026 combinando coincidencia de
+palabras clave, ubicación de la unidad y ajuste curricular (adecuación entre
+los puntos de experiencia y formación del candidato y la dureza competitiva
+de la vacante según sus requisitos y número de plazas). Devuelve las tres
+alternativas óptimas de unidades distintas, muestra su continuidad histórica
+entre 2023 y 2026 y permite volcar ese perfil directamente al Laboratorio.
 
-Y añade como funciones nuevas: el panel de decaimiento Half-Life, el
-Waterfall de desglose exacto por bloque, el Oráculo de Reclutamiento, la
-opción de deriva empírica real basada en convocatorias 2023-2025, el
-aviso de calibración en vivo, el escalado de alta resolución de los
-gráficos, y el módulo de generación de informe imprimible.
+
+----------------------------------------------------------------------------
+15. CATÁLOGO LONGITUDINAL BOE 2023-2026 Y ALERTA DE RENUMERACIÓN
+----------------------------------------------------------------------------
+
+La quinta pestaña expone la base de datos completa de las cuatro
+convocatorias (1.238 registros y 1.550 plazas), sincronizada por defecto con
+la categoría seleccionada en la cabecera general y filtrable por año,
+ejército, escala y búsqueda textual.
+
+Al pulsar sobre el detalle de cualquier vacante, el sistema cruza dos
+índices longitudinales distintos. Por un lado reconstruye la serie histórica
+de esa misma unidad, localidad y cometido entre 2023 y 2026; por otro,
+verifica todos los usos del código alfanumérico de la plaza. Si detecta que
+el Ministerio reutilizó ese mismo código en años distintos para unidades o
+escalas diferentes, muestra una advertencia expresa de renumeración para
+impedir que se confundan plazas distintas bajo una misma etiqueta.
+
+
+----------------------------------------------------------------------------
+16. OPTIMIZACIÓN MULTICRITERIO DE PARETO Y DECODIFICADOR INVERSO
+----------------------------------------------------------------------------
+
+La sexta pestaña agrupa dos motores matemáticos de inversión normativa.
+
+En la parte superior, el optimizador de políticas traza la frontera de
+Pareto entre la variación de edad deseada y el grado de intervención sobre
+la norma. Ofrece tres criterios de resolución, que son la mínima distorsión cuadrática
+conjunta, modificación exclusiva del tope de experiencia civil (respetando
+los factores académico y de servicio que estén activos en el Laboratorio) y
+mínima cardinalidad en norma L1 (para tocar el menor número posible de
+parámetros del BOE). Cada propuesta informa de su valor continuo exacto, su
+error de redondeo en la rejilla de controles y su efecto previsto en el
+Observatorio.
+
+En la parte inferior, el decodificador inverso recibe una puntuación total
+observada de Mérito Específico (de 0 a 50 puntos) y enumera todas las
+combinaciones de experiencia, titulación y cursos que pueden haberla
+generado bajo los baremos de 2025 y de 2026. Distingue expresamente entre la
+familia documental ordinaria (de uno a tres títulos oficiales, que alcanza
+un máximo de 41 puntos) y el dominio algebraico agregado (que cubre hasta el
+techo legal de 50 puntos), expresando los rangos de años de experiencia
+mediante uniones exactas de intervalos matemáticos.
+
+
+----------------------------------------------------------------------------
+17. INFORME IMPRIMIBLE EN PDF Y EXPORTACIÓN REPRODUCIBLE
+----------------------------------------------------------------------------
+
+El botón de generación documental compone un informe técnico de tres páginas
+en tinta oscura sobre fondo blanco, diseñado para imprimirse en papel o
+guardarse como archivo PDF nativo desde el diálogo del navegador.
+
+El contenedor de impresión cuelga directamente del cuerpo raíz del documento
+para asegurar un maquetado limpio en cualquier motor de renderizado. Incluye
+el resumen ejecutivo del escenario, la comparativa completa de las quince
+palancas frente a la referencia, el desglose de políticas, las fichas de las
+posiciones guardadas y la sección dedicada al motor Monte Carlo. Si se
+ejecuta desde la tarjeta estocástica teniendo activa una vista
+tridimensional, el documento coloca el bloque Monte Carlo en primera página
+e incorpora tanto el abanico 2D de alta resolución como la captura de la
+superficie 3D seleccionada.
+
+Asimismo, la barra de exportación permite descargar los percentiles anuales
+en formato CSV, el paquete completo de auditoría en formato JSON (con
+vectores de residuos, estado de referencia, semillas e histogramas anuales)
+y un guion autónomo para MATLAB (.m) que reproduce bit a bit el generador
+pseudoaleatorio y dibuja las gráficas bidimensionales y tridimensionales.
+
+
+----------------------------------------------------------------------------
+18. BATERÍA DE VERIFICACIÓN MATEMÁTICA (T1-T18) Y DIAGNÓSTICO
+----------------------------------------------------------------------------
+
+El archivo incorpora una batería automatizada de dieciocho pruebas de
+integridad matemática y funcional que puede ejecutarse en cualquier momento
+abriendo la consola del navegador (tecla F12) e invocando la función
+`window.runDinoMathAuditTests()`.
+
+Esta verificación comprueba la exactitud de la edad inicial de referencia
+(39,722135 años), la inmutabilidad del estado base al explorar controles, la
+vinculación de 0 y 12 años de experiencia BOE, el centrado en las medias de
+calibración de Ejércitos y Comunes, la pureza de la posición C, el respeto
+al bloqueo del factor académico en los tres motores de optimización, la
+invalidación por firma de contexto, la conservación de masa en las colas de
+los histogramas, la notación de intervalos del decodificador, la respuesta
+de los botones de equidad, la limpieza del contrato JSON y MATLAB ante pasos
+extintos y el funcionamiento del botón de deshacer tras múltiples
+aplicaciones. Al terminar la pasada, devuelve todos los controles al estado
+exacto que tenían antes de lanzar la prueba.
+
+Para inspeccionar las matrices internas del modelo sin alterar la sesión, la
+instrucción `window.dinosaurioDebug()` imprime en consola los vectores de
+coeficientes antes y después de la contracción bayesiana junto con sus
+errores estándar.
+
+
+----------------------------------------------------------------------------
+19. LÍMITES METODOLÓGICOS Y LECTURA DE RESULTADOS
+----------------------------------------------------------------------------
+
+Las cifras que entrega DINOSAURIO 2.0 son estimaciones estadísticas y
+proyecciones de simulación construidas sobre el registro histórico de las
+convocatorias 2023-2026. No tienen valor vinculante ni sustituyen a las
+bases publicadas en el Boletín Oficial del Estado.
+
+Dentro del modelo lineal de edad, siete controles ejercen efecto causal
+directo (servicio militar previo, experiencia civil, titulación
+universitaria, cursos administrativos, formación general, académica base y
+posgrado), mientras que los ocho restantes (idiomas SLP, competencias TIC,
+permisos de conducción, motocicleta, ADR, deportista de alto nivel, FCSE y
+condición de empleado público) suman puntos descriptivos en el baremo pero
+no desplazan por separado la edad estimada, al viajar su efecto integrado en
+la media del bloque general de la muestra disponible.
+
+Del mismo modo, la pendiente de deriva empírica 2023-2025 se apoya en solo
+tres cortes anuales. Debe emplearse como un contraste de sensibilidad y no
+como una proyección demográfica determinista a largo plazo.
+
+
+----------------------------------------------------------------------------
+20. RESOLUCIÓN DE INCIDENCIAS OPERATIVAS
+----------------------------------------------------------------------------
+
+Si al abrir el fichero en local la tabla del catálogo muestra un aviso de
+incompatibilidad, se debe a que el navegador empleado carece de soporte para
+descompresión nativa de flujos GZIP; basta con abrir el archivo en una
+versión actualizada de Chrome, Edge, Firefox o Safari.
+
+Cuando el botón de ejecución del motor Monte Carlo permanece bloqueado,
+indica que todavía no se ha guardado ninguna posición en las ranuras A, B o
+C, o bien que ninguna de sus tres casillas de selección está marcada. Puede
+pulsarse el botón de preparación rápida situado bajo el gráfico del
+Laboratorio para fijar el caso actual en una ranura libre y bajar
+directamente al simulador.
+
+Si tras calcular una receta en el recorrido inverso el botón de aplicación
+devuelve un aviso de caducidad, significa que algún control deslizante, la
+categoría o el marco normativo cambiaron después de generar la propuesta. El
+bloqueo por firma de contexto impide aplicar parámetros calculados para un
+escenario distinto; basta con pulsar de nuevo el botón de cálculo de receta.
+
+
+----------------------------------------------------------------------------
+21. REFLEXIÓN FINAL
+----------------------------------------------------------------------------
+
+La neutralidad formal de una regla administrativa no equivale a su
+neutralidad demográfica. Cuando un sistema de concurso modifica los tramos
+de saturación de la experiencia acumulada, redefine quién tiene ventaja
+competitiva para ocupar las plazas antes incluso de que se publique la
+relación de admitidos.
+
+La utilidad de este simulador no reside en predecir el futuro de una
+convocatoria particular, sino en hacer transparente la estructura matemática
+que conecta las reglas del Boletín Oficial del Estado con la pirámide de
+edad resultante. Lo que antes quedaba oculto tras la intuición informal
+pasa ahora a ser auditable, reproducible y medible al milímetro.
 
 
 ============================================================================
 
-          FIN DEL MANUAL - DINOSAURIO - POR MANUEL HERNÁNDEZ
+          FIN DEL MANUAL · DINOSAURIO 2.0 · MANUEL HERNÁNDEZ
 
 ============================================================================
