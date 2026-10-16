@@ -4,7 +4,9 @@
 
 ============================================================================
 
+
 ============================================================================
+
 ¿Cuánto cambia la edad de una promoción cuando se altera la pendiente de un
 solo mérito sin tocar un día los límites legales de ingreso? Entre las
 convocatorias de Reservistas Voluntarios publicadas en el BOE de 2023 a 2026,
@@ -13,8 +15,8 @@ Apéndice 3 reduce en cinco años el tramo necesario para alcanzar la máxima
 puntuación por experiencia civil. El articulado no menciona la edad en una
 sola línea, pero el desplazamiento demográfico sobre la cohorte seleccionada
 es inmediato y medible.
-============================================================================
 
+============================================================================
 
 ÍNDICE
 ------
