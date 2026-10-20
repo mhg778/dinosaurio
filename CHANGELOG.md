@@ -1,6 +1,36 @@
-# DINOSAURIO 2.0  Registro de cambios
+# DINOSAURIO 2.01 · Registro de cambios
 
-Versión candidata.
+Release de calibración, validación y funcionalidad. IDs del backlog entre paréntesis.
+
+## Añadido
+
+- **Modo 2 del Monte Carlo: fuerza activa con efecto arrastre (C2).** Stock oficial 2025 (ET 1.386, Armada 452, Aire 435, Comunes 716), envejecimiento +1,0/año, bajas por límite legal de edad (a) y otras bajas (b) separadas, altas con desfase de un año según el cupo del catálogo, Δ de la edad de entrada como escenario. Validaciones V1-V6. No toca los coeficientes del predictor.
+- **Años de servicio esperados (C3).**
+- **Dual del Pareto (C1):** máximo desplazamiento con intervención acotada (cotas, L2, L1); dualidad primal-dual exacta.
+- **Tarjeta «Cupo y repesca observados» (A6, C4)** en Oportunidades.
+- **Tests T19-T29** (contabilidad, mecanismos separados, C3, stock inicial, determinismo, predictor intacto, dual, conmutador de modos, documentación, compresión, seguridad).
+- **Documentación:** auditoría de calibración, Modo 2, supuestos, fuentes y límites de la validación 2026 en el centro de ayuda.
+- **Herramientas offline** (`tools/`): parser y fixtures (A8, A0, A1, A1b), análisis de celdas, deriva, cupo y repesca (A3, A4, A6, A7), contraste con simulacro (B2), efecto mecánico (B3) y tabla del baremo (D3).
+
+## Cambiado
+
+- **Compresión (D1):** diccionario `_T` en gzip estándar con inflate mínimo síncrono (antes, LZ77 propio). `window.DINO_T_META` informa del códec.
+- **Oportunidades (C4):** el 17,52 % heredado (184 vacantes ÷ 1.050 plazas) mezclaba unidades; se documenta, se renombra «plazas sin cubrir» y la referencia por defecto pasa a 20,0 % (210 plazas reasignadas ÷ 1.050). El 17,5 % sigue seleccionable como referencia heredada.
+- Título y textos visibles a 2.01. **Se mantienen** los identificadores de contrato de exportación (`DINOSAURIO-2.0-AUDITADO`, `DINOSAURIO-BAYES-2.0-AUDITADO`) por compatibilidad.
+
+## Corregido
+
+- **XSS en los campos del catálogo (D5):** `innerHTML` insertaba sin escapar `area`, `cometido`, `unidad`, experiencia, formación y requisitos en la tabla del catálogo, la ficha de plaza, el asistente y la trazabilidad longitudinal. Con un catálogo manipulado, la 2.0 creaba 61 elementos ejecutables; la 2.01, ninguno. 56 puntos de salida escapados.
+- **Documentación inexacta:** la descripción «GZIP» del diccionario `_T` (era LZ77 propio) y la referencia a los artículos 16 y 21.1.a) del RD 383/2011 (el límite 61/58 está en el art. 19.1).
+
+## Verificado (sin cambios de código)
+
+- Los 1.123 residuos del motor se reproducen con error ≤ 0,005 (edad decimal a la fecha de firma de cada Resolución; OLS de cuatro bloques por grupo; primera aparición de cada solicitante). Coeficientes reproducidos: 0,4101 y 0,5062 (específicos), 0,165 con SE 0,279 (académicos de Comunes).
+- El baremo es idéntico 2023-2025 (salvo el bloque de pilotos, que desaparece en 2024); el único cambio de puntuación de 2026 es la escala de experiencia.
+
+---
+
+# DINOSAURIO 2.0  Registro de cambios
 
 El artefacto `DINOSAURIO2.html` consolida toda la plataforma analítica de seis módulos en un único fichero mantenible, con el catálogo longitudinal BOE 2023-2026 íntegro (`1.238` registros, `1.550` plazas) y `1.123` residuos empíricos IEEE-754.
 
