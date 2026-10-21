@@ -1,3 +1,10 @@
+<p align="center">
+  <img
+    src="assets/dinosaurio.png"
+    alt="DINOSAURIO — Laboratorio y análisis"
+    width="800"
+  />
+</p>
 ============================================================================
 
   DINOSAURIO 2.0 · MANUAL DE OPERACIÓN DEL SIMULADOR ANALÍTICO
