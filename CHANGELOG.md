@@ -1,8 +1,15 @@
-# DINOSAURIO 2.01 · Registro de cambios
+# DINOSAURIO 2.02 · Registro de cambios
 
 Release de calibración, validación y funcionalidad. IDs del backlog entre paréntesis.
 
-## Añadido
+La 2.02 incorpora cuatro ideas:
+
+1. **Dual interpretable (C1).** El resultado se traduce a **valores reales de política** (tope de experiencia, factor académico, factor de servicio), con el valor continuo, el valor aplicable redondeado a la rejilla del Laboratorio (1 · 0,1 · 0,1), las palancas que saturan y su aporte a la edad. El presupuesto puede expresarse en unidades **normalizadas** (fracción del rango de cada palanca, por defecto) o **brutas** (las del Oráculo). Incluye el botón **«Aplicar al Laboratorio»**, que mueve los deslizadores reales, y se refresca solo cuando cambian el bloqueo del factor académico o los deslizadores.
+2. **Percentiles de edad (Modo 2).** Mediana y P10-P25-P75-P90 por año y rama, con **bandas** P10-P90 y P25-P75 en el gráfico y columnas nuevas en la tabla. Muestran la dispersión de edades de la plantilla, no incertidumbre del modelo.
+3. **Integridad del diccionario.** Hash **FNV-1a** del diccionario `_T` decodificado, comparado con el esperado en la construcción y con el recalculado (T30). Coincide con el de `gunzip` del sistema.
+4. **Retrospectiva 2016→2025 (V7).** Con las plazas convocadas reales del ET y la `h` actual, el modelo se compara con las diez existencias observadas (desviación máxima 4,3 %, RMSE 2,4 %). **Un parámetro frente a diez observaciones**, no un ajuste del punto final. Esta calibración fija `h` en **7 %** (antes 8 %). El total FAS 2025 se muestra como contraste (2.680 efectivos y 50,9 años frente a 2.989 y 50,2 observados; el flujo de los demás ejércitos es un supuesto).
+
+## 2.01 - Añadido
 
 - **Modo 2 del Monte Carlo: fuerza activa con efecto arrastre (C2).** Stock oficial 2025 (ET 1.386, Armada 452, Aire 435, Comunes 716), envejecimiento +1,0/año, bajas por límite legal de edad (a) y otras bajas (b) separadas, altas con desfase de un año según el cupo del catálogo, Δ de la edad de entrada como escenario. Validaciones V1-V6. No toca los coeficientes del predictor.
 - **Años de servicio esperados (C3).**
