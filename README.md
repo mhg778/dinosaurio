@@ -5,6 +5,56 @@
     width="800"
   />
 </p>
+
+
+
+============================================================================
+
+  DINOSAURIO 3.0 · MANUAL DE OPERACIÓN DEL SIMULADOR ANALÍTICO - UPDATE
+
+============================================================================
+
+Laboratorio para el estudio de la edad de ingreso y el envejecimiento de la plantilla de Reservistas Voluntarios, con simulador de puntuaciones de concurso para aspirantes.
+
+## Qué hace esta aplicación
+
+DINOSAURIO 3.0 se distribuye como un único archivo `index.html` sin servidor, sin librerías externas y sin telemetría. Al abrirlo presenta dos espacios diferenciados:
+
+* **Laboratorio de plantilla:** proyecta la evolución de la plantilla completa desde el cierre de 2025 (2.989 efectivos), compara el efecto independiente de modificar el baremo, reducir otras bajas anuales o ampliar el cupo, calcula los años de servicio útil y permite planificar convocatorias por fases ante el pico de salidas por edad (2032-2038). Incluye vistas 2D y 3D, editor de tabla de puntos por experiencia civil, histórico de repesca 2023-2025 y exportación a informe PDF y guion reproducible de MATLAB (`.m`).
+* **Simulador de concurso:** calcula la puntuación estimada con el baremo vigente de 2026 (Apéndice 3), consulta el catálogo longitudinal del BOE 2023-2026 (1.238 filas y 1.550 plazas) con avisos de códigos reutilizados y prepara un borrador ordenable de hasta 10 plazas listo para imprimir.
+
+## Uso
+
+1. Abre `index.html` directamente en cualquier navegador moderno o publícalo en GitHub Pages.
+2. Elige **Laboratorio de plantilla** o **Simulador de concurso** desde el portal inicial.
+3. Puedes compartir cualquier escenario copiando el enlace desde el icono superior (`#s=...`); los parámetros se codifican en la dirección URL sin abandonar el navegador.
+
+## Origen de los datos y alcance metodológico
+
+La aplicación clasifica cada cifra visible según su grado de certeza:
+
+* **Observado:** cifras publicadas en el BOE (convocatorias 2023-2026, 1.123 admitidos en 2023-2025) y estadísticas oficiales de personal reservista (stock 2025 y serie 2016-2025 del Ejército de Tierra).
+* **Reconstruido:** magnitudes deducidas a partir de agregados oficiales (por ejemplo, la distribución inicial de edades del Ejército de Tierra a partir de su estructura de empleos).
+* **Estimado:** coeficientes estadísticos del modelo de edad de ingreso ajustados por tamaño de muestra entre Ejércitos (769 admitidos) y Cuerpos Comunes (354 admitidos), con constante de ajuste `tau = 80`.
+* **Supuesto:** parámetros no observables en fuentes públicas que la persona usuaria puede modificar (tasa anual `h` de otras bajas ajenas a la edad, pérdida entre clasificación e incorporación o coste unitario de formación).
+* **Proyectado:** resultados del modelo hacia el futuro bajo los supuestos seleccionados.
+
+## Aviso legal y limitaciones
+
+* **Herramienta independiente:** este proyecto es una aplicación de estudio técnico y no pertenece al Ministerio de Defensa ni a las Fuerzas Armadas.
+* **Sin valor administrativo:** las puntuaciones del simulador y el borrador de hasta 10 plazas tienen finalidad orientativa. No verifican documentación ni sustituyen a la sede electrónica oficial de tramitación.
+* **Separación entre correlación y causalidad:** los desplazamientos de edad estimados al modificar reglas del baremo reflejan sensibilidades del modelo ajustado a 2023-2025, no efectos causales garantizados en convocatorias futuras. Al evaluar 2026 conviene separar el efecto del baremo del efecto de la repesca de vacantes sin demanda (20,0 % medio del cupo en 2023-2025).
+* **Privacidad:** la aplicación no incluye datos personales identificables (sin NIO, DNI ni fechas de nacimiento individuales) y el borrador se almacena únicamente en el navegador local (`localStorage`).
+
+## Verificación automática
+
+En la consola del navegador, `window.runDinoMathAuditTests()` ejecuta la batería completa (`T1-T68`) comprobando la integridad de `window.DINO_DATASET`, las validaciones `V1-V7`, el balance contable con salidas separadas por edad y por otras causas, el comparador de variables, el borrador, el enlace compartible y la exportación a MATLAB y PDF.
+
+
+
+
+
+
 ============================================================================
 
   DINOSAURIO 2.0 · MANUAL DE OPERACIÓN DEL SIMULADOR ANALÍTICO
