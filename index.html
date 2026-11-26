@@ -2125,8 +2125,8 @@ el.textContent=
 '@media(max-width:600px){.fa-card{padding:12px}#m2Canvas3D{height:290px}.fa-seg{flex-wrap:wrap}}';
 D.head.appendChild(el);
 }
-function infoBtn(lbl,tip){
-return '<button type="button" class="fa-i" aria-label="'+esc(lbl)+'" data-tip="'+esc(tip)+'"><span class="fa-id" aria-hidden="true">i</span></button>';
+function infoBtn(lbl,tip,step){
+return '<button type="button" class="fa-i" aria-label="'+esc(lbl)+'" data-tip="'+esc(tip)+'"'+(step?(' data-help-step="'+step+'"'):'')+'><span class="fa-id" aria-hidden="true">i</span></button>';
 }
 function buildMarkup(){
 var fasesHtml=[
@@ -2160,19 +2160,19 @@ return ''+
 '</section>'+
 '<section class="fa-card" id="compVariablesCard" aria-labelledby="faCompTit">'+
 '<div class="fa-head"><div class="fa-sg"><h2 id="faCompTit">Comparador de variables: qué mueve más la plantilla</h2><span class="ev-badge ev-pro">Proyectado</span>'+
-infoBtn('Cómo se calcula el comparador','Ejecuta cuatro simulaciones independientes sobre la plantilla de 2025: una base sin cambios y una por cada variable, sin mezclarlas.')+
+infoBtn('Cómo se calcula el comparador','Ejecuta cuatro simulaciones independientes sobre la plantilla de 2025: una base sin cambios y una por cada variable, sin mezclarlas.',2)+
 '</div><div class="fa-sub" id="faBaseSum"></div></div>'+
 '<div class="fa-g3">'+
-'<div class="fa-col"><div class="fa-ct"><span>1. Cambiar el baremo</span>'+infoBtn('Detalle del cambio de baremo','Aplica el cambio de edad de ingreso del modelo actual. Solo afecta a las nuevas incorporaciones, no al personal ya en plantilla.')+'</div><div class="fa-sub" id="faBarSub"></div><div id="faR1"></div></div>'+
-'<div class="fa-col dest"><div class="fa-ct"><span>2. Reducir otras bajas anuales</span>'+infoBtn('Qué son otras bajas anuales','Incluye fines de compromiso sin renovación y bajas voluntarias. En el modelo reduce la tasa anual h de bajas no debidas a la edad.')+'</div><label class="fa-sub" for="faRetSl"><span id="faRetLbl"></span><input type="range" id="faRetSl" min="1" max="5" step="0.5" value="2"></label><div id="faR2"></div></div>'+
-'<div class="fa-col"><div class="fa-ct"><span>3. Aumentar el cupo anual</span>'+infoBtn('Cómo actúa el cupo anual','Multiplica las plazas ofertadas desde 2026. Acelera el relevo antes del pico de salidas por edad de 2032-2038.')+'</div><label class="fa-sub" for="faCupSl"><span id="faCupLbl"></span><input type="range" id="faCupSl" min="10" max="100" step="5" value="25"></label><div id="faR3"></div></div>'+
+'<div class="fa-col"><div class="fa-ct"><span>1. Cambiar el baremo</span>'+infoBtn('Detalle del cambio de baremo','Aplica el cambio de edad de ingreso del modelo actual. Solo afecta a las nuevas incorporaciones, no al personal ya en plantilla.',2)+'</div><div class="fa-sub" id="faBarSub"></div><div id="faR1"></div></div>'+
+'<div class="fa-col dest"><div class="fa-ct"><span>2. Reducir otras bajas anuales</span>'+infoBtn('Qué son otras bajas anuales','Incluye fines de compromiso sin renovación y bajas voluntarias. En el modelo reduce la tasa anual h de bajas no debidas a la edad.',2)+'</div><label class="fa-sub" for="faRetSl"><span id="faRetLbl"></span><input type="range" id="faRetSl" min="1" max="5" step="0.5" value="2"></label><div id="faR2"></div></div>'+
+'<div class="fa-col"><div class="fa-ct"><span>3. Aumentar el cupo anual</span>'+infoBtn('Cómo actúa el cupo anual','Multiplica las plazas ofertadas desde 2026. Acelera el relevo antes del pico de salidas por edad de 2032-2038.',3)+'</div><label class="fa-sub" for="faCupSl"><span id="faCupLbl"></span><input type="range" id="faCupSl" min="10" max="100" step="5" value="25"></label><div id="faR3"></div></div>'+
 '</div>'+
 '<details id="c3CosteBox"><summary>Calcular coste de formación por año útil (opcional)<span aria-hidden="true">▸</span></summary>'+
 '<div class="fa-sg" style="margin-top:8px"><label class="fa-sub" for="m2-coste-unit">Coste inicial por ingreso (€) <span class="ev-badge ev-sup">Supuesto</span></label><input type="number" id="m2-coste-unit" min="0" step="100" placeholder="Vacío = oculto" style="width:150px;min-height:44px"><div id="faCosteOut" class="fa-sub" hidden></div></div></details>'+
 '</section>'+
 '<section class="fa-card" id="faVisorCard" aria-labelledby="faVisorTit">'+
 '<div class="fa-head"><div class="fa-sg"><h2 id="faVisorTit">Evolución de la plantilla y retorno de servicio</h2>'+
-infoBtn('Cómo leer las bandas y los gráficos','La franja sombreada muestra dónde se concentra el 80 % central de edades de la plantilla (percentiles P10 y P90: un 10 % es más joven y un 10 % es mayor).')+
+infoBtn('Cómo leer las bandas y los gráficos','La franja sombreada muestra dónde se concentra el 80 % central de edades de la plantilla (percentiles P10 y P90: un 10 % es más joven y un 10 % es mayor).',3)+
 '</div><div class="fa-seg" role="group" aria-label="Tipo de gráfico"><button type="button" class="active" data-fa-chart="2d">Gráfico 2D (media y rango central)</button><button type="button" data-fa-chart="3d-pyr">3D · Edades año a año</button><button type="button" data-fa-chart="3d-serv">3D · Servicio útil según bajas</button></div></div>'+
 '<div class="fa-cbox"><canvas id="m2Canvas3D" width="960" height="340"></canvas>'+
 '<div class="fa-rot" id="faRotBar" hidden><button type="button" id="faRotL">◀ −15°</button><button type="button" id="faRotR">▶ +15°</button><button type="button" id="faRotF">Vista frontal</button><button type="button" id="faRotS">Vista lateral</button><button type="button" id="faRot0">Restablecer ángulo</button><button type="button" id="faRotPng">Descargar PNG</button>'+
@@ -2878,6 +2878,51 @@ pane.querySelectorAll('h2,h3').forEach(function(h){
 if(/superficie|trapezoidal|área/i.test(h.textContent||''))h.textContent='Contribución real de cada bloque en años';
 });
 }
+function updateLeverBadges(cat){
+var cN=cat||(E.getCurrentCategory?E.getCurrentCategory():'oficiales');
+var q=E.AGE_BOUNDS[cN]||E.AGE_BOUNDS.oficiales;
+var cf=E.COEF_MODELOS[q.modelo]||E.COEF_MODELOS.ejercitos;
+CAUSAL_IDS.forEach(function(id){
+var inp=$(id),card=inp&&inp.closest('.lever-item-card');
+if(!card)return;
+var catKey=E.REAL_CAT[id],beta=catKey?cf[catKey]:0;
+if(id==='cursos')beta=beta*0.5;
+var top=card.querySelector('.l-tit')||card.querySelector('.l-top');
+if(top){
+var bdg=card.querySelector('.ent-beta');
+if(!bdg){
+bdg=D.createElement('span');
+bdg.className='ent-beta';
+top.appendChild(bdg);
+}
+var unit=id==='cursos'?' años/curso':' años/pt';
+bdg.textContent=fmtS(beta,2)+unit;
+bdg.className='ent-beta '+(beta<-0.05?'ent-ok':(beta>0.05?'ent-w':'ent-d'));
+bdg.setAttribute('data-tip','Efecto estimado por unidad en '+cN+': '+fmtS(beta,2)+unit+'.');
+}
+if(id==='experiencia'){
+var met=card.querySelector('.l-met')||top;
+if(met){
+var eq=card.querySelector('.ent-boe-eq');
+if(!eq){
+eq=D.createElement('span');
+eq.className='ent-boe-eq';
+eq.setAttribute('data-tip','Equivalencia en el baremo oficial: el deslizador 0–10 equivale a 0–25 puntos BOE (× 2,5).');
+met.appendChild(eq);
+}
+var v=parseFloat(inp.value)||0;
+eq.textContent='= '+fmt(v*2.5,1)+' pts BOE';
+}
+}
+});
+}
+function updateBoeLinkNotice(showHint){
+var box=$('entBoeNotice'),chk=$('chkLinkExpBOE');
+if(!box)return;
+var linked=!!(chk&&chk.checked);
+if(linked||!showHint){box.hidden=true;return;}
+box.hidden=false;
+}
 function evalCurve(years,pts){
 var a=pts||cur.pts,y=Number(years)||0;
 return y<=0?a[0]:y<=3?a[1]:y<=5?a[2]:y<=10?a[3]:y<=15?a[4]:y<=20?a[5]:a[6];
@@ -2923,7 +2968,7 @@ return '<div class="ent-pb"><div class="ent-pl">'+p[0]+'</div><div class="ent-pv
 }).join('');
 }
 var imp=computeCurveImpact(cur.pts),sum=$('expCurveSummary');
-if(sum)sum.innerHTML='Efecto medio con distribución supuesta de experiencia <span class="ev-badge ev-sup">Supuesto</span>: <strong class="ent-m">'+fmtS(imp.diffBOE,2)+' pts</strong> (Ejércitos <strong class="ent-m">'+fmtS(imp.deltaEj,2)+' años</strong> · Cuerpos Comunes <strong class="ent-m">'+fmtS(imp.deltaCC,2)+' años</strong>).';
+if(sum)sum.innerHTML='Efecto medio con distribución supuesta de experiencia <span class="ev-badge ev-sup">Supuesto</span>: <strong class="ent-m">'+fmtS(imp.diffBOE,2)+' pts</strong> (Ejércitos <strong class="ent-m">'+fmtS(imp.deltaEj,2)+' años</strong> · Cuerpos Comunes <strong class="ent-m">'+fmtS(imp.deltaCC,2)+' años</strong>). Contraste empírico (2023-2025): el efecto mecánico puro de la escala 2026 sobre solicitantes reales se acota entre <strong class="ent-m">−0,07 y −0,03 años</strong> <span class="ev-badge ev-est">Estimado</span>.';
 }
 function applyCurveToFuerzaActiva(){
 var imp=computeCurveImpact(cur.pts);
@@ -2935,7 +2980,8 @@ return imp;
 function buildCurveCard(){
 var card=D.createElement('section');card.id='expCurveCard';card.className='card ent-c';
 card.innerHTML=
-'<div class="ent-h"><div><h3>Tabla de puntos por años de experiencia civil</h3><span class="ev-badge ev-pro">Proyectado</span></div>'+
+'<div class="ent-h"><div><h3>Tabla de puntos por años de experiencia civil</h3><span class="ev-badge ev-pro">Proyectado</span>'+
+'<button type="button" class="ent-i" aria-label="Ayuda sobre la tabla de experiencia" data-help-step="4" data-tip="Edita los 7 tramos del Apéndice 3 y traslada el efecto medio estimado a Plantilla y retorno."><span class="ent-id" aria-hidden="true">i</span></button></div>'+
 '<button type="button" class="ent-pri" id="btnApplyCurveFA">Aplicar este cambio en Plantilla y retorno</button></div>'+
 '<div class="ent-ps">'+Object.keys(PRESETS).map(function(k){return '<button type="button" class="ent-p'+(k===cur.preset?' active':'')+'" data-exp-pre="'+k+'">'+PRESETS[k].nombre+'</button>';}).join('')+'</div>'+
 '<div class="ent-tg">'+TRAMOS.map(function(lb,i){return '<label class="ent-tf"><span>'+lb+'</span><input type="number" id="expTramo_'+i+'" min="0" max="25" step="0.5" value="'+cur.pts[i]+'"></label>';}).join('')+'</div>'+
@@ -2964,15 +3010,21 @@ function injectCss(){
 if($('dino3-lote4-css'))return;
 var s=D.createElement('style');s.id='dino3-lote4-css';
 s.textContent=
-'#entradaStrip{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:2px 10px;background:rgba(16,27,40,.86);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;margin:12px 0 14px;min-height:48px}'+
+'#entradaStrip{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:2px 10px;background:rgba(16,27,40,.86);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;margin:12px 0 10px;min-height:48px}'+
 '#entradaStrip .ent-g{display:flex;flex-wrap:wrap;align-items:center;gap:8px}'+
 '#entradaStrip .ent-l{font:600 12px var(--font-ui,system-ui,sans-serif);color:var(--muted)}'+
-'#entradaStrip button,#expCurveCard button,#grupoSinEfectoEdad summary{font-family:var(--font-ui,system-ui,sans-serif);min-height:44px;min-width:44px}'+
+'#entradaStrip button,#expCurveCard button,#grupoSinEfectoEdad summary,#entBoeNotice button{font-family:var(--font-ui,system-ui,sans-serif);min-height:44px;min-width:44px}'+
+'#entBoeNotice{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;margin:0 0 12px;border:1px solid rgba(242,195,107,.5);border-radius:9px;background:rgba(242,195,107,.08);font:13px var(--font-body,Arial,sans-serif);color:var(--amber)}'+
 '.ent-seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}'+
 '.ent-seg button{border:0;border-radius:0;background:rgba(22,37,52,.88);color:var(--muted);padding:0 12px;font-size:12.5px;font-weight:600}'+
 '.ent-seg button.active{background:#1e4b66;color:#fff;box-shadow:inset 0 -2px 0 var(--cyan)}'+
 '.ent-sw{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1px solid var(--border);border-radius:8px;background:rgba(22,37,52,.88);cursor:pointer;font:600 12.5px var(--font-ui,system-ui,sans-serif);color:var(--text)}'+
 '.ent-sw input{width:18px;height:18px;accent-color:var(--cyan)}'+
+'.ent-beta,.ent-boe-eq{display:inline-block;padding:1px 6px;border-radius:5px;border:1px solid var(--border);background:rgba(13,22,32,.85);font:700 11px var(--font-mono,ui-monospace,Consolas,monospace);margin-left:4px;white-space:nowrap}'+
+'.ent-boe-eq{color:var(--cyan);border-color:rgba(84,200,255,.4)}'+
+'.ent-i{width:44px;height:44px;padding:0;border:0;background:transparent;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle}'+
+'.ent-id{width:20px;height:20px;border-radius:50%;background:rgba(84,200,255,.18);color:var(--cyan);font:800 11px/20px var(--font-ui,system-ui,sans-serif);text-align:center}'+
+'.ent-i:hover .ent-id,.ent-i:focus-visible .ent-id{background:var(--cyan);color:#071022}'+
 '#grupoSinEfectoEdad{margin-top:12px;background:rgba(13,22,32,.85);border:1px solid var(--border);border-radius:9px;padding:0 12px}'+
 '#grupoSinEfectoEdad summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;color:var(--cyan);font-size:13px;font-weight:600;list-style:none}'+
 '#grupoSinEfectoEdad[open]{padding-bottom:10px}'+
@@ -3000,6 +3052,7 @@ s.textContent=
 D.head.appendChild(s);
 }
 function buildStrip(){
+var wrap=D.createElement('div');
 var st=D.createElement('div');st.id='entradaStrip';st.setAttribute('role','region');st.setAttribute('aria-label','Controles de edad de ingreso');
 var r=W.baremoReglaActiva||'2026';
 st.innerHTML=
@@ -3009,14 +3062,43 @@ st.innerHTML=
 '<span class="ent-l">Modo</span><div class="ent-seg" role="group" aria-label="Modo de trabajo">'+
 '<button type="button" class="active" data-ent-jm="explore">Explorar cambios</button>'+
 '<button type="button" data-ent-jm="target">Fijar edad objetivo</button></div>'+
-'<button type="button" id="entFixRef">Fijar como referencia</button><button type="button" id="entReset">Restablecer</button></div>'+
+'<button type="button" id="entFixRef" data-tip="Convierte el perfil actual en el nuevo punto de partida para medir diferencias.">Fijar como referencia</button>'+
+'<button type="button" id="entReset" data-tip="Devuelve los controles a la referencia fijada actualmente.">Restablecer</button>'+
+'<button type="button" id="entOrig" data-tip="Restaura siempre el perfil inicial de 2025 aunque hayas fijado otra referencia.">Volver al inicio (2025)</button></div>'+
 '<div class="ent-g"><label class="ent-sw" for="chkAdvancedLab"><input type="checkbox" id="chkAdvancedLab"> Exploración avanzada</label></div>';
-st.querySelectorAll('[data-ent-boe]').forEach(function(b){b.onclick=function(){if(W.setBaremoRegla)W.setBaremoRegla(b.getAttribute('data-ent-boe'));syncStrip();};});
+var notice=D.createElement('div');
+notice.id='entBoeNotice';
+notice.hidden=true;
+notice.innerHTML='<span>El cambio entre BOE 2023-2025 y BOE 2026 solo mueve la edad si está marcada la casilla «Vincular años BOE» en Experiencia civil afín.</span>'+
+'<button type="button" id="entEnableLinkBoe">Activar vínculo por años</button>';
+st.querySelectorAll('[data-ent-boe]').forEach(function(b){
+b.onclick=function(){
+if(W.setBaremoRegla)W.setBaremoRegla(b.getAttribute('data-ent-boe'));
+syncStrip();
+updateBoeLinkNotice(true);
+};
+});
 st.querySelectorAll('[data-ent-jm]').forEach(function(b){b.onclick=function(){if(W.setLabJourneyMode)W.setLabJourneyMode(b.getAttribute('data-ent-jm'));syncStrip();};});
-st.querySelector('#entFixRef').onclick=function(){if(W.setScenarioAsReference)W.setScenarioAsReference();};
+st.querySelector('#entFixRef').onclick=function(){
+if(W.setScenarioAsReference)W.setScenarioAsReference();
+if(W.DINO_SHELL&&W.DINO_SHELL.showToast)W.DINO_SHELL.showToast('Referencia actualizada. Usa «Volver al inicio (2025)» para recuperar el origen.',2600);
+};
 st.querySelector('#entReset').onclick=function(){if(W.resetAllLeversToRef)W.resetAllLeversToRef();};
+st.querySelector('#entOrig').onclick=function(){
+if(W.initLabReferenceValues)W.initLabReferenceValues();
+if(W.updateAll)W.updateAll();
+updateBoeLinkNotice(false);
+if(W.DINO_SHELL&&W.DINO_SHELL.showToast)W.DINO_SHELL.showToast('Restaurado el perfil inicial de 2025',2000);
+};
 st.querySelector('#chkAdvancedLab').onchange=function(e){setAdvanced(!!e.target.checked);};
-return st;
+notice.querySelector('#entEnableLinkBoe').onclick=function(){
+var chk=$('chkLinkExpBOE');
+if(chk){chk.checked=true;if(W.syncExpBOEYears)W.syncExpBOEYears();}
+updateBoeLinkNotice(false);
+};
+wrap.appendChild(st);
+wrap.appendChild(notice);
+return wrap;
 }
 function syncStrip(){
 var st=$('entradaStrip');if(!st)return;
@@ -3024,6 +3106,7 @@ var r=W.baremoReglaActiva||'2026',jm=(W.DINO_LAB_STATE&&W.DINO_LAB_STATE.mode)||
 st.querySelectorAll('[data-ent-boe]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-ent-boe')===r);});
 st.querySelectorAll('[data-ent-jm]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-ent-jm')===jm);});
 var chk=$('chkAdvancedLab');if(chk)chk.checked=cur.advanced;
+if($('chkLinkExpBOE')&&$('chkLinkExpBOE').checked)updateBoeLinkNotice(false);
 }
 function setAdvanced(on){
 cur.advanced=!!on;
@@ -3083,7 +3166,7 @@ var oR=W.renderLabEffect;
 if(typeof oR==='function'&&!oR._d3E){
 W.renderLabEffect=function(s,c,h){
 var r=oR.apply(this,arguments);
-drawContribBars(s,c);updateNonCausalSum(s);syncStrip();scrubArea($('tabPaneClassic'));
+drawContribBars(s,c);updateNonCausalSum(s);updateLeverBadges(c);syncStrip();scrubArea($('tabPaneClassic'));
 return r;
 };
 W.renderLabEffect._d3E=true;
@@ -3112,7 +3195,7 @@ var ws=pane.querySelector('.lab-workspace-grid');
 (ws&&ws.children&&ws.children[1]?ws.children[1]:pane).appendChild(buildCurveCard());
 mountAdvanced(pane);scrubArea(pane);hook();
 var s=E.getCaseState?E.getCaseState():null;
-drawContribBars(s);updateNonCausalSum(s);renderCurve();syncStrip();
+drawContribBars(s);updateNonCausalSum(s);updateLeverBadges();renderCurve();syncStrip();
 var rt=null;
 W.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){drawContribBars(E.getCaseState?E.getCaseState():null);},120);});
 }
@@ -3155,8 +3238,42 @@ s.textContent=
 '.o-pri{background:#1e4b66;border-color:var(--cyan);color:#fff;font-weight:700}';
 D.head.appendChild(s);
 }
+function patchBatteryModeF16(){
+var sel=$('bat-modo'),card=$('batCard');
+if(!sel||!card||sel._d3F16)return;
+sel._d3F16=true;
+sel.addEventListener('change',function(){
+if(sel.value!=='combi')return;
+setTimeout(function(){
+['exp','acad','serv'].forEach(function(id){
+var c=$('bat-var-'+id);
+if(c){c.disabled=false;c.checked=true;}
+});
+var any=$('bat-var-exp');
+if(any)any.dispatchEvent(new W.Event('change',{bubbles:true}));
+},0);
+});
+}
+function patchDecoderF15(root){
+var inp=$('decScoreInput');
+if(!inp||$('decExampleBtn'))return;
+var box=inp.closest('.card, .sec-card, div')||root;
+var btn=D.createElement('button');
+btn.type='button';
+btn.id='decExampleBtn';
+btn.style.cssText='margin-left:8px;min-height:44px;padding:0 12px;font-family:var(--font-ui,system-ui,sans-serif)';
+btn.textContent='Probar ejemplo (20 pts)';
+btn.setAttribute('data-tip','Carga 20 puntos de ejemplo y calcula las combinaciones de experiencia, titulación y cursos que dan esa nota.');
+btn.onclick=function(){
+inp.value='20';
+if(typeof W.runDecoderSolver==='function')W.runDecoderSolver();
+};
+if(inp.parentNode)inp.parentNode.appendChild(btn);
+}
 function polishReglasLabels(root){
 if(!root)return;
+patchBatteryModeF16();
+patchDecoderF15(root);
 var crit=$('paretoCritSelect');
 if(crit){
 Array.prototype.forEach.call(crit.options,function(opt){
@@ -3170,6 +3287,7 @@ var t=h.textContent||'';
 if(/decodificador/i.test(t))h.textContent='Qué combinaciones dan una nota de mérito específico';
 else if(/or[aá]culo|pareto/i.test(t)&&!h.closest('#dualCard'))h.textContent='Límite de las variables (ajuste por objetivo)';
 else if(/dual del optimizador/i.test(t))h.innerHTML='Máximo cambio alcanzable con las tres variables <span class="ev-badge ev-pro">Proyectado</span>';
+else if(/batería de escenarios/i.test(t))h.innerHTML='Batería de escenarios: combinaciones de cambios autorizados <span class="ev-badge ev-pro">Proyectado</span>';
 });
 var dualBtn=$('dual-apply');
 if(dualBtn&&!dualBtn._d3Opt){
@@ -3727,7 +3845,7 @@ if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boo
 (function(){
 'use strict';
 var W=window,D=document;
-var st={open:false,tab:'screen',view:'portal',opener:null,tipT:null,tipEl:null,tipsOn:true};
+var st={open:false,tab:'screen',view:'portal',step:0,opener:null,tipT:null,tipEl:null,tipsOn:true,inAudit:false};
 function $(id){return D.getElementById(id);}
 function esc(v){return typeof W.__dinoEsc==='function'?W.__dinoEsc(v):String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function fmt(x,d){return Number.isFinite(x)?x.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}):'-';}
@@ -3744,74 +3862,138 @@ function injectCss(){
 if($('dino3-lote7-css'))return;
 var s=D.createElement('style');s.id='dino3-lote7-css';
 s.textContent=
-'#dinoTip{position:fixed;z-index:100002;max-width:310px;background:#0b1526;color:var(--text,#e6eff9);border:1px solid var(--mode-accent,#54c8ff);border-radius:9px;padding:9px 12px;font:13px/1.45 var(--font-ui,system-ui,sans-serif);box-shadow:0 10px 28px rgba(0,0,0,.55);pointer-events:none}'+
-'#dinoTip[hidden]{display:none!important}'+
-'#dinoAyuda.d3-ay{position:fixed!important;top:44px!important;right:0!important;bottom:0!important;width:min(500px,100vw)!important;z-index:100000;background:#0d1624;border-left:1px solid var(--border);border-radius:0!important;display:flex;flex-direction:column;box-shadow:-12px 0 36px rgba(0,0,0,.55);animation:d3Sl .22s ease}'+
+'#dinoTip{position:fixed;z-index:100002;max-width:315px;background:#0b1526;color:var(--text,#e6eff9);border:1px solid var(--mode-accent,#54c8ff);border-radius:9px;padding:9px 12px;font:13px/1.45 var(--font-ui,system-ui,sans-serif);box-shadow:0 10px 28px rgba(0,0,0,.55);pointer-events:none}'+
+'#dinoTip[hidden]{display:none!important}.a3-tip-s{margin-top:5px;color:#ffbf47;font-size:11.5px;font-weight:600}'+
+'#dinoAyuda.d3-ay{position:fixed!important;top:44px!important;right:0!important;bottom:0!important;width:min(510px,100vw)!important;z-index:100000;background:#0d1624;border-left:1px solid var(--border);border-radius:0!important;display:flex;flex-direction:column;box-shadow:-12px 0 36px rgba(0,0,0,.55);animation:d3Sl .22s ease}'+
 'body:not(.in-app) #dinoAyuda.d3-ay{top:0!important}'+
 '@keyframes d3Sl{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}'+
-'.a3-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:rgba(13,23,35,.96);border-bottom:1px solid var(--border)}'+
-'.a3-h h2{margin:0;font:700 15px var(--font-ui,system-ui,sans-serif);color:#fff}.a3-ac{display:flex;align-items:center;gap:8px}'+
-'.a3-ck{display:inline-flex;align-items:center;gap:6px;min-height:44px;font:600 12.5px var(--font-ui,system-ui,sans-serif);color:var(--muted);cursor:pointer}'+
+'.a3-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:rgba(13,23,35,.96);border-bottom:1px solid var(--border)}'+
+'.a3-h h2{margin:0;font:700 15px var(--font-ui,system-ui,sans-serif);color:#fff}.a3-ac{display:flex;align-items:center;gap:6px}'+
+'.a3-ck{display:inline-flex;align-items:center;gap:5px;min-height:44px;font:600 12px var(--font-ui,system-ui,sans-serif);color:var(--muted);cursor:pointer;padding:0 4px}'+
 '.a3-ck input{width:17px;height:17px;accent-color:#ffbf47}'+
-'.a3-x{min-width:44px;min-height:44px;border-radius:8px;border:1px solid var(--border);background:#182735;color:#fff;font:700 15px var(--font-ui,system-ui,sans-serif);cursor:pointer}.a3-x:hover{border-color:#ffbf47}'+
+'.a3-b1,.a3-x{min-width:44px;min-height:44px;border-radius:8px;border:1px solid var(--border);background:#182735;color:#fff;font:600 12.5px var(--font-ui,system-ui,sans-serif);padding:0 10px;cursor:pointer}'+
+'.a3-b1:hover,.a3-x:hover{border-color:#ffbf47}'+
 '.a3-ts{display:grid;grid-template-columns:1fr 1fr;background:#101b26;border-bottom:1px solid var(--border)}'+
 '.a3-t{min-height:44px;border:0;border-radius:0;background:transparent;color:var(--muted);border-bottom:2px solid transparent;font:700 13px var(--font-ui,system-ui,sans-serif);cursor:pointer}'+
 '.a3-t.active{color:#fff;border-bottom-color:#ffbf47;background:rgba(255,191,71,.08)}'+
-'.a3-b{flex:1;overflow-y:auto;padding:14px 16px 24px;font:14px/1.5 var(--font-body,Arial,sans-serif);color:var(--text)}'+
+'.a3-b{flex:1;overflow-y:auto;padding:12px 16px 24px;font:14px/1.5 var(--font-body,Arial,sans-serif);color:var(--text)}'+
+'.a3-ficha{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}'+
+'.a3-fi{background:rgba(16,27,40,.92);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:12.5px;line-height:1.4}'+
+'.a3-fi b{display:block;font:700 11px var(--font-ui,system-ui,sans-serif);letter-spacing:.04em;text-transform:uppercase;color:var(--mode-accent,#54c8ff);margin-bottom:3px}'+
 '.a3-bx{background:rgba(16,27,40,.9);border:1px solid var(--border);border-radius:9px;padding:11px 12px;margin-bottom:10px}'+
-'.a3-bx h3,.a3-st h4,.a3-d summary,.a3-f button{font-family:var(--font-ui,system-ui,sans-serif)}'+
-'.a3-bx h3{margin:0 0 6px;font-size:14px;color:#fff}.a3-bx ul{margin:4px 0 0;padding-left:18px}.a3-bx li{margin-bottom:4px}'+
-'.a3-ok{border-left:3px solid #b6df72}.a3-ok h3{color:#b6df72}.a3-no{border-left:3px solid #ff8d91}.a3-no h3{color:#ff8d91}'+
-'.a3-st{background:rgba(16,27,40,.9);border:1px solid var(--border);border-left:3px solid #ffbf47;border-radius:9px;padding:10px 12px;margin-bottom:9px}'+
-'.a3-n{display:inline-block;background:#ffbf47;color:#071022;font:800 11px var(--font-ui,system-ui,sans-serif);padding:2px 7px;border-radius:4px;margin-bottom:5px}'+
-'.a3-st h4{margin:0 0 4px;font-size:14px;color:#fff}.a3-st p{margin:0;color:var(--muted);font-size:13.5px}'+
+'.a3-bx h3,.a3-fig h4,.a3-d summary,.a3-f button,.a3-nav button,.a3-go{font-family:var(--font-ui,system-ui,sans-serif)}'+
+'.a3-bx h3{margin:0 0 6px;font-size:14px;color:#fff}.a3-bx ul{margin:4px 0 0;padding-left:18px}.a3-bx li{margin-bottom:6px}'+
+'.a3-bx small{color:var(--muted)}.a3-ok{border-left:3px solid #b6df72}.a3-ok h3{color:#b6df72}.a3-no{border-left:3px solid #ff8d91}.a3-no h3{color:#ff8d91}'+
+'.a3-nav{display:flex;gap:6px;flex-wrap:wrap;position:sticky;top:-12px;background:#0d1624;padding:6px 0 10px;z-index:2;border-bottom:1px solid rgba(44,64,84,.6);margin-bottom:10px}'+
+'.a3-pb{min-width:44px;min-height:44px;border-radius:50%;border:1.5px solid #ffbf47;background:transparent;color:#ffbf47;font:800 13px var(--font-ui,system-ui,sans-serif);cursor:pointer}'+
+'.a3-pb.on,.a3-pb:hover{background:#ffbf47;color:#071022}'+
+'.a3-fig{margin:0 0 14px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#101c30}'+
+'.a3-fig[aria-current="step"]{border-color:#ffbf47;box-shadow:0 0 0 2px rgba(255,191,71,.35)}'+
+'.a3-fh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;background:#16243a}'+
+'.a3-fhl{display:flex;align-items:center;gap:8px;min-width:0}'+
+'.a3-n{background:#ffbf47;color:#071022;font:800 11px var(--font-ui,system-ui,sans-serif);padding:2px 7px;border-radius:4px;white-space:nowrap}'+
+'.a3-fig h4{margin:0;font-size:13.5px;color:#fff}.a3-fig svg{display:block;width:100%;height:auto;background:#0b1322}'+
+'.a3-fig figcaption{padding:9px 12px 11px;font-size:13.5px;color:var(--text)}.a3-fig figcaption p{margin:0 0 7px}.a3-fig figcaption p:last-child{margin:0}'+
+'.a3-nota{background:rgba(84,200,255,.1);border-left:3px solid #54c8ff;padding:5px 9px;border-radius:4px;font-size:12.5px}'+
+'.a3-aviso{background:rgba(255,141,145,.12);border-left:3px solid #ff8d91;padding:5px 9px;border-radius:4px;font-size:12.5px}'+
+'.a3-go{min-height:36px;padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:#1b2e44;color:#54c8ff;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap}'+
+'.a3-go:hover{border-color:#ffbf47;color:#fff}'+
 '.a3-d{background:rgba(16,27,40,.85);border:1px solid var(--border);border-radius:8px;padding:0 11px;margin-bottom:8px}'+
 '.a3-d summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:600;color:var(--mode-accent,#54c8ff);list-style:none}'+
 '.a3-d[open]{padding-bottom:10px}.a3-d p{margin:0;font-size:13.5px;color:var(--muted)}'+
 '.a3-f{padding:8px 14px;border-top:1px solid var(--border);background:rgba(13,23,35,.96)}'+
 '.a3-m{width:100%;min-height:44px;text-align:left;background:transparent;border:1px solid var(--border);border-radius:8px;padding:0 12px;color:#54c8ff;font-size:13px;font-weight:700;cursor:pointer}.a3-m:hover{border-color:#54c8ff}'+
-'@media(max-width:560px){#dinoAyuda.d3-ay{top:88px!important;width:100vw!important}body:not(.in-app) #dinoAyuda.d3-ay{top:0!important}}'+
-'@media(prefers-reduced-motion:reduce){#dinoAyuda.d3-ay{animation:none!important}}';
+'@media(max-width:560px){#dinoAyuda.d3-ay{top:88px!important;width:100vw!important}body:not(.in-app) #dinoAyuda.d3-ay{top:0!important}.a3-ficha{grid-template-columns:1fr}}'+
+'@media(prefers-reduced-motion:reduce){#dinoAyuda.d3-ay{animation:none!important}}'+
+'@media print{'+
+'body.dino-imprimiendo>*:not(#dinoAyuda){display:none!important}'+
+'body.dino-imprimiendo #dinoAyuda.d3-ay{display:block!important;position:static!important;width:auto!important;height:auto!important;background:#fff!important;color:#111!important;border:0!important;box-shadow:none!important}'+
+'body.dino-imprimiendo .a3-ac,body.dino-imprimiendo .a3-ts,body.dino-imprimiendo .a3-nav,body.dino-imprimiendo .a3-f,body.dino-imprimiendo .a3-go{display:none!important}'+
+'body.dino-imprimiendo .a3-b{overflow:visible!important;padding:0!important;color:#111!important}'+
+'body.dino-imprimiendo .a3-h{background:#eee!important;color:#000!important;border-bottom:1.5pt solid #111!important}'+
+'body.dino-imprimiendo .a3-h h2,body.dino-imprimiendo .a3-bx h3,body.dino-imprimiendo .a3-fig h4{color:#000!important}'+
+'body.dino-imprimiendo .a3-fi,body.dino-imprimiendo .a3-bx,body.dino-imprimiendo .a3-fig,body.dino-imprimiendo .a3-d{background:#fff!important;color:#111!important;border-color:#999!important;break-inside:avoid}'+
+'body.dino-imprimiendo .a3-fh{background:#eef2f7!important}body.dino-imprimiendo .a3-fig figcaption{color:#111!important}'+
+'}';
 D.head.appendChild(s);
 }
+var SV={
+R:function(x,y,w,h,f,st,sw,rx,d){
+return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+(rx==null?6:rx)+'" fill="'+(f||'none')+'"'+
+(st?(' stroke="'+st+'" stroke-width="'+(sw||1)+'"'):'')+(d?(' stroke-dasharray="'+d+'"'):'')+'/>';
+},
+T:function(x,y,s,sz,f,a,w){
+return '<text x="'+x+'" y="'+y+'" font-family="system-ui,sans-serif" font-size="'+(sz||10)+'" fill="'+(f||'#e6eff9')+'"'+
+(a?(' text-anchor="'+a+'"'):'')+(w?(' font-weight="'+w+'"'):'')+'>'+esc(s)+'</text>';
+},
+cal:function(n,x,y){
+return '<circle cx="'+x+'" cy="'+y+'" r="9" fill="#ffbf47" stroke="#071022" stroke-width="1.2"/>'+
+'<text x="'+x+'" y="'+(y+3.8)+'" font-family="system-ui,sans-serif" font-size="11" fill="#071022" text-anchor="middle" font-weight="800">'+n+'</text>';
+},
+hi:function(x,y,w,h){return SV.R(x,y,w,h,'none','#ffbf47',1.7,7,'5 3');},
+dino:function(x,y,sc){
+return '<g transform="translate('+x+' '+y+') scale('+(sc||0.82)+')">'+
+'<polygon points="14,30 0,38 15,40" fill="#7bd35a"/><ellipse cx="30" cy="31" rx="19" ry="11.5" fill="#7bd35a"/>'+
+'<path d="M40 26 L46 11 Q47 7 52 7 L60 8 Q65 9 64 14 Q62 19 56 19 L52 19 L49 31 Z" fill="#7bd35a"/>'+
+'<circle cx="56.5" cy="12" r="1.8" fill="#071022"/>'+
+'<polygon points="20,22 24,14 28,21" fill="#2f7a2b"/><polygon points="29,20 33,12 37,20" fill="#2f7a2b"/>'+
+'<rect x="21" y="38" width="7" height="10" rx="3" fill="#2f7a2b"/><rect x="34" y="38" width="7" height="10" rx="3" fill="#2f7a2b"/></g>';
+},
+bubble:function(y,l1,l2){
+return SV.dino(10,y+4,0.82)+SV.R(70,y,296,48,'#16243a','#ffbf47',1.4,8)+
+'<polygon points="70,'+(y+18)+' 61,'+(y+23)+' 70,'+(y+27)+'" fill="#16243a" stroke="#ffbf47" stroke-width="1.3"/>'+
+SV.T(80,y+19,l1,9.5,'#ffbf47','start','700')+SV.T(80,y+35,l2,9,'#e6eff9','start','500');
+},
+frame:function(tit,desc,activeTab,acc,body){
+var col=acc||'#54c8ff';
+var top=SV.R(0.5,0.5,379,209,'#0d1626','#2c4054',1.2,9)+
+SV.R(0.5,0.5,379,22,'#101b26',null,0,9)+'<line x1="1" y1="2" x2="379" y2="2" stroke="'+col+'" stroke-width="2.5"/>'+
+SV.T(12,15,'DINOSAURIO 3.0 · '+activeTab,9.5,'#e6eff9','start','700')+
+'<circle cx="364" cy="11.5" r="6.5" fill="#ffbf47"/>'+SV.T(364,14.8,'?',9.5,'#071022','middle','800')+
+'<line x1="1" y1="23" x2="379" y2="23" stroke="#2c4054" stroke-width="1"/>';
+return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 210" width="380" height="210" role="img" aria-label="'+esc(tit)+'"><title>'+esc(tit)+'</title><desc>'+esc(desc)+'</desc>'+top+body+'</svg>';
+}
+};
 var TIPS={
-dinoBrand:'Vuelve al portal inicial para elegir entre Laboratorio y Simulador.',
-dinoCatSelect:'Cambia el cuerpo o escala. Cada grupo tiene sus límites de edad y su modelo.',
-dinoSwitchModeBtn:'Cambia entre Laboratorio de plantilla y Simulador de concurso.',
-dinoShareBtn:'Copia un enlace con el escenario actual en la dirección URL.',
-dinoAyudaTop:'Abre la ayuda de esta pantalla y el tutorial guiado.',
-enterPlanBtn:'Abre el Laboratorio para analizar edad de ingreso, plantilla y servicio útil.',
-enterAspBtn:'Abre el Simulador para calcular tu puntuación 2026 y montar tu borrador.',
-portalTutorialBtn:'Abre el tutorial guiado paso a paso.',
-faEjSel:'Elige las Fuerzas Armadas al completo o un ejército o cuerpo concreto.',
-faHorSel:'Años proyectados desde el cierre oficial de 2025.',
-faRetSl:'Reduce la tasa anual de otras bajas (sin renovación o bajas voluntarias; parámetro h).',
-faCupSl:'Multiplica las plazas convocadas al año respecto a 2026.',
-'m2-coste-unit':'Coste unitario supuesto de formación inicial (€). Vacío = oculto.',
-chkAdvancedLab:'Despliega pruebas +25 %, pérdida de valor de títulos antiguos y proyección de flujo.',
-btnApplyCurveFA:'Aplica el efecto medio de esta tabla de experiencia en Plantilla y retorno.',
-aspEscala:'Filtra las vacantes de 2026 según la escala elegida.',
-aspExp:'Años de experiencia civil afín. En 2026 el tope de 25 puntos llega al superar 15 años.',
-aspTit:'Titulación oficial adicional afín según el Apéndice 3.',
-aspCur:'Cursos afines de 20 h o más (0,5 puntos por curso; máximo 8 cursos = 4,0 puntos).',
-aspArea:'Filtra las vacantes de 2026 por familia profesional.',
-aspZona:'Filtra las vacantes de 2026 por área geográfica.',
-optRecEj:'Filtra los destinos repetidos en 2023-2026 por ejército.',
-optRecMin:'Muestra destinos convocados en al menos 3 años o en los 4 seguidos.',
-optSimRate:'Porcentaje supuesto de plazas sin solicitante reasignadas dentro del ejército.'
+dinoBrand:{t:'Vuelve al portal inicial para elegir entre Laboratorio y Simulador.',s:0},
+dinoCatSelect:{t:'Cambia el cuerpo o escala. Cada grupo tiene sus límites legales de edad y su modelo.',s:1},
+dinoSwitchModeBtn:{t:'Cambia entre Laboratorio de plantilla y Simulador de concurso sin pasar por el portal.',s:0},
+dinoShareBtn:{t:'Copia un enlace con tus parámetros actuales codificados en la dirección URL.',s:0},
+dinoAyudaTop:{t:'Abre la ayuda de esta pantalla y el tutorial ilustrado paso a paso.',s:0},
+enterPlanBtn:{t:'Abre el Laboratorio para analizar edad de ingreso, plantilla completa y años de servicio útil.',s:1},
+enterAspBtn:{t:'Abre el Simulador para calcular tu baremo 2026, consultar el catálogo y montar tu borrador.',s:1},
+portalTutorialBtn:{t:'Abre el tutorial ilustrado paso a paso.',s:1},
+faEjSel:{t:'Elige las Fuerzas Armadas al completo (2.989 efectivos en 2025) o un ejército concreto.',s:1},
+faHorSel:{t:'Número de años proyectados desde el cierre oficial de 2025 (5, 10 o 15 años).',s:1},
+faRetSl:{t:'Reduce la tasa anual de otras bajas no debidas a la edad (sin renovación o voluntarias; parámetro h).',s:2},
+faCupSl:{t:'Multiplica las plazas convocadas al año respecto a la oferta de 2026.',s:2},
+'m2-coste-unit':{t:'Coste unitario supuesto de formación inicial (€). Déjalo vacío para no mostrar importes.',s:2},
+faBtnMatlab:{t:'Descarga un guion reproducible (.m) con las series anuales, bajas separadas y matrices de edad.',s:5},
+faBtnPdf:{t:'Genera el informe ejecutivo A4 en blanco y negro listo para imprimir o guardar en PDF.',s:5},
+chkAdvancedLab:{t:'Despliega bajo demanda pruebas +25 %, pérdida de valor de títulos antiguos y proyección de flujo.',s:4},
+btnApplyCurveFA:{t:'Traslada el efecto medio estimado de esta tabla de experiencia a Plantilla y retorno.',s:4},
+aspEscala:{t:'Filtra las vacantes de 2026 según la escala a la que optas.',s:1},
+aspExp:{t:'Años de experiencia civil afín. Con el baremo 2026 el tope de 25 puntos llega al superar 15 años.',s:1},
+aspTit:{t:'Titulación oficial adicional a la exigida para la plaza (Apéndice 3).',s:1},
+aspCur:{t:'Cursos afines de 20 h o más (0,5 puntos por curso; tope de 8 cursos = 4,0 puntos).',s:1},
+aspArea:{t:'Filtra las vacantes compatibles de 2026 por familia profesional.',s:1},
+aspZona:{t:'Filtra las vacantes compatibles de 2026 por zona geográfica.',s:1},
+optRecEj:{t:'Filtra los destinos convocados de forma repetida en 2023-2026 por ejército.',s:5},
+optRecMin:{t:'Muestra destinos convocados en 3 o en las 4 convocatorias seguidas.',s:5},
+optSimRate:{t:'Porcentaje supuesto de plazas sin solicitante reasignadas dentro del mismo ejército (media real 2023-2025: 20,0 %).',s:5}
 };
 var EV_T={
 observado:'Dato real tomado de una fuente oficial (BOE o estadística DIPE).',
 reconstruido:'Dato deducido a partir de cifras oficiales agregadas.',
-estimado:'Cifra calculada con método estadístico y margen de error.',
-supuesto:'Valor asumido por falta de dato público; puedes ajustarlo.',
+estimado:'Cifra calculada con método estadístico y sujeta a margen de error.',
+supuesto:'Valor asumido por falta de dato público; puedes modificarlo.',
 proyectado:'Resultado del modelo hacia el futuro, no un hecho observado.'
 };
 var TH_T={
-'bajas por edad':'Salidas deterministas al alcanzar el límite legal (61 años oficiales/suboficiales; 58 tropa).',
-'otras bajas':'Bajas anuales ajenas a la edad (fin de compromiso sin renovación o voluntarias; tasa h).',
-'80 % central':'Franja donde está el 80 % central de edades de la plantilla (percentiles P10 y P90).',
-'código':'Identificador BOE. Cítalo siempre con el año porque algunos códigos cambian de unidad.'
+'bajas por edad':'Salidas deterministas al alcanzar el límite legal de edad (61 años en oficiales y suboficiales; 58 en tropa).',
+'otras bajas':'Bajas anuales ajenas a la edad (fin de compromiso sin renovación o bajas voluntarias; tasa supuesta h).',
+'80 % central':'Franja donde se concentra el 80 % central de edades de la plantilla (percentiles P10 y P90).',
+'código':'Identificador BOE. Cítalo siempre junto al año porque algunos códigos cambian de unidad entre convocatorias.'
 };
 function attachTips(){
 D.querySelectorAll('[title]').forEach(function(el){
@@ -3819,7 +4001,12 @@ var t=String(el.getAttribute('title')||'').trim();
 if(t&&!el.hasAttribute('data-tip')&&!el.hasAttribute('data-dino-tip'))el.setAttribute('data-tip',t);
 if(t){el.setAttribute('data-native-title',t);el.removeAttribute('title');}
 });
-Object.keys(TIPS).forEach(function(id){var el=$(id);if(el&&!el.hasAttribute('data-tip'))el.setAttribute('data-tip',TIPS[id]);});
+Object.keys(TIPS).forEach(function(id){
+var el=$(id);
+if(!el)return;
+if(!el.hasAttribute('data-tip'))el.setAttribute('data-tip',TIPS[id].t);
+if(TIPS[id].s&&!el.hasAttribute('data-tip-step'))el.setAttribute('data-tip-step',String(TIPS[id].s));
+});
 D.querySelectorAll('.ev-badge,.ev').forEach(function(el){
 if(el.hasAttribute('data-tip')||el.hasAttribute('data-dino-tip'))return;
 var tx=String(el.textContent||'').toLowerCase();
@@ -3838,8 +4025,18 @@ if(!tipsOn()||!el)return false;
 var txt=el.getAttribute('data-tip');if(!txt)return false;
 var g=$('dinoTip');
 if(!g){g=D.createElement('div');g.id='dinoTip';g.setAttribute('role','tooltip');D.body.appendChild(g);}
-g.textContent=txt;g.hidden=false;
-var r=el.getBoundingClientRect(),gw=g.offsetWidth||290,gh=g.offsetHeight||50;
+g.textContent='';
+var p=D.createElement('div');p.textContent=txt;g.appendChild(p);
+var hStep=el.getAttribute('data-help-step')||el.getAttribute('data-tip-step');
+if(hStep&&Number(hStep)>0){
+var sub=D.createElement('div');sub.className='a3-tip-s';
+sub.textContent=el.hasAttribute('data-help-step')
+?('Clic en ⓘ: abre el paso '+hStep+' del tutorial')
+:('Más detalle en el botón «?» (paso '+hStep+')');
+g.appendChild(sub);
+}
+g.hidden=false;
+var r=el.getBoundingClientRect(),gw=g.offsetWidth||295,gh=g.offsetHeight||54;
 var top=r.bottom+8;if(top+gh>(W.innerHeight||768)-8&&r.top-gh-8>8)top=r.top-gh-8;
 g.style.left=Math.max(8,Math.min(r.left,(W.innerWidth||1024)-gw-8))+'px';
 g.style.top=top+'px';
@@ -3851,7 +4048,7 @@ clearTimeout(st.tipT);
 var g=$('dinoTip');if(g)g.hidden=true;
 if(st.tipEl){st.tipEl.removeAttribute('aria-describedby');st.tipEl=null;}
 }
-function bindTips(){
+function bindTipsAndObserver(){
 if(D._d3Tips)return;D._d3Tips=true;
 function find(n){return n&&n.closest?n.closest('[data-tip]'):null;}
 D.addEventListener('mouseover',function(e){var el=find(e.target);if(!el||el===st.tipEl)return;clearTimeout(st.tipT);st.tipT=setTimeout(function(){showTip(el);},180);},true);
@@ -3862,101 +4059,268 @@ W.addEventListener('scroll',hideTip,true);
 D.addEventListener('touchstart',function(e){
 if(!W.matchMedia||!W.matchMedia('(hover: none)').matches)return;
 var el=find(e.target);
-if(el&&(el.classList.contains('fa-i')||el.classList.contains('ev-badge')||el.tagName==='TH'))showTip(el);
+if(el&&(el.classList.contains('fa-i')||el.classList.contains('ent-i')||el.classList.contains('ev-badge')||el.tagName==='TH'))showTip(el);
 else if(!el)hideTip();
 },{passive:true});
+D.addEventListener('click',function(e){
+if(st.inAudit)return;
+var btn=e.target&&e.target.closest?e.target.closest('[data-help-step]'):null;
+if(!btn)return;
+e.preventDefault();e.stopPropagation();
+openDrawer('tutorial',btn,parseInt(btn.getAttribute('data-help-step'),10)||1);
+},true);
+if(W.MutationObserver){
+var moT=null;
+var mo=new MutationObserver(function(ms){
+if(st.inAudit)return;
+var relevant=ms.some(function(m){
+return Array.prototype.some.call(m.addedNodes,function(n){
+return n.nodeType===1&&n.id!=='dinoTip'&&n.id!=='dinoAyuda'&&!(n.classList&&n.classList.contains('dino-info'));
+});
+});
+if(!relevant)return;
+clearTimeout(moT);
+moT=setTimeout(attachTips,150);
+});
+mo.observe(D.body,{childList:true,subtree:true});
+}
 }
 var HELP={
 portal:{
 t:'Ayuda · Portal inicial',
-d:'Elige tu perfil para ver solo las herramientas que necesitas: Laboratorio de plantilla (cian) o Simulador de concurso para aspirantes (verde militar).',
-ok:['Cambiar de espacio en cualquier momento desde la barra superior.','Compartir escenarios mediante un enlace con tus parámetros en la URL.'],
-no:['Tramitar solicitudes oficiales: todo se calcula en tu navegador sin enviar datos.'],
-q:[['¿Qué abro si soy aspirante?','Entra en «Simulador de concurso» para calcular tu baremo 2026 y ordenar hasta 10 plazas.']]
+f:['¿Qué espacio necesito abrir ahora?','Pantalla inicial','30 segundos','No tramita solicitudes oficiales ni envía datos fuera del navegador.'],
+ok:['«Puedo cambiar entre Laboratorio y Simulador en cualquier momento desde la barra superior.»','«El botón de enlace guarda mi escenario en la dirección URL para compartirlo.»'],
+no:[['«Esta aplicación envía mis datos al Ministerio de Defensa.»','Todo el cálculo se ejecuta en local dentro de tu navegador.']],
+q:[['¿Qué espacio abro si soy aspirante?','Entra en «Simulador de concurso» (verde militar) para calcular tu puntuación de 2026 y ordenar tu borrador de hasta 10 plazas.'],
+['¿Qué espacio abro para analizar el envejecimiento de la plantilla?','Entra en «Laboratorio de plantilla» (cian) para comparar baremo, bajas anuales y cupo hasta 2040.']]
 },
 'plan-fuerza':{
 t:'Ayuda · Plantilla y retorno',
-d:'Proyecta la plantilla completa de Reservistas Voluntarios desde 2025 (2.989 efectivos), separando bajas por límite legal de edad (61 y 58 años) de otras bajas anuales.',
-ok:['Comparar el impacto real del baremo, reducir otras bajas anuales y aumentar el cupo.','Probar planes por fases para el pico de salidas 2032-2038 y revisar los gráficos 2D y 3D.'],
-no:['Predecir las bajas voluntarias reales: el 7 % es un supuesto calibrado con la serie del ET 2016-2025.'],
-q:[['¿Por qué el baremo mueve despacio la media total?','El personal ya activo envejece un año cada año; el baremo solo cambia las nuevas entradas.'],
-['¿Qué es la franja sombreada en 2D?','El 80 % central de las edades de la plantilla (percentiles P10 y P90).']]
+f:['¿Qué mueve más la edad media y los años útiles de la plantilla completa?','Laboratorio · Plantilla y retorno','3 minutos','No predice bajas voluntarias reales: el 7 % anual es un supuesto calibrado con 2016-2025.'],
+ok:['«Con los supuestos actuales, reducir otras bajas anuales aporta más años útiles por ingreso que tocar solo el baremo.»','«Las bajas por límite legal de edad (61 y 58 años) y las otras bajas se calculan siempre por separado.»'],
+no:[['«Si cambiamos el baremo hoy, la plantilla rejuvenecerá al año siguiente.»','El personal ya activo envejece un año cada año; la reforma tarda años en desplazar la media total.'],
+['«Las bajas voluntarias serán exactamente del 7 %.»','El 7 % es un supuesto calibrado frente a la serie oficial del Ejército de Tierra 2016-2025.']],
+q:[['¿Por qué cambiar el baremo mueve tan despacio la edad de la plantilla?','Por la inercia del personal ya en plantilla (2.989 efectivos en 2025): el baremo solo modifica las nuevas incorporaciones.'],
+['¿Qué representa la franja sombreada en el gráfico 2D?','La franja donde está el 80 % central de las edades de la plantilla (percentiles P10 y P90), no un margen de error estadístico.'],
+['¿Por qué pone «Más de H años» en renovación de la mitad?','Porque dentro del horizonte elegido el personal de partida de 2025 sigue pesando más del 50 % del total.']]
 },
 'plan-entrada':{
 t:'Ayuda · Edad de ingreso',
-d:'Reúne los 7 controles que desplazan la edad estimada de ingreso (1.123 admitidos 2023-2025) y el editor de tabla de puntos por experiencia civil.',
-ok:['Ver cuántos años aporta cada bloque en las barras horizontales.','Probar tablas de experiencia y enviar su efecto medio a Plantilla y retorno.'],
-no:['Confundir un perfil de ejemplo con la edad media de toda una convocatoria.'],
-q:[['¿Dónde están las pruebas +25 % y el flujo Modo 1?','Activa «Exploración avanzada» en la tira superior.'],
-['¿Por qué 8 méritos están plegados?','Suman puntos en el baremo, pero el modelo no les asigna efecto propio sobre la edad.']]
+f:['¿Qué edad estima el modelo para un perfil concreto y qué bloques la mueven?','Laboratorio · Edad de ingreso','3 minutos','No es la edad media de una promoción completa ni predice el resultado real de 2026.'],
+ok:['«Para este perfil de ejemplo, cada punto de experiencia en el modelo suma unos +0,41 años y cada punto académico resta unos −0,28 años en Ejércitos.»','«El efecto mecánico puro de la escala 2026 sobre los solicitantes reales de 2023-2025 fue pequeño (−0,07 a −0,03 años).»'],
+no:[['«La próxima promoción entrará con la edad mostrada aquí.»','Esta vista calcula la edad de un perfil individual de ejemplo, no la media de toda la convocatoria.'],
+['«Mover idiomas o permisos cambia la edad estimada.»','Esos 8 méritos suman puntos en el baremo, pero están plegados porque el modelo no les asigna efecto propio sobre la edad.']],
+q:[['Muevo un deslizador y la edad no cambia','Has movido uno de los 8 méritos agrupados en «Otros méritos del baremo». Es normal. Prueba con Experiencia civil afín o Formación académica base.'],
+['Cambio de baremo 2023-2025 a 2026 y no pasa nada','El selector de baremo solo cambia la edad cuando está marcada la casilla «Vincular años BOE» dentro de Experiencia civil afín.'],
+['La edad de partida ya no es 39,72','Si pulsaste «Fijar como referencia», cambió el punto de partida. Pulsa «Volver al inicio (2025)» en la tira superior para recuperar el estado original.']]
 },
 'plan-opt':{
 t:'Ayuda · Optimización y oferta',
-d:'Calcula el límite alcanzable con las tres variables de regla, compara baterías de escenarios y muestra los datos reales de repesca y vacantes recurrentes 2023-2026.',
-ok:['Aplicar combinaciones de reglas directamente en Edad de ingreso.','Separar el efecto histórico de la repesca (20,0 % medio) del efecto del baremo.'],
-no:['Tomar los criterios de reparto como decisiones automáticas: son sensibilidades del modelo.'],
-q:[['¿Qué significa «Código reutilizado»?','Que ese código BOE se asignó en otros años a unidades o cometidos distintos.']]
+f:['¿Cuál es el límite alcanzable con las reglas actuales y cuánto pesó la repesca?','Laboratorio · Optimización y oferta','4 minutos','No prescribe qué reforma es legal ni qué política debe aprobarse.'],
+ok:['«Con las tres variables de regla, el descenso máximo estimado es de −0,70 años en Ejércitos y −1,75 en Cuerpos Comunes.»','«En 2023-2025 se reasignó entre el 14,3 % y el 24,8 % del cupo (20,0 % medio), lo que desplaza la edad bruta por sí solo.»'],
+no:[['«El mejor escenario de la batería es el recomendable.»','Solo es el que más baja la edad en el modelo; no valora coste, legalidad ni efectos operativos.'],
+['«La segunda vuelta es un procedimiento oficial en vigor.»','El simulador de segunda vuelta es un ejercicio hipotético con tasas supuestas por ti.']],
+q:[['El objetivo de edad que busco no es factible','Solo son alcanzables los objetivos dentro del rango mostrado debajo del selector para el cuerpo activo.'],
+['¿Qué significa «Código reutilizado» en vacantes recurrentes?','Que ese mismo código BOE se usó en otros años para unidades o cometidos distintos. Cítalo siempre junto al año.']]
 },
 'asp-baremo':{
 t:'Ayuda · Mi puntuación y destinos',
-d:'Calcula tu puntuación de mérito específico con el baremo 2026 (Apéndice 3) y muestra las vacantes compatibles de la convocatoria.',
-ok:['Ver cuántos puntos ganas o mantienes en 2026 frente a 2025.','Revisar el historial de cada destino y añadirlo a tu borrador.'],
-no:['Garantizar plaza ni validar oficialmente tu documentación.'],
-q:[['¿Por qué los cursos tienen tope en 8?','El baremo fija un máximo de 4,0 puntos en cursos (8 × 0,5).']]
+f:['¿Cuántos puntos de mérito específico tengo en 2026 y qué vacantes encajan conmigo?','Simulador · Mi puntuación y destinos','3 minutos','No comprueba tu documentación oficial ni garantiza plaza frente a otros aspirantes.'],
+ok:['«Con mi experiencia, titulación y cursos obtengo X puntos sobre 50 con el baremo 2026 y gano Y puntos frente a 2025.»','«Estas vacantes de 2026 coinciden con mi escala, área y zona y puedo añadirlas al borrador.»'],
+no:[['«Con esta puntuación tengo plaza asegurada.»','La nota de corte depende de los demás solicitantes y de la validación documental oficial.']],
+q:[['Pongo más de 8 cursos y la nota no sube','El Apéndice 3 limita los cursos afines a un máximo de 4,0 puntos (8 cursos × 0,5 puntos).'],
+['No me salen vacantes compatibles','Cambia «Área profesional» a Todas o «Zona preferida» a Cualquier destino para ampliar el listado.']]
 },
 'asp-cat':{
 t:'Ayuda · Catálogo 2023-2026',
-d:'Consulta las 1.238 filas de oferta del BOE (1.550 plazas), abre fichas históricas y añade vacantes de 2026 a tu borrador.',
-ok:['Comprobar si una unidad repite plazas cada año o si un código cambió de cometido.'],
-no:['Identificar una plaza solo por su código sin indicar el año.'],
-q:[['¿Por qué solo 2026 tiene «+ Borrador»?','Porque el borrador prepara la solicitud de la convocatoria vigente de 2026.']]
+f:['¿Qué plazas salieron entre 2023 y 2026 y si un destino repite o cambió de código?','Simulador · Catálogo 2023-2026','3 minutos','No indica cuántas personas solicitaron cada plaza ni quién la obtuvo.'],
+ok:['«En el catálogo 2023-2026 figuran 1.238 registros y 1.550 plazas; puedo comprobar la continuidad de cada unidad en su ficha.»'],
+no:[['«El código por sí solo identifica siempre la misma unidad.»','Un mismo código puede reutilizarse en años distintos; la clave única es año + código.']],
+q:[['¿Por qué solo las filas de 2026 tienen botón «+ Borrador»?','Porque el borrador prepara tu lista de preferencias para la convocatoria vigente de 2026.'],
+['No encuentro una unidad al buscar','La búsqueda revisa cometido, unidad, código y requisitos; prueba con una sola palabra clave sin abreviaturas.']]
 },
 'asp-draft':{
 t:'Ayuda · Mi borrador',
-d:'Ordena hasta 10 plazas preferentes de 2026 según el límite de la base 7.1.f, guarda la lista en tu navegador e imprímela en PDF.',
-ok:['Reordenar con ↑ y ↓, copiar los códigos e imprimir tu hoja resumen.'],
-no:['Presentar la solicitud oficial: úsalo como guía personal al tramitarla.'],
-q:[['¿Por qué no deja añadir una plaza 11?','La base 7.1.f limita cada solicitud a 10 plazas. Quita una antes de añadir otra.']]
+f:['¿Cómo ordeno mis hasta 10 preferencias de 2026 para llevarlas listas a la solicitud?','Simulador · Mi borrador (N/10)','2 minutos','No presenta la solicitud oficial en la sede electrónica.'],
+ok:['«Mi lista ordenada de hasta 10 códigos queda guardada en este navegador y lista para copiar o imprimir en PDF.»'],
+no:[['«Al guardar el borrador mi solicitud queda registrada.»','Es una herramienta personal de preparación; debes introducir los códigos en la sede oficial.']],
+q:[['No me deja añadir una plaza número 11','La base 7.1.f fija un tope máximo de 10 plazas por solicitud. Quita una plaza antes de añadir otra.']]
 }
 };
-function tutorialSteps(mode){
+function buildTutorialSteps(mode){
 if(mode==='asp'){
 var b=W.DINO_ASP_API&&W.DINO_ASP_API.getBaremoState?W.DINO_ASP_API.getBaremoState():null;
-var s26=b?fmt(b.e26.total,1):'21,0',df=b?((b.diff>=0?'+':'−')+fmt(Math.abs(b.diff),1)):'+5,0';
-var nD=W.DINO_DRAFT?W.DINO_DRAFT.getCodes().length:0;
+var s26=b?fmt(b.e26.total,1):'21,0',s25=b?fmt(b.e25.total,1):'16,0';
+var df=b?((b.diff>=0?'+':'−')+fmt(Math.abs(b.diff),1)):'+5,0';
+var yrs=b?b.yrs:7,nD=W.DINO_DRAFT?W.DINO_DRAFT.getCodes().length:0;
 return [
-['Paso 1','Calcula tus puntos de 2026','Introduce experiencia, titulación y cursos en «Mi puntuación y destinos». Ahora mismo sumas '+s26+' sobre 50 ('+df+' frente a 2025).'],
-['Paso 2','Revisa la ficha histórica','Pulsa «Ver ficha» para comprobar si la plaza repitió en 2023-2026 y si cambió de código.'],
-['Paso 3','Filtra el Catálogo 2023-2026','Usa «Catálogo 2023-2026» para buscar por unidad o especialidad y añadir plazas de 2026 con «+ Borrador».'],
-['Paso 4','Ordena e imprime tu borrador','En «Mi borrador» ('+nD+'/10) ajusta el orden con ↑ y ↓, copia los códigos o descarga el PDF.']
+{
+n:1,v:'asp-baremo',t:'Calcula tu puntuación con el baremo 2026',
+svg:SV.frame('Calcular puntuación 2026','Esquema de la calculadora de baremo 2026 con nota en vivo','Simulador','#9fb36a',
+SV.R(14,34,170,86,'#142234','#2c4054',1,7)+SV.T(24,51,'Experiencia: '+yrs+' años',10,'#e6eff9','start','700')+
+SV.T(24,68,'Titulación adicional + Cursos',9,'#a9bed4')+SV.hi(18,38,162,36)+SV.cal(1,174,42)+
+SV.R(196,34,170,86,'#142234','#9fb36a',1.5,7)+SV.T(206,51,'Mérito específico 2026',9,'#a9bed4','start','600')+
+SV.T(206,80,s26+' / 50',22,'#b4e86c','start','800')+SV.T(206,100,df+' pts frente a 2025 ('+s25+')',9,'#e6eff9')+SV.cal(2,356,42)+
+SV.bubble(132,'Recuerda el tope en cursos:','Cuentan como máximo 8 cursos afines (4,0 puntos).')),
+cap:'<p>Introduce experiencia, titulación adicional y cursos en <b>Mi puntuación y destinos</b> (<b>①</b>). Ahora mismo sumas <b>'+s26+' de 50 puntos</b> (<b>②</b>), una diferencia de <b>'+df+' puntos</b> frente al baremo de 2025.</p><p class="a3-nota">Abre el desplegable inferior si quieres estimar también tu nota total sobre 100.</p>'
+},
+{
+n:2,v:'asp-baremo',t:'Comprueba el historial y los códigos reutilizados',
+svg:SV.frame('Ficha histórica y códigos','Esquema de trazabilidad 2023-2026 con aviso de código reutilizado','Simulador','#9fb36a',
+SV.R(14,34,352,82,'#142234','#2c4054',1,7)+SV.T(24,52,'Ficha de plaza · Continuidad 2023–2026',10,'#e6eff9','start','700')+
+SV.R(24,62,68,22,'#1f3326','#9fb36a',1,5)+SV.T(58,76,'2023–2026',9,'#b4e86c','middle','700')+
+SV.R(102,62,134,22,'rgba(255,141,145,.14)','#ff8d91',1.2,5)+SV.T(169,76,'Código reutilizado',9,'#ff8d91','middle','700')+SV.cal(1,238,62)+
+SV.T(24,103,'Comprueba si la misma unidad salió varios años seguidos',9,'#a9bed4')+
+SV.bubble(132,'No uses el código aislado:','Cita siempre año + código; algunos cambian de unidad.')),
+cap:'<p>Pulsa <b>Ver ficha</b> en cualquier vacante para ver en qué convocatorias salió entre 2023 y 2026 y si aparece el aviso <b>Código reutilizado</b> (<b>①</b>).</p><p class="a3-aviso">Un código del BOE puede corresponder a unidades distintas en convocatorias diferentes.</p>'
+},
+{
+n:3,v:'asp-cat',t:'Filtra el Catálogo 2023-2026 y añade plazas',
+svg:SV.frame('Catálogo 2023-2026','Esquema de filtrado del catálogo y botón + Borrador','Catálogo','#9fb36a',
+SV.R(14,34,106,26,'#142234','#9fb36a',1.2,6)+SV.T(24,51,'Año: 2026',9.5,'#e6eff9','start','700')+SV.cal(1,122,36)+
+SV.R(134,34,232,26,'#142234','#2c4054',1,6)+SV.T(144,51,'Buscar unidad, cometido o código…',9,'#8fa6be')+
+SV.R(14,72,352,46,'#142234','#2c4054',1,7)+SV.T(24,92,'2026 · 70005 · Informática · EMAD',9.5,'#e6eff9','start','700')+
+SV.R(266,82,90,26,'#324423','#9fb36a',1.3,6)+SV.T(311,99,'+ Borrador',9.5,'#fff','middle','700')+SV.hi(262,78,98,34)+SV.cal(2,360,80)+
+SV.T(18,144,'Las 1.238 filas y 1.550 plazas de 2023–2026 están disponibles offline.',9.5,'#a9bed4')+
+SV.T(18,164,'Cambia a «Todos los años» si quieres consultar convocatorias previas.',9,'#8fa6be')),
+cap:'<p>El catálogo arranca filtrado en <b>2026</b> (<b>①</b>). Usa el buscador por palabra clave y pulsa <b>+ Borrador</b> (<b>②</b>) en las plazas que quieras guardar.</p>'
+},
+{
+n:4,v:'asp-draft',t:'Ordena e imprime tu borrador (hasta 10 plazas)',
+svg:SV.frame('Mi borrador de solicitud','Esquema de lista numerada con controles subir/bajar e imprimir PDF','Mi borrador','#9fb36a',
+SV.R(14,34,352,28,'#142234','#2c4054',1,6)+SV.T(24,52,'Mi borrador: '+nD+' de 10 plazas',10,'#b4e86c','start','700')+
+SV.R(240,38,120,20,'#324423','#9fb36a',1.2,5)+SV.T(300,51,'Imprimir PDF',9,'#fff','middle','700')+SV.cal(2,362,40)+
+SV.R(14,72,352,34,'#142234','#2c4054',1,6)+SV.R(22,78,22,22,'rgba(159,179,106,.2)','#9fb36a',1,4)+SV.T(33,93,'1',10,'#b4e86c','middle','800')+
+SV.T(54,93,'Preferencia #1 · Código 2026',9.5,'#e6eff9','start','600')+
+SV.R(292,78,28,22,'#1a2b3d','#2c4054',1,4)+SV.T(306,93,'↑',11,'#fff','middle','700')+
+SV.R(326,78,28,22,'#1a2b3d','#2c4054',1,4)+SV.T(340,93,'↓',11,'#fff','middle','700')+SV.hi(288,74,70,30)+SV.cal(1,290,74)+
+SV.bubble(132,'Límite oficial (base 7.1.f):','Máximo 10 plazas por solicitud; se guarda en tu navegador.')),
+cap:'<p>En <b>Mi borrador ('+nD+'/10)</b> ordena tus preferencias con <b>↑</b> y <b>↓</b> (<b>①</b>), copia la lista de códigos o genera tu hoja limpia con <b>Imprimir borrador (PDF)</b> (<b>②</b>).</p>'
+}
 ];
 }
 var c=W.DINO_FA_API&&W.DINO_FA_API.getLastComp?W.DINO_FA_API.getLastComp():null;
-var e0=c?fmt(c.base.edadMedia,2):'48,65',s0=c?fmt(c.base.servicioUtil,2):'9,48',s2=c?fmt(c.bajas.servicioUtil,2):'10,73',h=c?c.horizonte:15;
+var e0=c?fmt(c.base.edadMedia,2):'48,65',s0=c?fmt(c.base.servicioUtil,2):'9,48';
+var s1=c?fmt(c.baremo.servicioUtil,2):'9,68',s2=c?fmt(c.bajas.servicioUtil,2):'10,73';
+var hH=c?c.horizonte:15;
+var eLab=(W.DINO_ENGINE&&W.DINO_ENGINE.getCaseState&&W.DINO_ENGINE.getCaseState())?fmt(W.DINO_ENGINE.getCaseState().activeAge,2):'39,72';
 return [
-['Paso 1','Elige cuerpo, ejército y horizonte','Selecciona el cuerpo arriba y fija ejército y horizonte ('+h+' años actuales) en «Plantilla y retorno».'],
-['Paso 2','Compara las tres variables','Sin cambios la media queda en '+e0+' años y '+s0+' años útiles; reducir otras bajas sube el servicio útil a '+s2+' años.'],
-['Paso 3','Explora 2032-2038 y el visor 3D','Activa «Por fases (2032-2038)» y alterna entre el gráfico 2D y las dos vistas 3D interactivas.'],
-['Paso 4','Ajusta la tabla de experiencia','En «Edad de ingreso» edita los 7 tramos de experiencia civil y traslada el efecto a Plantilla y retorno.'],
-['Paso 5','Revisa repesca y exporta','En «Optimización y oferta» consulta vacantes recurrentes y repesca, o descarga PDF y guion MATLAB.']
+{
+n:1,v:'plan-fuerza',t:'Elige cuerpo, ejército y horizonte',
+svg:SV.frame('Elegir ámbito y horizonte','Esquema de los selectores de cuerpo, ejército y horizonte','Plantilla y retorno','#54c8ff',
+SV.R(14,34,112,32,'#142234','#54c8ff',1.3,6)+SV.T(24,48,'Cuerpo / Escala',8,'#8fa6be')+SV.T(24,60,'Oficiales ▾',10,'#e6eff9','start','700')+SV.cal(1,126,36)+
+SV.R(138,34,118,32,'#142234','#2c4054',1,6)+SV.T(148,48,'Ejército',8,'#8fa6be')+SV.T(148,60,'Fuerzas Armadas',9.5,'#e6eff9','start','700')+
+SV.R(266,34,100,32,'#142234','#54c8ff',1.3,6)+SV.T(276,48,'Horizonte',8,'#8fa6be')+SV.T(276,60,hH+' años ▾',10,'#54c8ff','start','700')+SV.cal(2,366,36)+
+SV.R(14,80,352,42,'#142234','#2c4054',1,7)+
+SV.T(24,98,'Plantilla oficial de partida (cierre 2025): 2.989 reservistas',9.5,'#e6eff9','start','700')+
+SV.T(24,113,'Edad media calibrada: 50,2 años · Límites: 61 años (OF/SOF) y 58 (Tropa)',8.5,'#a9bed4')+
+SV.bubble(136,'Cada grupo tiene su modelo:','Cambiar de cuerpo ajusta los límites de edad y los pesos.')),
+cap:'<p>Selecciona el cuerpo arriba (<b>①</b>) y fija ejército y horizonte (actualmente <b>'+hH+' años</b>, <b>②</b>) en la tira de filtros de <b>Plantilla y retorno</b>.</p>'
+},
+{
+n:2,v:'plan-fuerza',t:'Compara baremo, bajas anuales y cupo',
+svg:SV.frame('Comparador de las tres variables','Esquema de las tres columnas independientes del comparador','Plantilla y retorno','#54c8ff',
+SV.R(14,34,110,92,'#142234','#2c4054',1,7)+SV.T(22,50,'1. Baremo',9.5,'#e6eff9','start','700')+SV.T(22,72,'Servicio útil:',8.5,'#8fa6be')+SV.T(22,88,s1+' años',12,'#54c8ff','start','800')+SV.cal(1,118,42)+
+SV.R(135,34,110,92,'#16283d','#54c8ff',1.6,7)+SV.T(143,50,'2. Otras bajas',9.5,'#fff','start','700')+SV.T(143,72,'Servicio útil:',8.5,'#8fa6be')+SV.T(143,88,s2+' años',12,'#b6df72','start','800')+SV.hi(131,30,118,100)+SV.cal(2,240,42)+
+SV.R(256,34,110,92,'#142234','#2c4054',1,7)+SV.T(264,50,'3. Cupo anual',9.5,'#e6eff9','start','700')+SV.T(264,72,'Sin cambios:',8.5,'#8fa6be')+SV.T(264,88,s0+' años',12,'#f2c36b','start','800')+SV.cal(3,360,42)+
+SV.bubble(140,'Cuatro simulaciones separadas:','Base ('+e0+' a) frente a cada variable aislada, sin mezclarlas.')),
+cap:'<p>El comparador evalúa cada variable por separado: sin cambios la media queda en <b>'+e0+' años</b> y <b>'+s0+' años útiles</b>; cambiar el baremo (<b>①</b>) da <b>'+s1+' años</b>, mientras reducir otras bajas anuales (<b>②</b>) eleva el retorno a <b>'+s2+' años útiles</b>.</p><p class="a3-nota">Si rellenas el coste unitario opcional en el desplegable inferior, calcula el coste por año útil en euros.</p>'
+},
+{
+n:3,v:'plan-fuerza',t:'Inspecciona el pico 2032-2038 y los gráficos 2D / 3D',
+svg:SV.frame('Pico 2032-2038 y vistas 3D','Gráfico con franja ámbar 2032-2038 y selector 2D/3D','Plantilla y retorno','#54c8ff',
+SV.R(14,34,352,88,'#0b1422','#2c4054',1,7)+
+SV.R(178,36,98,84,'rgba(242,195,107,.15)',null,0,0)+SV.T(184,50,'Pico 2032-2038',8.5,'#f2c36b','start','700')+SV.cal(1,272,46)+
+'<polyline fill="none" stroke="#f2c36b" stroke-width="2" points="28,58 120,66 220,72 346,75"/>'+
+'<polyline fill="none" stroke="#38e1ff" stroke-width="2.2" stroke-dasharray="5 3" points="28,58 120,72 220,84 346,90"/>'+
+SV.R(24,100,108,16,'#1e4b66','#54c8ff',1,4)+SV.T(78,111,'2D · 3D Edades · 3D',8,'#fff','middle','700')+SV.cal(2,134,108)+
+SV.bubble(136,'Efecto de inercia:','El personal activo envejece +1 año/año; el pico llega en 2032-2038.')),
+cap:'<p>Activa <b>Por fases (2032-2038)</b> para probar refuerzos previos de cupo ante el pico de salidas por límite de edad (<b>①</b>) y alterna entre <b>Gráfico 2D</b>, <b>3D · Edades año a año</b> y <b>3D · Servicio útil según bajas</b> (<b>②</b>).</p>'
+},
+{
+n:4,v:'plan-entrada',t:'Mide bloques en Edad de ingreso y edita la experiencia',
+svg:SV.frame('Edad de ingreso y experiencia','Barras divergentes en años y curva escalonada de experiencia','Edad de ingreso','#54c8ff',
+SV.R(14,34,170,88,'#142234','#2c4054',1,7)+SV.T(22,50,'Perfil actual: '+eLab+' a',9.5,'#54c8ff','start','700')+
+SV.R(94,62,56,12,'#ff8d91',null,0,2)+SV.T(22,72,'Experiencia',8.5,'#a9bed4')+
+SV.R(58,82,36,12,'#b6df72',null,0,2)+SV.T(22,92,'Académico',8.5,'#a9bed4')+SV.cal(1,174,42)+
+SV.R(196,34,170,88,'#142234','#54c8ff',1.2,7)+SV.T(204,50,'Tabla de experiencia',9.5,'#e6eff9','start','700')+
+'<path d="M208 106 H232 V94 H258 V80 H288 V66 H322 V56 H354" fill="none" stroke="#54c8ff" stroke-width="2"/>'+SV.cal(2,356,42)+
+SV.bubble(136,'Ojo con la lectura:','Muestra un perfil de ejemplo, no la media de toda una promoción.')),
+cap:'<p>En <b>Edad de ingreso</b> las barras horizontales (<b>①</b>) muestran cuántos años suma o resta cada bloque. Debajo puedes editar los 7 tramos de experiencia civil (<b>②</b>) y aplicar el cambio en Plantilla y retorno.</p><p class="a3-nota">Los 8 méritos sin efecto en edad están plegados para limpiar la vista; activa «Exploración avanzada» para ver pruebas +25 % y Modo 1.</p>'
+},
+{
+n:5,v:'plan-opt',t:'Separa repesca del baremo y exporta informes',
+svg:SV.frame('Repesca y exportación','Barras de repesca 2023-2025 y botones MATLAB/PDF','Optimización y oferta','#54c8ff',
+SV.R(14,34,196,88,'#142234','#2c4054',1,7)+SV.T(24,50,'Repesca observada (2023–2025)',9.5,'#e6eff9','start','700')+
+SV.R(28,92,34,20,'#f2c36b',null,0,3)+SV.T(45,88,'14,3%',8.5,'#f2c36b','middle','700')+
+SV.R(84,82,34,30,'#f2c36b',null,0,3)+SV.T(101,78,'19,4%',8.5,'#f2c36b','middle','700')+
+SV.R(140,70,34,42,'#f2c36b',null,0,3)+SV.T(157,66,'24,8%',8.5,'#f2c36b','middle','700')+SV.cal(1,202,42)+
+SV.R(222,34,144,88,'#142234','#54c8ff',1.2,7)+SV.T(232,52,'Exportación',9.5,'#e6eff9','start','700')+
+SV.R(232,62,124,22,'#1a2b3d','#2c4054',1,5)+SV.T(294,76,'MATLAB (.m)',9,'#e6eff9','middle','600')+
+SV.R(232,90,124,22,'#1e4b66','#54c8ff',1.2,5)+SV.T(294,104,'Informe PDF',9,'#fff','middle','700')+SV.cal(2,358,42)+
+SV.bubble(136,'Separar repesca y baremo:','En 2023-2025 la repesca movió −2,0 a (Ejércitos) y −6,9 a (Comunes).')),
+cap:'<p>En <b>Optimización y oferta</b> consulta el límite de las variables, la batería de escenarios y la repesca real 2023-2025 (<b>①</b>). Desde Plantilla y retorno descarga el guion <b>MATLAB (.m)</b> o el <b>Informe ejecutivo (PDF)</b> (<b>②</b>).</p>'
+}
 ];
+}
+function highlightStep(n,scroll){
+st.step=n||0;
+var p=$('dinoAyuda');if(!p)return;
+p.querySelectorAll('.a3-fig').forEach(function(f){
+if(String(f.getAttribute('data-step'))===String(st.step))f.setAttribute('aria-current','step');
+else f.removeAttribute('aria-current');
+});
+p.querySelectorAll('.a3-pb').forEach(function(b){
+b.classList.toggle('on',String(b.getAttribute('data-go-step'))===String(st.step));
+});
+if(scroll&&st.step>0){
+var tgt=$('ay3-step-'+st.step);
+if(tgt&&tgt.scrollIntoView)try{tgt.scrollIntoView({block:'start',behavior:'smooth'});}catch(e){}
+}
 }
 function renderDrawer(){
 var p=$('dinoAyuda');
-if(!p){p=D.createElement('aside');p.id='dinoAyuda';p.setAttribute('role','dialog');p.setAttribute('aria-modal','false');p.setAttribute('aria-labelledby','dinoAyudaT');D.body.appendChild(p);}
+if(!p){
+p=D.createElement('aside');p.id='dinoAyuda';
+p.setAttribute('role','dialog');p.setAttribute('aria-modal','false');p.setAttribute('aria-labelledby','dinoAyudaT');
+D.body.appendChild(p);
+}
 p.classList.add('d3-ay');
 var vk=st.view||viewKey(),mk=modeKey(),inf=HELP[vk]||HELP.portal;
-var body=st.tab==='tutorial'
-?tutorialSteps(mk).map(function(s){return '<div class="a3-st"><span class="a3-n">'+esc(s[0])+'</span><h4>'+esc(s[1])+'</h4><p>'+esc(s[2])+'</p></div>';}).join('')
-:'<div class="a3-bx"><h3>'+esc(inf.t.replace('Ayuda · ',''))+'</h3><p style="margin:0">'+esc(inf.d)+'</p></div>'+
-'<div class="a3-bx a3-ok"><h3>✔ Qué puedes concluir</h3><ul>'+inf.ok.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'+
-'<div class="a3-bx a3-no"><h3>✘ Qué no puedes concluir</h3><ul>'+inf.no.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'+
+var body='';
+if(st.tab==='tutorial'){
+var steps=buildTutorialSteps(mk);
+var nav='<nav class="a3-nav" aria-label="Pasos del tutorial">'+
+steps.map(function(s){return '<button type="button" class="a3-pb'+(st.step===s.n?' on':'')+'" data-go-step="'+s.n+'" aria-label="Ir al paso '+s.n+'">'+s.n+'</button>';}).join('')+
+'</nav>';
+var figs=steps.map(function(s){
+var jump=(mk!=='portal'&&s.v&&s.v!==vk)
+?'<button type="button" class="a3-go" data-jump-view="'+esc(s.v)+'">Ir a vista ↗</button>'
+:'';
+return '<figure class="a3-fig" id="ay3-step-'+s.n+'" data-step="'+s.n+'"'+(st.step===s.n?' aria-current="step"':'')+'>'+
+'<div class="a3-fh"><div class="a3-fhl"><span class="a3-n">Paso '+s.n+'</span><h4>'+esc(s.t)+'</h4></div>'+jump+'</div>'+
+s.svg+'<figcaption>'+s.cap+'</figcaption></figure>';
+}).join('');
+body=nav+figs;
+}else {
+var f=inf.f;
+body=
+'<div class="a3-ficha">'+
+'<div class="a3-fi"><b>Qué pregunta responde</b>'+esc(f[0])+'</div>'+
+'<div class="a3-fi"><b>Dónde estás</b>'+esc(f[1])+'</div>'+
+'<div class="a3-fi"><b>Tiempo estimado</b>'+esc(f[2])+'</div>'+
+'<div class="a3-fi"><b>Qué no responde</b>'+esc(f[3])+'</div>'+
+'</div>'+
+'<div class="a3-bx a3-ok"><h3>✔ Qué puedes decir</h3><ul>'+inf.ok.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'+
+'<div class="a3-bx a3-no"><h3>✘ Qué no puedes decir</h3><ul>'+inf.no.map(function(x){return '<li>'+esc(x[0])+' <small>('+esc(x[1])+')</small></li>';}).join('')+'</ul></div>'+
 '<h3 style="margin:10px 0 6px;font:700 13.5px var(--font-ui,system-ui,sans-serif)">Si algo no cuadra</h3>'+
 inf.q.map(function(q){return '<details class="a3-d"><summary>'+esc(q[0])+'<span aria-hidden="true">▸</span></summary><p>'+esc(q[1])+'</p></details>';}).join('');
+}
 var foot=mk==='plan'?'<div class="a3-f"><button type="button" class="a3-m" id="ay3Met">Método y coeficientes ↗</button></div>':'';
 p.innerHTML=
 '<div class="a3-h"><h2 id="dinoAyudaT">'+esc(inf.t)+'</h2><div class="a3-ac">'+
 '<label class="a3-ck"><input type="checkbox" id="ay3Chk"'+(tipsOn()?' checked':'')+'> Globos</label>'+
+'<button type="button" class="a3-b1" id="ay3Print">Imprimir</button>'+
 '<button type="button" class="a3-x" id="ay3X" aria-label="Cerrar ayuda">✕</button></div></div>'+
 '<div class="a3-ts" role="tablist">'+
 '<button type="button" role="tab" class="a3-t'+(st.tab==='screen'?' active':'')+'" data-a3t="screen">Esta pantalla</button>'+
@@ -3964,25 +4328,58 @@ p.innerHTML=
 '<div class="a3-b">'+body+'</div>'+foot;
 p.setAttribute('data-panel',vk);
 p.querySelector('#ay3X').onclick=closeDrawer;
+p.querySelector('#ay3Print').onclick=printHelp;
 p.querySelector('#ay3Chk').onchange=function(e){setTipsOn(!!e.target.checked);};
-p.querySelectorAll('[data-a3t]').forEach(function(b){b.onclick=function(){st.tab=b.getAttribute('data-a3t');renderDrawer();};});
+p.querySelectorAll('[data-a3t]').forEach(function(b){
+b.onclick=function(){st.tab=b.getAttribute('data-a3t');renderDrawer();};
+});
+p.querySelectorAll('[data-go-step]').forEach(function(b){
+b.onclick=function(){highlightStep(parseInt(b.getAttribute('data-go-step'),10),true);};
+});
+p.querySelectorAll('[data-jump-view]').forEach(function(b){
+b.onclick=function(){
+var v=b.getAttribute('data-jump-view');
+if(W.DINO_SHELL&&W.DINO_SHELL.switchView)W.DINO_SHELL.switchView(v);
+};
+});
 var bm=p.querySelector('#ay3Met');
 if(bm)bm.onclick=function(){if(W.openDocModal)W.openDocModal('metodo',bm);};
 }
-function openDrawer(tab,opener){
-hideTip();st.open=true;st.tab=tab==='tutorial'?'tutorial':'screen';st.view=viewKey();st.opener=opener||D.activeElement;
+function openDrawer(tab,opener,stepNum){
+hideTip();
+st.open=true;
+st.tab=tab==='tutorial'?'tutorial':'screen';
+st.view=viewKey();
+st.step=stepNum?Number(stepNum):0;
+st.opener=opener||D.activeElement;
 renderDrawer();
-var p=$('dinoAyuda');if(p){p.hidden=false;p.setAttribute('data-abierto','1');var x=p.querySelector('#ay3X');if(x)x.focus();}
+var p=$('dinoAyuda');
+if(p){
+p.hidden=false;
+p.setAttribute('data-abierto','1');
+if(st.tab==='tutorial'&&st.step>0)highlightStep(st.step,true);
+var x=p.querySelector('#ay3X');
+if(x)x.focus();
+}
 }
 function closeDrawer(){
-st.open=false;var p=$('dinoAyuda');if(p){p.hidden=true;p.removeAttribute('data-abierto');}
+st.open=false;
+var p=$('dinoAyuda');
+if(p){p.hidden=true;p.removeAttribute('data-abierto');}
 if(st.opener&&D.body.contains(st.opener)&&st.opener.focus)try{st.opener.focus();}catch(e){}
 st.opener=null;
+}
+function printHelp(){
+if(!st.open)openDrawer(st.tab);
+D.body.classList.add('dino-imprimiendo');
+var fin=function(){D.body.classList.remove('dino-imprimiendo');W.removeEventListener('afterprint',fin);};
+W.addEventListener('afterprint',fin);
+try{W.print();}catch(e){fin();}
 }
 function bindTriggers(){
 var bTop=$('dinoAyudaTop'),bTut=$('portalTutorialBtn');
 if(bTop)bTop.onclick=function(){var p=$('dinoAyuda');if(p&&!p.hidden&&p.classList.contains('d3-ay'))closeDrawer();else openDrawer('screen',bTop);};
-if(bTut)bTut.onclick=function(){openDrawer('tutorial',bTut);};
+if(bTut)bTut.onclick=function(){openDrawer('tutorial',bTut,1);};
 D.addEventListener('keydown',function(e){
 if(e.key!=='Escape')return;
 var g=$('dinoTip');if(g&&!g.hidden){hideTip();return;}
@@ -3992,7 +4389,12 @@ if(W.DINO_SHELL){
 ['switchView','enterMode','showPortal'].forEach(function(fn){
 var o=W.DINO_SHELL[fn];
 if(typeof o==='function'&&!o._d3Ay){
-W.DINO_SHELL[fn]=function(){var r=o.apply(this,arguments);attachTips();if(st.open){st.view=viewKey();renderDrawer();}return r;};
+W.DINO_SHELL[fn]=function(){
+var r=o.apply(this,arguments);
+attachTips();
+if(st.open){st.view=viewKey();renderDrawer();}
+return r;
+};
 W.DINO_SHELL[fn]._d3Ay=true;
 }
 });
@@ -4000,17 +4402,31 @@ W.DINO_SHELL[fn]._d3Ay=true;
 var oAu=W.runDinoMathAuditTests;
 if(typeof oAu==='function'&&!oAu._d3Ay){
 W.runDinoMathAuditTests=function(){
-var was=st.open,p=$('dinoAyuda');
+var was=st.open,prevTab=st.tab,prevStep=st.step,p=$('dinoAyuda');
+st.inAudit=true;
 if(p){p.classList.remove('d3-ay');p.hidden=true;}
 if(W.DINO_AYUDA_API&&W.DINO_AYUDA_API.estado)W.DINO_AYUDA_API.estado.clave=null;
 st.open=false;
-try{return oAu.apply(this,arguments);}finally{if(was)openDrawer(st.tab);}
+try{return oAu.apply(this,arguments);}
+finally{
+st.inAudit=false;
+if(was)openDrawer(prevTab,null,prevStep);
+}
 };
 W.runDinoMathAuditTests._d3Ay=true;
 }
 }
-W.DINO_AYUDA3={open:openDrawer,close:closeDrawer,refreshTooltips:attachTips,setTipsEnabled:setTipsOn,isTipsEnabled:tipsOn,SCREEN_HELP:HELP};
-function boot(){injectCss();attachTips();bindTips();bindTriggers();setTimeout(attachTips,400);}
+W.DINO_AYUDA3={
+open:openDrawer,
+close:closeDrawer,
+goToStep:highlightStep,
+print:printHelp,
+refreshTooltips:attachTips,
+setTipsEnabled:setTipsOn,
+isTipsEnabled:tipsOn,
+SCREEN_HELP:HELP
+};
+function boot(){injectCss();attachTips();bindTipsAndObserver();bindTriggers();setTimeout(attachTips,400);}
 if(D.readyState==='loading')D.addEventListener('DOMContentLoaded',boot);else boot();
 })();
 </script>
@@ -4581,13 +4997,30 @@ if(/^["']?arial\b/i.test(ff.trim()))ffOk=false;
 }
 });
 var ay=W.DINO_AYUDA3;
-var keysOk=!!(ay&&ay.SCREEN_HELP&&['portal','plan-fuerza','plan-entrada','plan-opt','asp-baremo','asp-cat','asp-draft'].every(function(k){return !!ay.SCREEN_HELP[k];}));
+var keysOk=!!(ay&&ay.SCREEN_HELP&&['portal','plan-fuerza','plan-entrada','plan-opt','asp-baremo','asp-cat','asp-draft'].every(function(k){
+var h=ay.SCREEN_HELP[k];
+return !!(h&&Array.isArray(h.f)&&h.f.length===4&&Array.isArray(h.ok)&&h.ok.length>0&&Array.isArray(h.no)&&h.no.length>0);
+}));
 var tipsCount=D.querySelectorAll('[data-tip]').length;
-if(ay){ay.open('screen');}
-var drOpen=!!($('dinoAyuda')&&!$('dinoAyuda').hidden);
-if(ay){ay.close();}
-var ok=foundBad.length===0&&ffOk&&keysOk&&tipsCount>=15&&drOpen;
-return {ok:ok,detail:'prohibidos=['+foundBad.join(',')+'] · uiFont='+ffOk+' · ayuda7='+keysOk+' · tips='+tipsCount};
+var drOpen=false,svgsOk=false,stepOk=false,printOk=false;
+if(ay){
+ay.open('screen');
+drOpen=!!($('dinoAyuda')&&!$('dinoAyuda').hidden&&$('dinoAyuda').querySelectorAll('.a3-fi').length===4);
+ay.open('tutorial',null,2);
+var figs=$('dinoAyuda')?$('dinoAyuda').querySelectorAll('figure.a3-fig'):[];
+svgsOk=figs.length>=4&&Array.prototype.every.call(figs,function(f){return !!f.querySelector('svg');});
+stepOk=!!($('ay3-step-2')&&$('ay3-step-2').getAttribute('aria-current')==='step');
+var origPr=W.print,prCalled=false,marked=false;
+W.print=function(){prCalled=true;marked=D.body.classList.contains('dino-imprimiendo');};
+ay.print();
+W.dispatchEvent(new W.Event('afterprint'));
+W.print=origPr;
+printOk=prCalled&&marked&&!D.body.classList.contains('dino-imprimiendo');
+ay.close();
+}
+var f3Ok=!!D.querySelector('.ent-boe-eq')&&D.querySelectorAll('.ent-beta').length>=7;
+var ok=foundBad.length===0&&ffOk&&keysOk&&tipsCount>=15&&drOpen&&svgsOk&&stepOk&&printOk&&f3Ok;
+return {ok:ok,detail:'prohibidos=['+foundBad.join(',')+'] · uiFont='+ffOk+' · ayuda7='+keysOk+' · svg='+svgsOk+' · step='+stepOk+' · print='+printOk+' · F3/F9='+f3Ok};
 }));
 }finally{
 if(W.DINO_DATASET)W.DINO_DATASET.bolsaFrontera=prevBolsa;
